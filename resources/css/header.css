@@ -1,0 +1,401 @@
+/* =========================
+   HEADER BASE
+========================= */
+
+.we-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+/* Nivel 1 */
+.we-header-top {
+    height: 25px;
+    background: #341e68;
+}
+
+/* Nivel 2 */
+.headermenu {
+    height: 40px;
+    background: #e2e8f0;
+    display: flex;
+    position: relative;
+}
+
+/* =========================
+   NIVEL 3
+========================= */
+
+.we-header-main {
+    height: 70px;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.header-main {
+    width: 550px;
+    height: 85%;
+    background: #341e68;
+    border-bottom-right-radius: 80px;
+}
+
+/* =========================
+   MENU
+========================= */
+
+.menu-wrapper {
+    position: absolute;
+    right: 17px;
+    top: 85%;
+    transform: translateY(-50%);
+}
+
+.menu-btn {
+    background: #e2e8f0;
+    color: #030303;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.menu-btn:hover {
+    background: #cbd5e1;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Texto desktop */
+.menu-text {
+    display: inline;
+}
+
+/* Hamburguesa */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 3px;
+    padding-bottom: 5px;
+}
+
+.hamburger span {
+    width: 18px;
+    height: 2px;
+    background: #fdfafa;
+    border-radius: 2px;
+}
+
+/* Dropdown */
+.menu-dropdown {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background: #fff;
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    min-width: 220px; /* ancho mínimo */
+    width: max-content; /* se ajusta al contenido */
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.25s ease;
+}
+
+.menu-dropdown li a {
+    display: block;
+    padding: 12px 19px;
+    color: #341e68;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.menu-dropdown li a:hover {
+    background: #edf2f7;
+}
+
+.menu-wrapper:hover .menu-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.we-header-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 15px;
+    padding-right: 27px;
+    padding-bottom: 10px;
+}
+
+.we-logo {
+    width: 55px;
+    height: 55px;
+}
+
+.we-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #31186a;
+}
+
+/* =========================
+   HERO (MEJORADO 90%)
+========================= */
+
+.hero {
+    position: relative;
+    width: 99%;
+    max-width: 1600px;
+    height: 480px;
+    margin: 32px auto;
+    border-radius: 24px;
+    overflow: hidden;
+    background: url("/img/banner1.jpeg") center / cover no-repeat;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(36, 19, 69, 0.85),
+        rgba(36, 19, 69, 0.4)
+    );
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: 0 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+}
+
+.hero-title {
+    font-size: 36px;
+    margin-bottom: 16px;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    margin-bottom: 32px;
+}
+
+/* =========================
+   BOTÓN COTIZAR
+========================= */
+
+.hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(90deg, #2f80ed, #56ccf2);
+    box-shadow: 0 8px 20px rgba(47, 128, 237, 0.35);
+    transition: all 0.25s ease;
+}
+
+.hero-btn:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 14px 28px rgba(47, 128, 237, 0.45);
+}
+
+.hero-btn:active {
+    transform: scale(0.98);
+}
+
+.hero-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.8;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+    .we-header-top {
+        height: 12px;
+    }
+
+    .headermenu {
+        height: 42px;
+    }
+
+    .header-main {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+
+    .menu-text {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .menu-btn {
+        padding: 6px 10px;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .we-header-main {
+        height: 46px;
+    }
+
+    .we-logo {
+        width: 30px;
+        height: 30px;
+    }
+
+    .we-title {
+        font-size: 16px;
+        white-space: nowrap;
+    }
+
+    /* HERO MOBILE */
+    .hero {
+        width: 94%;
+        height: 280px;
+        margin: 20px auto;
+        border-radius: 18px;
+    }
+
+    .hero-content {
+        padding: 0 16px;
+    }
+
+    .hero-title {
+        font-size: 22px;
+    }
+
+    .hero-subtitle {
+        font-size: 14px;
+    }
+
+    .menu-wrapper {
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+/* =========================
+   HERO MAGIC ✨ (ELEGANTE)
+========================= */
+
+/* Animación de entrada */
+.hero {
+    animation: heroFadeIn 0.9s ease-out forwards;
+}
+
+@keyframes heroFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Overlay con efecto glass */
+.hero-overlay {
+    backdrop-filter: blur(2px);
+}
+
+/* Contenido entra en cascada */
+.hero-title {
+    animation: textReveal 0.8s ease-out 0.2s both;
+}
+
+.hero-subtitle {
+    animation: textReveal 0.8s ease-out 0.35s both;
+}
+
+.hero-btn {
+    animation: textReveal 0.8s ease-out 0.5s both;
+}
+
+@keyframes textReveal {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Movimiento sutil del fondo */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    transform: scale(1.05);
+    animation: slowPan 18s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes slowPan {
+    from {
+        transform: scale(1.05) translateX(-6px);
+    }
+    to {
+        transform: scale(1.1) translateX(6px);
+    }
+}
+
+/* Glow elegante del botón */
+.hero-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.35),
+        transparent
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.hero-btn:hover::after {
+    transform: translateX(100%);
+}
