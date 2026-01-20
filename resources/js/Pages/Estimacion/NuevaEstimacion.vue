@@ -49,13 +49,13 @@ watch(
 
         try {
             const res = await axios.get(
-                `/api/tipoimplementacion/${nuevoTipoId}/integraciones`
+                `/api/tipoimplementacion/${nuevoTipoId}/integraciones`,
             );
             integracionesDisponibles.value = res.data.data ?? [];
         } catch (err) {
             console.error("Error cargando integraciones:", err);
         }
-    }
+    },
 );
 
 // --- Guardar ---
@@ -125,7 +125,7 @@ const cancel = () => router.get("/estimaciones");
                             tiposImplementacion.find(
                                 (t) =>
                                     String(t.id) ===
-                                    String(estimacion.tipoImplementacion)
+                                    String(estimacion.tipoImplementacion),
                             )?.descripcion || ""
                         }}
                     </p>
@@ -183,8 +183,8 @@ const cancel = () => router.get("/estimaciones");
                                 ? nivel === 'Baja'
                                     ? 'bg-green-500 text-white border border-green-500'
                                     : nivel === 'Media'
-                                    ? 'bg-yellow-400 text-white border border-yellow-400'
-                                    : 'bg-red-500 text-white border border-red-500'
+                                      ? 'bg-yellow-400 text-white border border-yellow-400'
+                                      : 'bg-red-500 text-white border border-red-500'
                                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100',
                         ]"
                     >

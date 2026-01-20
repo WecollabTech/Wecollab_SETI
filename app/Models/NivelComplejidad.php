@@ -15,4 +15,13 @@ class NivelComplejidad extends Model
         'estado',
         'rubricas'
         ];
+
+
+
+
+
+        public function estimaciones()
+    {
+        return $this->hasMany(Estimacion::class, 'complejidad_id');
+    }
 }

@@ -29,28 +29,34 @@ class TipoImplementacion extends Model
 
 
     // TipoImplementacion.php
+// Relación muchos a muchos con integraciones
     public function integraciones()
     {
         return $this->belongsToMany(
-            Integrationes::class,                   // Modelo relacionado
-            'integracion_tipoimplementacion',     // Nombre de la tabla pivot
+            Integrationes::class,                   // Modelo correcto
+            'integracion_tipoimplementacion',     // Tabla pivot
             'tipo_implementacion_id',             // FK de este modelo en la tabla pivot
-            'integracion_id'                      // FK del modelo relacionado en la tabla pivot
+            'integracion_id'                      // FK del modelo relacionado
         );
     }
 
     // Relación muchos a muchos con fases
     public function fases()
+        {
+            return $this->belongsToMany(
+                Fase::class,
+                'fase_tipo_implementacion',
+                'tipo_implementacion_id',
+                'fase_id'
+            );
+        }
+
+
+// Relación uno a muchos con estimaciones
+    public function estimaciones()
     {
-        return $this->belongsToMany(
-            Fase::class,
-            'fase_tipo_implementacion', // nombre de la tabla pivot
-            'tipo_implementacion_id',
-            'fase_id'
-        );
+        return $this->hasMany(Estimacion::class);
     }
-
-
     
 
 }

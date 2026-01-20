@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EstimacionController;
 use App\Http\Controllers\FaseController;
 use App\Http\Controllers\IntegrationesController;
 use App\Http\Controllers\NivelComplejidadController;
@@ -64,3 +65,8 @@ Route::post('/niveles', [NivelComplejidadController::class, 'store']);
 Route::put('/niveles/{nivel}', [NivelComplejidadController::class, 'update']);
 Route::delete('/niveles/{nivel}', [NivelComplejidadController::class, 'destroy']);
 Route::get('/nivel-complejidad', [NivelComplejidadController::class, 'apiindex']);
+
+
+
+//RUTAS PARA GUARDAR ESTIMACION DE PROYECTOS
+Route::post('/estimaciones', [EstimacionController::class, 'store']);
