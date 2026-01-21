@@ -28,6 +28,7 @@ const form = reactive({
     duracion_minuto: null,
     orden: null,
     fase_id: "",
+    id_proceso: "", // <-- agregado
 });
 
 const errors = reactive({
@@ -38,6 +39,7 @@ const errors = reactive({
     duracion_minuto: null,
     orden: null,
     fase_id: null,
+    id_proceso: null, // <-- agregado
 });
 
 const fases = ref([]);
@@ -59,6 +61,7 @@ const cargarTarea = async () => {
         form.duracion_minuto = data.duracion_minuto ?? null;
         form.orden = data.orden ?? null;
         form.fase_id = data.fase_id ?? "";
+        form.id_proceso = data.id_proceso ?? ""; // <-- agregado
     } catch (err) {
         console.error("Error al cargar tarea:", err);
     }
@@ -74,34 +77,12 @@ const cargarFases = async () => {
 };
 
 // --- WATCHERS ---
-watch(
-    () => form.titulo,
-    () => (errors.titulo = null)
-);
-watch(
-    () => form.descripcion,
-    () => (errors.descripcion = null)
-);
-watch(
-    () => form.estado,
-    () => (errors.estado = null)
-);
-watch(
-    () => form.activo,
-    () => (errors.activo = null)
-);
-watch(
-    () => form.duracion_minuto,
-    () => (errors.duracion_minuto = null)
-);
-watch(
-    () => form.orden,
-    () => (errors.orden = null)
-);
-watch(
-    () => form.fase_id,
-    () => (errors.fase_id = null)
-);
+Object.keys(form).forEach((key) => {
+    watch(
+        () => form[key],
+        () => (errors[key] = null),
+    );
+});
 
 // --- SUBMIT ---
 const submit = async () => {
@@ -109,22 +90,37 @@ const submit = async () => {
     sending.value = true;
     Object.keys(errors).forEach((k) => (errors[k] = null));
 
+    // Construir payload con tipos correctos
+    const payload = {
+        titulo: form.titulo,
+        descripcion: form.descripcion,
+        estado: form.estado,
+        activo: Boolean(form.activo),
+        duracion_minuto: form.duracion_minuto
+            ? Number(form.duracion_minuto)
+            : null,
+        orden: form.orden ? Number(form.orden) : null,
+        fase_id: form.fase_id ? Number(form.fase_id) : null,
+        id_proceso: form.id_proceso, // obligatorio
+    };
+
     try {
-        const res = await axios.put(`/api/tareas/${tareaIdNumber}`, form);
+        const res = await axios.put(`/api/tareas/${tareaIdNumber}`, payload);
         console.log("Respuesta del servidor:", res.data);
 
         modalMessage.value =
             res.data.message || "Tarea actualizada correctamente.";
         modalType.value = "success";
-        showModal.value = true; // <-- aquí se muestra el modal
+        showModal.value = true;
     } catch (err) {
         if (err.response?.status === 422) {
+            console.log("Errores de validación:", err.response.data.errors);
             const validationErrors = err.response.data.errors;
             Object.keys(validationErrors).forEach(
-                (f) => (errors[f] = validationErrors[f][0])
+                (f) => (errors[f] = validationErrors[f][0]),
             );
         } else {
-            console.error("Error al actualizar tarea:", err.message);
+            console.error("Error al actualizar tarea:", err);
         }
     } finally {
         sending.value = false;
@@ -154,7 +150,6 @@ onMounted(() => {
         </template>
 
         <FormWrapper title="Actualizar los datos de la Tarea">
-            <!-- FORM INPUTS IGUAL QUE ANTES -->
             <FormInput
                 label="Título"
                 v-model="form.titulo"
@@ -163,6 +158,17 @@ onMounted(() => {
             />
             <p v-if="errors.titulo" class="text-red-600 text-sm mt-1">
                 {{ errors.titulo }}
+            </p>
+
+            <FormInput
+                label="Id Proceso"
+                type="text"
+                v-model="form.id_proceso"
+                :error="errors.id_proceso"
+                placeholder="ID del proceso"
+            />
+            <p v-if="errors.id_proceso" class="text-red-600 text-sm mt-1">
+                {{ errors.id_proceso }}
             </p>
 
             <FormInput
@@ -255,7 +261,6 @@ onMounted(() => {
             </template>
         </FormWrapper>
 
-        <!-- MODAL DE ÉXITO -->
         <SuccessModal
             :show.sync="showModal"
             :message="modalMessage"
