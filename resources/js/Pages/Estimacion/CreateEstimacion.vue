@@ -17,14 +17,20 @@ const estimacion = ref({
     integraciones: [],
     complejidad: null,
     comentarios: "",
-    bloques: [], // ← fases + integraciones
+    bloquesFases: [],
+    bloquesIntegraciones: [],
     totalMinutos: 0,
     totalHoras: 0,
 });
 
 // Función para guardar la estimación completa
 const guardarEstimacion = async (estimacion) => {
-    console.log("📌 ESTIMACIÓN COMPLETA:", estimacion);
+    if (!estimacion.complejidad?.id) {
+        console.warn(
+            "⚠️ Complejidad no definida, no se puede guardar la estimación",
+        );
+        return;
+    }
 
     const payload = {
         tipo_implementacion_id: estimacion.tipoImplementacionId,
@@ -33,11 +39,18 @@ const guardarEstimacion = async (estimacion) => {
         comentarios: estimacion.comentarios,
         total_minutos: estimacion.totalMinutos,
         total_horas: estimacion.totalHoras,
-        fases: estimacion.bloques.map((b) => ({
-            tipo: b.tipo,
-            referencia_id: b.id,
-            tareas: b.tareas.map((t) => ({
-                tarea_id: t.id,
+        fases: (estimacion.bloquesFases || []).map((f) => ({
+            referencia_id: f.id,
+            tareas: f.tareas.map((t) => ({
+                tarea_id: t.tarea_id,
+                titulo: t.titulo,
+                duracion_minuto: t.duracion_minuto,
+            })),
+        })),
+        integraciones: (estimacion.bloquesIntegraciones || []).map((i) => ({
+            referencia_id: i.id,
+            tareas: i.tareas.map((t) => ({
+                tarea_id: t.tarea_id,
                 titulo: t.titulo,
                 duracion_minuto: t.duracion_minuto,
             })),
@@ -45,7 +58,6 @@ const guardarEstimacion = async (estimacion) => {
     };
 
     console.log("📦 PAYLOAD FINAL:", payload);
-
     // await axios.post("/api/estimaciones", payload);
 };
 </script>
@@ -66,7 +78,6 @@ const guardarEstimacion = async (estimacion) => {
             "
         />
 
-        <!-- PASO 2 -->
         <PasoFases
             v-if="paso === 2"
             :tipoImplementacionId="Number(estimacion.tipoImplementacionId)"
@@ -76,7 +87,8 @@ const guardarEstimacion = async (estimacion) => {
             @back="paso = 1"
             @next="
                 (data) => {
-                    estimacion.bloques = data.bloques;
+                    estimacion.bloquesFases = data.bloquesFases;
+                    estimacion.bloquesIntegraciones = data.bloquesIntegraciones;
                     estimacion.totalMinutos = data.totalMinutos;
                     estimacion.totalHoras = data.totalHoras;
                     paso = 3;
@@ -84,17 +96,18 @@ const guardarEstimacion = async (estimacion) => {
             "
         />
 
-        <!-- PASO 3 -->
         <PasoTareas
             v-if="paso === 3"
             :nombreProyecto="estimacion.nombreTipoImplementacion"
-            :bloques="estimacion.bloques"
+            :bloquesFases="estimacion.bloquesFases"
+            :bloquesIntegraciones="estimacion.bloquesIntegraciones"
             :totalMinutos="estimacion.totalMinutos"
             :totalHoras="estimacion.totalHoras"
             @back="paso = 2"
             @finish="
                 (data) => {
-                    estimacion.bloques = data.bloques;
+                    estimacion.bloquesFases = data.bloquesFases;
+                    estimacion.bloquesIntegraciones = data.bloquesIntegraciones;
                     estimacion.totalMinutos = data.totalMinutos;
                     estimacion.totalHoras = data.totalHoras;
 

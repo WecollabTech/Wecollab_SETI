@@ -7,10 +7,7 @@ const props = defineProps({
     tipoImplementacionId: Number,
     nombreProyecto: String,
     complejidad: Object,
-    integracionesSeleccionadas: {
-        type: Array,
-        required: true,
-    },
+    integracionesSeleccionadas: { type: Array, required: true },
 });
 
 const emit = defineEmits(["next", "back"]);
@@ -19,40 +16,42 @@ const fases = ref([]);
 const integraciones = ref([]);
 const faseActiva = ref(null);
 const integracionActiva = ref(null);
-const tareasSeleccionadas = ref([]);
 
-// 🔹 Cargar fases + integraciones
+// Mantener selección separada
+const tareasSeleccionadasFases = ref([]);
+const tareasSeleccionadasIntegraciones = ref([]);
+
+// Cargar fases + integraciones
 onMounted(async () => {
     try {
-        // 1️⃣ FASES con tareas (YA FUNCIONA)
         const resFases = await axios.get(
             `/api/tipoimplementacion/${props.tipoImplementacionId}/fases`,
         );
-
         fases.value = resFases.data.data ?? [];
 
-        // 2️⃣ INTEGRACIONES con tareas (ENDPOINT NUEVO)
         const resIntegraciones = await axios.get(
             `/api/tipoimplementacion/${props.tipoImplementacionId}/integraciones-tareas`,
         );
-
         const integracionesBackend = resIntegraciones.data.data ?? [];
 
-        // 3️⃣ SOLO dejar las integraciones seleccionadas
         const idsSeleccionados = props.integracionesSeleccionadas.map(
             (i) => i.id,
         );
-
         integraciones.value = integracionesBackend.filter((i) =>
             idsSeleccionados.includes(i.id),
         );
 
-        // 4️⃣ Preseleccionar todas las tareas (fases + integraciones)
-        [...fases.value, ...integraciones.value].forEach((bloque) => {
-            bloque.tareas?.forEach((t) => {
-                if (!tareasSeleccionadas.value.includes(t.id)) {
-                    tareasSeleccionadas.value.push(t.id);
-                }
+        // Preseleccionar tareas de fases
+        fases.value.forEach((fase) => {
+            fase.tareas?.forEach((t) => {
+                tareasSeleccionadasFases.value.push(t.id);
+            });
+        });
+
+        // Preseleccionar tareas de integraciones
+        integraciones.value.forEach((intg) => {
+            intg.tareas?.forEach((t) => {
+                tareasSeleccionadasIntegraciones.value.push(t.id);
             });
         });
     } catch (error) {
@@ -60,17 +59,22 @@ onMounted(async () => {
     }
 });
 
-// ✅ Seleccionar todo
-const seleccionarTodo = (bloque) => {
+// Seleccionar / limpiar tareas
+const seleccionarTodo = (bloque, tipo) => {
+    const sel =
+        tipo === "fase"
+            ? tareasSeleccionadasFases
+            : tareasSeleccionadasIntegraciones;
     bloque.tareas?.forEach((t) => {
-        if (!tareasSeleccionadas.value.includes(t.id))
-            tareasSeleccionadas.value.push(t.id);
+        if (!sel.value.includes(t.id)) sel.value.push(t.id);
     });
 };
-
-// ✅ Limpiar tareas
-const limpiarTareas = (bloque) => {
-    tareasSeleccionadas.value = tareasSeleccionadas.value.filter(
+const limpiarTareas = (bloque, tipo) => {
+    const sel =
+        tipo === "fase"
+            ? tareasSeleccionadasFases
+            : tareasSeleccionadasIntegraciones;
+    sel.value = sel.value.filter(
         (id) => !bloque.tareas?.some((t) => t.id === id),
     );
 };
@@ -80,26 +84,33 @@ const factorComplejidad = computed(() =>
     Number(props.complejidad?.factor ?? 1),
 );
 
-// Total minutos
 const totalMinutos = computed(() => {
     let total = 0;
-    [...fases.value, ...integraciones.value].forEach((b) => {
+    fases.value.forEach((b) => {
         b.tareas?.forEach((t) => {
-            if (tareasSeleccionadas.value.includes(t.id))
+            if (tareasSeleccionadasFases.value.includes(t.id))
+                total += Number(t.duracion_minuto);
+        });
+    });
+    integraciones.value.forEach((b) => {
+        b.tareas?.forEach((t) => {
+            if (tareasSeleccionadasIntegraciones.value.includes(t.id))
                 total += Number(t.duracion_minuto);
         });
     });
     return total * factorComplejidad.value;
 });
-
 const totalHoras = computed(() => Number((totalMinutos.value / 60).toFixed(2)));
 
 // Horas por bloque
-const horasPorBloque = (bloque) => {
+const horasPorBloque = (bloque, tipo) => {
+    const sel =
+        tipo === "fase"
+            ? tareasSeleccionadasFases.value
+            : tareasSeleccionadasIntegraciones.value;
     let total = 0;
     bloque.tareas?.forEach((t) => {
-        if (tareasSeleccionadas.value.includes(t.id))
-            total += Number(t.duracion_minuto);
+        if (sel.includes(t.id)) total += Number(t.duracion_minuto);
     });
     return Number(((total * factorComplejidad.value) / 60).toFixed(2));
 };
@@ -112,21 +123,29 @@ const toggleIntegracion = (id) =>
 
 // Continuar
 const continuar = () => {
-    const bloques = [...fases.value, ...integraciones.value]
+    const bloquesFases = fases.value
         .map((b) => ({
             id: b.id,
             nombre: b.nombre,
-            tipo: integraciones.value.some((i) => i.id === b.id)
-                ? "integracion"
-                : "fase",
             tareas: b.tareas.filter((t) =>
-                tareasSeleccionadas.value.includes(t.id),
+                tareasSeleccionadasFases.value.includes(t.id),
+            ),
+        }))
+        .filter((b) => b.tareas.length > 0);
+
+    const bloquesIntegraciones = integraciones.value
+        .map((b) => ({
+            id: b.id,
+            nombre: b.nombre,
+            tareas: b.tareas.filter((t) =>
+                tareasSeleccionadasIntegraciones.value.includes(t.id),
             ),
         }))
         .filter((b) => b.tareas.length > 0);
 
     emit("next", {
-        bloques,
+        bloquesFases,
+        bloquesIntegraciones,
         totalMinutos: totalMinutos.value,
         totalHoras: totalHoras.value,
     });
@@ -141,172 +160,119 @@ const continuar = () => {
             }}</span>
         </template>
 
-        <!-- SECCIÓN FASES -->
+        <!-- FASES -->
         <h1 class="mt-4 mb-2 font-bold text-lg">Fases de Implementación</h1>
         <div class="space-y-4 col-span-2">
             <div
                 v-for="fase in fases"
                 :key="fase.id"
-                class="border rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition"
+                class="border rounded-2xl bg-white shadow-sm hover:shadow-md transition"
             >
                 <button
                     type="button"
-                    class="w-full px-6 py-4 bg-blue-50 hover:bg-blue-100 transition font-semibold text-blue-700"
+                    class="w-full px-6 py-4 bg-blue-50 hover:bg-blue-100 font-semibold text-blue-700"
                     @click="toggleFase(fase.id)"
                 >
-                    <div class="flex items-center justify-between w-full">
+                    <div class="flex justify-between items-center w-full">
                         <span>{{ fase.nombre }}</span>
-                        <div class="flex items-center gap-4">
-                            <span
-                                :class="
-                                    horasPorBloque(fase) == 0
-                                        ? 'text-gray-400'
-                                        : 'text-blue-600'
-                                "
-                                class="text-sm font-semibold"
-                            >
-                                {{ horasPorBloque(fase) }} h
-                            </span>
-                            <span class="text-2xl font-bold">{{
-                                faseActiva === fase.id ? "−" : "+"
-                            }}</span>
-                        </div>
+                        <span>{{ horasPorBloque(fase, "fase") }} h</span>
                     </div>
                 </button>
 
-                <div v-if="faseActiva === fase.id" class="bg-white divide-y">
+                <div v-if="faseActiva === fase.id" class="divide-y">
                     <div
                         v-for="tarea in fase.tareas"
                         :key="tarea.id"
-                        class="px-6 py-3 flex justify-between items-center hover:bg-gray-50 transition"
+                        class="flex justify-between px-6 py-3 items-center hover:bg-gray-50 transition"
                     >
                         <div class="flex items-center gap-3">
                             <input
                                 type="checkbox"
-                                v-model="tareasSeleccionadas"
+                                v-model="tareasSeleccionadasFases"
                                 :value="tarea.id"
                                 class="rounded border-gray-300"
                             />
-                            <span class="text-gray-800">{{
-                                tarea.titulo
-                            }}</span>
+                            <span>{{ tarea.titulo }}</span>
                         </div>
-                        <div class="text-gray-500 font-medium">
-                            {{ tarea.duracion_minuto }} min
-                        </div>
+                        <span class="text-gray-500"
+                            >{{ tarea.duracion_minuto }} min</span
+                        >
                     </div>
 
                     <div
-                        class="px-6 py-3 flex justify-end gap-3 bg-gray-50 border-t"
+                        class="flex justify-end gap-3 px-6 py-3 bg-gray-50 border-t"
                     >
                         <button
-                            type="button"
-                            class="px-3 py-1 text-sm rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
-                            @click.stop="seleccionarTodo(fase)"
+                            @click.stop="seleccionarTodo(fase, 'fase')"
+                            class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                         >
                             Seleccionar todo
                         </button>
                         <button
-                            type="button"
-                            class="px-3 py-1 text-sm rounded bg-red-100 text-red-700 hover:bg-red-200 transition"
-                            @click.stop="limpiarTareas(fase)"
+                            @click.stop="limpiarTareas(fase, 'fase')"
+                            class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                         >
                             Limpiar
                         </button>
-                    </div>
-
-                    <div
-                        v-if="!fase.tareas || fase.tareas.length === 0"
-                        class="px-6 py-3 text-sm text-gray-400 italic"
-                    >
-                        Esta fase no tiene tareas registradas.
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN INTEGRACIONES -->
+        <!-- INTEGRACIONES -->
         <h1 class="mt-6 mb-2 font-bold text-lg">Integraciones Asociadas</h1>
         <div class="space-y-4 col-span-2">
             <div
                 v-for="intg in integraciones"
                 :key="intg.id"
-                class="border rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition"
+                class="border rounded-2xl bg-white shadow-sm hover:shadow-md transition"
             >
                 <button
                     type="button"
-                    class="w-full px-6 py-4 bg-yellow-50 hover:bg-yellow-100 transition font-semibold text-yellow-800"
+                    class="w-full px-6 py-4 bg-yellow-50 hover:bg-yellow-100 font-semibold text-yellow-800"
                     @click="toggleIntegracion(intg.id)"
                 >
-                    <div class="flex items-center justify-between w-full">
+                    <div class="flex justify-between items-center w-full">
                         <span>{{ intg.nombre }}</span>
-                        <div class="flex items-center gap-4">
-                            <span
-                                :class="
-                                    horasPorBloque(intg) == 0
-                                        ? 'text-gray-400'
-                                        : 'text-yellow-800'
-                                "
-                                class="text-sm font-semibold"
-                            >
-                                {{ horasPorBloque(intg) }} h
-                            </span>
-                            <span class="text-2xl font-bold">{{
-                                integracionActiva === intg.id ? "−" : "+"
-                            }}</span>
-                        </div>
+                        <span>{{ horasPorBloque(intg, "integracion") }} h</span>
                     </div>
                 </button>
 
-                <div
-                    v-if="integracionActiva === intg.id"
-                    class="bg-white divide-y"
-                >
+                <div v-if="integracionActiva === intg.id" class="divide-y">
                     <div
                         v-for="tarea in intg.tareas"
                         :key="tarea.id"
-                        class="px-6 py-3 flex justify-between items-center hover:bg-gray-50 transition"
+                        class="flex justify-between px-6 py-3 items-center hover:bg-gray-50 transition"
                     >
                         <div class="flex items-center gap-3">
                             <input
                                 type="checkbox"
-                                v-model="tareasSeleccionadas"
+                                v-model="tareasSeleccionadasIntegraciones"
                                 :value="tarea.id"
                                 class="rounded border-gray-300"
                             />
-                            <span class="text-gray-800">{{
-                                tarea.titulo
-                            }}</span>
+                            <span>{{ tarea.titulo }}</span>
                         </div>
-                        <div class="text-gray-500 font-medium">
-                            {{ tarea.duracion_minuto }} min
-                        </div>
+                        <span class="text-gray-500"
+                            >{{ tarea.duracion_minuto }} min</span
+                        >
                     </div>
 
                     <div
-                        class="px-6 py-3 flex justify-end gap-3 bg-gray-50 border-t"
+                        class="flex justify-end gap-3 px-6 py-3 bg-gray-50 border-t"
                     >
                         <button
-                            type="button"
-                            class="px-3 py-1 text-sm rounded bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition"
-                            @click.stop="seleccionarTodo(intg)"
+                            @click.stop="seleccionarTodo(intg, 'integracion')"
+                            class="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200"
                         >
                             Seleccionar todo
                         </button>
                         <button
-                            type="button"
-                            class="px-3 py-1 text-sm rounded bg-red-100 text-red-700 hover:bg-red-200 transition"
-                            @click.stop="limpiarTareas(intg)"
+                            @click.stop="limpiarTareas(intg, 'integracion')"
+                            class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                         >
                             Limpiar
                         </button>
-                    </div>
-
-                    <div
-                        v-if="!intg.tareas || intg.tareas.length === 0"
-                        class="px-6 py-3 text-sm text-gray-400 italic"
-                    >
-                        Esta integración no tiene tareas registradas.
                     </div>
                 </div>
             </div>
@@ -314,22 +280,16 @@ const continuar = () => {
 
         <!-- RESUMEN -->
         <div
-            class="col-span-2 mt-6 max-w-md mx-auto border rounded-xl bg-gray-50 p-6 shadow-sm"
+            class="col-span-2 mt-6 max-w-md mx-auto border rounded-xl bg-gray-50 p-6 shadow-sm text-center font-bold text-blue-700"
         >
-            <div
-                class="flex justify-between items-center text-lg font-bold text-blue-700"
-            >
-                <span>Total de horas estimadas:</span>
-                <strong>{{ totalHoras }} h</strong>
-            </div>
+            Total de horas estimadas: {{ totalHoras }} h
         </div>
 
         <!-- ACCIONES -->
         <template #actions>
             <div class="flex justify-between w-full mt-4">
                 <button
-                    type="button"
-                    class="px-6 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
+                    class="px-6 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
                     @click="emit('back')"
                 >
                     Anterior
