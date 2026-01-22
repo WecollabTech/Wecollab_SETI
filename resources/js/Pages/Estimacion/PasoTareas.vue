@@ -1,100 +1,99 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
-
+import { onMounted } from "vue";
+import { watch } from "vue";
 const props = defineProps({
-    fases: { type: Array, required: true },
-    tipoImplementacionId: { type: Number, required: true },
-    nombreTipoImplementacion: { type: String, required: true },
-    complejidad: { type: Object, required: true },
+    nombreProyecto: {
+        type: String,
+        default: "",
+    },
+    bloques: {
+        type: Array,
+        default: () => [],
+    },
+    totalMinutos: {
+        type: Number,
+        default: 0,
+    },
+    totalHoras: {
+        type: Number,
+        default: 0,
+    },
+});
+
+watch(
+    () => props.bloques,
+    (val) => {
+        console.log("Bloques recibidos:", val);
+    },
+    { immediate: true },
+);
+
+onMounted(() => {
+    console.log("📦 BLOQUES EN PASO TAREAS:", props.bloques);
+    console.log("⏱️ TOTAL MINUTOS:", props.totalMinutos);
+    console.log("⏱️ TOTAL HORAS:", props.totalHoras);
 });
 
 const emit = defineEmits(["back", "finish"]);
-const showModal = ref(false);
-const tareasSeleccionadas = ref([]);
 
-// Precargar todas las tareas
-props.fases.forEach((fase) => {
-    fase.tareas?.forEach((t) => tareasSeleccionadas.value.push(t.id));
-});
+const horasPorBloque = (bloque) => {
+    if (!bloque?.tareas) return 0;
 
-const factorComplejidad = computed(() => Number(props.complejidad.factor ?? 1));
+    const total = bloque.tareas.reduce(
+        (acc, t) => acc + Number(t.duracion_minuto || 0),
+        0,
+    );
 
-const totalMinutos = computed(() => {
-    let total = 0;
-    props.fases.forEach((fase) => {
-        fase.tareas?.forEach((tarea) => {
-            if (tareasSeleccionadas.value.includes(tarea.id)) {
-                total += Number(tarea.duracion_minuto);
-            }
-        });
-    });
-    return total * factorComplejidad.value;
-});
-
-const totalHoras = computed(() => Number((totalMinutos.value / 60).toFixed(2)));
-
-const finalizar = () => {
-    const resumen = {
-        tipoImplementacionId: props.tipoImplementacionId,
-        nombreTipoImplementacion: props.nombreTipoImplementacion,
-        complejidad: props.complejidad,
-        totalMinutos: totalMinutos.value,
-        totalHoras: totalHoras.value,
-        fases: props.fases.map((fase) => ({
-            id: fase.id,
-            nombre: fase.nombre,
-            tareas: fase.tareas?.filter((t) =>
-                tareasSeleccionadas.value.includes(t.id),
-            ),
-        })),
-    };
-    console.log("✅ RESUMEN FINAL DE ESTIMACIÓN:", resumen);
-    emit("finish", resumen);
-    showModal.value = true;
+    return Number((total / 60).toFixed(2));
 };
+
+const totalTareas = computed(() =>
+    props.bloques.reduce((acc, b) => acc + (b.tareas?.length || 0), 0),
+);
 </script>
 
 <template>
-    <FormWrapper title="Revisión final de tareas">
-        <!-- 📦 LISTADO DE FASES -->
-        <div class="space-y-4 col-span-2">
+    <FormWrapper title="Resumen de Estimación">
+        <template #headerExtra>
+            <span class="text-blue-600 font-semibold">
+                {{ nombreProyecto }}
+            </span>
+        </template>
+
+        <!-- BLOQUES -->
+        <div v-if="bloques.length" class="space-y-4 col-span-2">
             <div
-                v-for="fase in fases"
-                :key="fase.id"
-                class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                v-for="bloque in bloques"
+                :key="`${bloque.tipo}-${bloque.id}`"
+                class="border rounded-2xl bg-white shadow-sm"
             >
-                <!-- Header de la fase -->
-                <div class="px-5 py-4 bg-gray-50 border-b border-gray-100">
-                    <h3 class="font-semibold text-blue-800 text-lg">
-                        {{ fase.nombre }}
-                    </h3>
+                <div
+                    :class="
+                        bloque.tipo === 'fase'
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'bg-yellow-50 text-yellow-800'
+                    "
+                    class="px-6 py-4 rounded-t-2xl font-semibold flex justify-between"
+                >
+                    <span>
+                        {{ bloque.nombre }}
+                        <small class="ml-2 italic text-sm">
+                            ({{ bloque.tipo }})
+                        </small>
+                    </span>
+                    <span>{{ horasPorBloque(bloque) }} h</span>
                 </div>
 
-                <!-- Lista de tareas -->
-                <div class="p-4">
+                <div class="divide-y">
                     <div
-                        v-for="tarea in fase.tareas"
+                        v-for="tarea in bloque.tareas"
                         :key="tarea.id"
-                        class="flex items-start gap-3 py-2.5 rounded hover:bg-gray-50 transition-colors"
+                        class="px-6 py-3 flex justify-between"
                     >
-                        <input
-                            type="checkbox"
-                            v-model="tareasSeleccionadas"
-                            :value="tarea.id"
-                            class="mt-0.5 h-4 w-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2"
-                            disabled
-                        />
-                        <div class="flex-1 min-w-0">
-                            <p
-                                class="text-gray-800 text-sm leading-relaxed break-words"
-                            >
-                                {{ tarea.titulo }}
-                            </p>
-                        </div>
-                        <span
-                            class="text-gray-500 text-xs font-medium bg-gray-100 px-2 py-1 rounded whitespace-nowrap"
-                        >
+                        <span>{{ tarea.titulo }}</span>
+                        <span class="text-gray-500">
                             {{ tarea.duracion_minuto }} min
                         </span>
                     </div>
@@ -102,74 +101,49 @@ const finalizar = () => {
             </div>
         </div>
 
-        <!-- 🧭 RESUMEN -->
+        <!-- SI NO HAY DATOS -->
+        <p v-else class="text-center text-gray-400 italic mt-6">
+            No hay datos para mostrar
+        </p>
+
+        <!-- RESUMEN -->
         <div
-            class="col-span-2 mt-10 max-w-md mx-auto border rounded-xl bg-gray-50 p-6 shadow-sm"
+            class="col-span-2 mt-6 max-w-md mx-auto border rounded-xl bg-gray-50 p-6 shadow-sm"
         >
+            <div class="flex justify-between font-semibold">
+                <span>Total de tareas:</span>
+                <span>{{ totalTareas }}</span>
+            </div>
+            <div class="flex justify-between font-semibold mt-2">
+                <span>Total de minutos:</span>
+                <span>{{ totalMinutos }} min</span>
+            </div>
             <div
-                class="flex justify-between items-center text-lg font-bold text-blue-700"
+                class="flex justify-between text-lg font-bold text-blue-700 mt-2"
             >
-                <span>Total de horas estimadas:</span>
-                <strong> {{ totalHoras }} h</strong>
+                <span>Total de horas:</span>
+                <span>{{ totalHoras }} h</span>
             </div>
         </div>
 
-        <!-- 💡 BOTONES -->
+        <!-- ACCIONES -->
         <template #actions>
-            <div
-                class="flex flex-col sm:flex-row justify-between gap-3 w-full mt-6"
-            >
+            <div class="flex justify-between w-full mt-4">
                 <button
+                    type="button"
+                    class="px-6 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
                     @click="emit('back')"
-                    class="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
                 >
-                    ← Anterior
+                    Anterior
                 </button>
                 <button
-                    @click="finalizar"
-                    class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium shadow-sm"
+                    type="button"
+                    class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    @click="emit('finish')"
                 >
-                    Finalizar estimación
+                    Confirmar Estimación
                 </button>
             </div>
         </template>
-
-        <!-- ✅ MODAL -->
-        <div
-            v-if="showModal"
-            class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-        >
-            <div
-                class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center animate-fade-in"
-            >
-                <div class="text-5xl mb-4">✅</div>
-                <h2 class="text-xl font-bold text-gray-800 mb-2">¡Listo!</h2>
-                <p class="text-gray-600 mb-5">
-                    La estimación ha sido generada con éxito.
-                </p>
-                <button
-                    @click="showModal = false"
-                    class="w-full py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-                >
-                    Ver resumen
-                </button>
-            </div>
-        </div>
     </FormWrapper>
 </template>
-
-<style scoped>
-.animate-fade-in {
-    animation: fadeIn 0.3s ease-out;
-}
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-</style>

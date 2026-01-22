@@ -11,13 +11,32 @@ const estimacion = ref({
     nombreTipoImplementacion: "",
     fecha: "",
     complejidad: null,
-    integraciones: [],
+    integraciones: [], // IDs seleccionadas
     comentarios: "",
 });
 
 const tiposImplementacion = ref([]);
 const integracionesDisponibles = ref([]);
 const nivelesComplejidad = ref([]);
+
+// Paleta de colores de respaldo para niveles desconocidos
+const coloresRespaldo = [
+    "#16a34a", // verde
+    "#facc15", // amarillo
+    "#ef4444", // rojo
+    "#8b5cf6", // morado
+    "#0ea5e9", // celeste
+    "#f97316", // naranja
+    "#db2777", // rosa
+];
+
+// Colores fijos por nombre (minúsculas)
+const coloresPorNombre = {
+    bajo: "#16a34a",
+    medio: "#facc15",
+    alto: "#ef4444",
+    critico: "#8b5cf6",
+};
 
 onMounted(async () => {
     try {
@@ -39,116 +58,174 @@ watch(
 
         if (!nuevoTipoId) return;
 
-        const res = await axios.get(`/api/tipoimplementacion/${nuevoTipoId}/integraciones`);
+        const res = await axios.get(
+            `/api/tipoimplementacion/${nuevoTipoId}/integraciones`,
+        );
         integracionesDisponibles.value = res.data.data ?? [];
 
-        const tipo = tiposImplementacion.value.find((t) => t.id === nuevoTipoId);
+        const tipo = tiposImplementacion.value.find(
+            (t) => t.id === nuevoTipoId,
+        );
         estimacion.value.nombreTipoImplementacion = tipo ? tipo.nombre : "";
-    }
+    },
 );
 
 const continuar = () => {
-    if (!estimacion.value.tipoImplementacionId || !estimacion.value.complejidad) return;
+    if (!estimacion.value.tipoImplementacionId || !estimacion.value.complejidad)
+        return;
 
     const tipoSeleccionado = tiposImplementacion.value.find(
-        (t) => t.id === Number(estimacion.value.tipoImplementacionId)
+        (t) => t.id === Number(estimacion.value.tipoImplementacionId),
+    );
+
+    const integracionesSeleccionadas = integracionesDisponibles.value.filter(
+        (i) =>
+            estimacion.value.integraciones.map(Number).includes(Number(i.id)),
     );
 
     emit("next", {
         tipoImplementacionId: Number(estimacion.value.tipoImplementacionId),
         nombreTipoImplementacion: tipoSeleccionado?.nombre || "",
-        integraciones: estimacion.value.integraciones,
+        integraciones: integracionesSeleccionadas, // ✅ SOLO estas
         complejidad: estimacion.value.complejidad,
         comentarios: estimacion.value.comentarios,
     });
 };
+
+// Función para asignar color al nivel según nombre o dinámicamente
+const colorNivel = (nivel, index) => {
+    const nombre = nivel.nombre?.toLowerCase();
+    if (coloresPorNombre[nombre]) {
+        return coloresPorNombre[nombre];
+    }
+    // Si no está definido en coloresPorNombre, usar color de respaldo
+    return coloresRespaldo[index % coloresRespaldo.length];
+};
 </script>
 
 <template>
-    <FormWrapper title="Para poder realizar la estimación es necesario llenar el formulario">
-        <div class="flex flex-col">
+    <FormWrapper
+        title="Para poder realizar la estimación es necesario llenar el formulario"
+    >
+        <!-- Tipo de Implementación -->
+        <div class="bg-white rounded-xl shadow p-4 mb-4">
             <FormEstimacion
                 label="Tipo de implementación"
                 type="select"
-                :options="tiposImplementacion.map(t => ({ value: t.id, label: t.nombre }))"
+                :options="
+                    tiposImplementacion.map((t) => ({
+                        value: t.id,
+                        label: t.nombre,
+                    }))
+                "
                 v-model="estimacion.tipoImplementacionId"
             />
-
-            <div v-if="estimacion.tipoImplementacionId" class="mt-1">
-                <span class="text-gray-900 text-xs font-bold">
-                    Descripción de la Implementación:
-                </span>
-                <p class="text-gray-600 text-sm ml-1 text-justify">
-                    {{
-                        tiposImplementacion.find(t => t.id === Number(estimacion.tipoImplementacionId))
-                            ?.descripcion || "Sin descripción disponible"
-                    }}
-                </p>
+            <div
+                v-if="estimacion.tipoImplementacionId"
+                class="mt-2 text-gray-600 text-sm"
+            >
+                {{
+                    tiposImplementacion.find(
+                        (t) => t.id === Number(estimacion.tipoImplementacionId),
+                    )?.descripcion || "Sin descripción disponible"
+                }}
             </div>
         </div>
 
         <!-- Integraciones -->
-        <div class="mt-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-                Integraciones
-            </label>
-
-            <div v-if="estimacion.tipoImplementacionId">
-                <FormEstimacion
-                    type="checkbox"
-                    :options="integracionesDisponibles.map(i => ({ value: i.id, label: i.nombre }))"
-                    v-model="estimacion.integraciones"
-                />
-            </div>
+        <div class="bg-white rounded-xl shadow p-4 mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Integraciones</label
+            >
+            <ul class="divide-y divide-gray-200 max-h-60 overflow-y-auto">
+                <li
+                    v-for="i in integracionesDisponibles"
+                    :key="i.id"
+                    class="flex items-center justify-between py-2"
+                >
+                    <div class="flex items-center gap-3">
+                        <input
+                            type="checkbox"
+                            :value="i.id"
+                            v-model="estimacion.integraciones"
+                            :id="'integracion-' + i.id"
+                            class="h-5 w-5 text-blue-600 rounded"
+                        />
+                        <label
+                            :for="'integracion-' + i.id"
+                            class="text-gray-800 text-sm break-words"
+                            :title="i.nombre"
+                        >
+                            {{ i.nombre }}
+                        </label>
+                    </div>
+                    <span
+                        v-if="i.descripcion"
+                        class="text-xs text-gray-400 italic"
+                        >{{ i.descripcion }}</span
+                    >
+                </li>
+            </ul>
         </div>
 
         <!-- Complejidad -->
-        <div class="mt-1">
-            <label class="block text-gray-700 font-medium mb-1">
-                Nivel de complejidad
-            </label>
-
-            <div class="flex gap-2">
+        <div class="bg-white rounded-xl shadow p-4 mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Nivel de complejidad</label
+            >
+            <div class="flex flex-wrap gap-2">
                 <button
-                    v-for="nivel in nivelesComplejidad"
+                    v-for="(nivel, index) in nivelesComplejidad"
                     :key="nivel.id"
                     type="button"
                     @click="estimacion.complejidad = nivel"
-                    :class="[
-                        'w-24 h-10 rounded-lg text-sm font-semibold',
-                        estimacion.complejidad?.id === nivel.id
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-white border text-gray-800',
-                    ]"
+                    :style="{
+                        backgroundColor:
+                            estimacion.complejidad?.id === nivel.id
+                                ? colorNivel(nivel, index)
+                                : '#fff',
+                        color:
+                            estimacion.complejidad?.id === nivel.id
+                                ? '#fff'
+                                : '#1f2937',
+                        borderColor:
+                            estimacion.complejidad?.id === nivel.id
+                                ? colorNivel(nivel, index)
+                                : '#d1d5db',
+                    }"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors"
                 >
                     {{ nivel.nombre }}
                 </button>
             </div>
-
-            <div v-if="estimacion.complejidad" class="mt-1">
-                <span class="text-gray-900 text-xs font-medium">
-                    Rubrica de Complejidad:
-                </span>
-                <p class="text-gray-600 text-sm ml-1">
-                    {{ estimacion.complejidad.descripcion }}
-                </p>
+            <div
+                v-if="estimacion.complejidad"
+                class="mt-2 text-gray-600 text-sm"
+            >
+                {{ estimacion.complejidad.descripcion }}
             </div>
         </div>
 
-        <FormEstimacion
-            label="Comentarios"
-            type="textarea"
-            v-model="estimacion.comentarios"
-        />
+        <!-- Comentarios -->
+        <div class="bg-white rounded-xl shadow p-4 mb-4">
+            <FormEstimacion
+                label="Comentarios"
+                type="textarea"
+                v-model="estimacion.comentarios"
+            />
+        </div>
 
+        <!-- Botón Siguiente -->
         <template #actions>
-            <button
-                type="button"
-                class="px-6 py-2.5 bg-blue-600 text-white rounded-lg"
-                @click="continuar"
-            >
-                Siguiente
-            </button>
+            <div class="flex justify-end mt-4">
+                <button
+                    type="button"
+                    class="px-6 py-2.5 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+                    @click="continuar"
+                >
+                    Siguiente
+                </button>
+            </div>
         </template>
     </FormWrapper>
 </template>

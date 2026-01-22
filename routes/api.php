@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EstimacionController;
 use App\Http\Controllers\FaseController;
+use App\Http\Controllers\IntegracionTareaController;
 use App\Http\Controllers\IntegrationesController;
 use App\Http\Controllers\NivelComplejidadController;
 use App\Http\Controllers\TareaController;
@@ -27,8 +28,11 @@ Route::delete('/tipoimplementacion/{id}', [TipoImplementacionController::class, 
 
 
 
+//rutas de taras integraciones 
+Route::post('/integraciones_tareas', [IntegracionTareaController::class, 'store']);
+
 //Rutas de Integraciones
- 
+
 Route::get('/integraciones', [IntegrationesController::class, 'index']);
 Route::post('/integraciones', [IntegrationesController::class, 'store']);
 Route::put('/integraciones/{integracion}', [IntegrationesController::class, 'update']);
@@ -45,6 +49,10 @@ Route::put('/fases/{fase}', [FaseController::class, 'update']);
 // Obtener una fase por ID
 Route::get('/fases/{fase}', [FaseController::class, 'show']);
 Route::get('/tipoimplementacion/{tipo}/fases', [TipoImplementacionController::class, 'fases']);
+Route::get(
+    '/tipoimplementacion/{tipo}/integraciones-tareas',
+    [TipoImplementacionController::class, 'integracionesConTareas']
+);
 
 
 
