@@ -24,6 +24,8 @@ const estimacion = ref({
 
 // Función para guardar la estimación completa
 const guardarEstimacion = async (estimacion) => {
+    console.log("📌 ESTIMACIÓN COMPLETA:", estimacion);
+
     const payload = {
         tipo_implementacion_id: estimacion.tipoImplementacionId,
         nombre_tipo_implementacion: estimacion.nombreTipoImplementacion,
@@ -32,15 +34,19 @@ const guardarEstimacion = async (estimacion) => {
         total_minutos: estimacion.totalMinutos,
         total_horas: estimacion.totalHoras,
         fases: estimacion.bloques.map((b) => ({
-            fase_id: b.id,
+            tipo: b.tipo,
+            referencia_id: b.id,
             tareas: b.tareas.map((t) => ({
+                tarea_id: t.id,
                 titulo: t.titulo,
                 duracion_minuto: t.duracion_minuto,
             })),
         })),
     };
 
-    await axios.post("/api/estimaciones", payload);
+    console.log("📦 PAYLOAD FINAL:", payload);
+
+    // await axios.post("/api/estimaciones", payload);
 };
 </script>
 
@@ -86,7 +92,15 @@ const guardarEstimacion = async (estimacion) => {
             :totalMinutos="estimacion.totalMinutos"
             :totalHoras="estimacion.totalHoras"
             @back="paso = 2"
-            @finish="guardarEstimacion"
+            @finish="
+                (data) => {
+                    estimacion.bloques = data.bloques;
+                    estimacion.totalMinutos = data.totalMinutos;
+                    estimacion.totalHoras = data.totalHoras;
+
+                    guardarEstimacion(estimacion);
+                }
+            "
         />
     </AppLayout>
 </template>

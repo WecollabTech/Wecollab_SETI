@@ -1,8 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
-import { onMounted } from "vue";
-import { watch } from "vue";
+
 const props = defineProps({
     nombreProyecto: {
         type: String,
@@ -20,20 +19,6 @@ const props = defineProps({
         type: Number,
         default: 0,
     },
-});
-
-watch(
-    () => props.bloques,
-    (val) => {
-        console.log("Bloques recibidos:", val);
-    },
-    { immediate: true },
-);
-
-onMounted(() => {
-    console.log("📦 BLOQUES EN PASO TAREAS:", props.bloques);
-    console.log("⏱️ TOTAL MINUTOS:", props.totalMinutos);
-    console.log("⏱️ TOTAL HORAS:", props.totalHoras);
 });
 
 const emit = defineEmits(["back", "finish"]);
@@ -139,7 +124,13 @@ const totalTareas = computed(() =>
                 <button
                     type="button"
                     class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                    @click="emit('finish')"
+                    @click="
+                        emit('finish', {
+                            bloques,
+                            totalMinutos,
+                            totalHoras,
+                        })
+                    "
                 >
                     Confirmar Estimación
                 </button>
