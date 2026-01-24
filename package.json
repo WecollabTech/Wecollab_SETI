@@ -24,6 +24,9 @@
         "@fortawesome/fontawesome-free": "^7.1.0",
         "@heroicons/vue": "^2.2.0",
         "bootstrap": "^5.3.8",
+        "html2canvas": "^1.4.1",
+        "jspdf": "^4.0.0",
+        "jspdf-autotable": "^5.0.7",
         "vue-multiselect": "^3.4.0"
     }
 }

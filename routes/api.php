@@ -39,6 +39,16 @@ Route::put('/integraciones/{integracion}', [IntegrationesController::class, 'upd
 // Obtener una fase por ID
 Route::get('/integraciones/{integracion}', [IntegrationesController::class, 'show']);
 Route::delete('/integraciones/{integratione}', [IntegrationesController::class, 'destroy']);
+Route::post(
+    '/integraciones/{id}/duplicar',
+    [IntegrationesController::class, 'duplicar']
+)->name('integraciones.duplicar');
+
+
+
+
+
+
 
 
 //rutas Fases

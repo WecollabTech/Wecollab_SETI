@@ -26,13 +26,14 @@ const showDeleteModal = ref(false);
 const showSuccessModal = ref(false);
 const deleting = ref(false);
 const integracionIdToDelete = ref(null);
+const successMessage = ref(""); // mensaje dinámico del modal
 
 // --- FUNCIONES ---
 const cargarIntegraciones = async (page = 1) => {
     loading.value = true;
     try {
         const res = await axios.get(
-            `/api/integraciones?page=${page}&search=${search.value}`
+            `/api/integraciones?page=${page}&search=${search.value}`,
         );
         integraciones.value = res.data;
     } catch (error) {
@@ -59,6 +60,7 @@ const eliminarIntegracion = async () => {
     try {
         await axios.delete(`/api/integraciones/${integracionIdToDelete.value}`);
         showDeleteModal.value = false;
+        successMessage.value = "La integración fue eliminada correctamente.";
         showSuccessModal.value = true;
         cargarIntegraciones(integraciones.value.current_page);
     } catch (err) {
@@ -86,6 +88,22 @@ const cambiarEstado = async (item) => {
         cargarIntegraciones(integraciones.value.current_page);
     } catch (err) {
         console.error("Error al cambiar estado:", err);
+    }
+};
+
+const duplicarIntegracion = async (id) => {
+    if (!confirm("¿Deseas duplicar esta integración junto con sus tareas?"))
+        return;
+
+    try {
+        const res = await axios.post(route("integraciones.duplicar", id));
+        successMessage.value =
+            res.data.message || "Integración duplicada correctamente.";
+        showSuccessModal.value = true;
+        cargarIntegraciones(integraciones.value.current_page);
+    } catch (error) {
+        console.error(error.response?.data || error);
+        alert("Error al duplicar la integración");
     }
 };
 
@@ -140,49 +158,44 @@ onMounted(() => {
                     :key="item.id"
                     class="border-b hover:bg-gray-50 transition"
                 >
-                    <td class="py-3 px-3 font-medium">
-                        {{ item.nombre }}
-                    </td>
-
-                    <td class="py-3 px-3">
-                        {{ item.descripcion ?? "-" }}
-                    </td>
-
-                    <td class="py-3 px-3 flex justify-center gap-2">
-                        <!-- EDITAR -->
+                    <td class="py-3 px-3 font-medium">{{ item.nombre }}</td>
+                    <td class="py-3 px-3">{{ item.descripcion ?? "-" }}</td>
+                    <td class="py-3 px-3 flex justify-center gap-2 flex-wrap">
                         <button
-                            @click="
-                                router.get(route('integraciones.edit', item.id))
-                            "
+                            @click="editarIntegracion(item.id)"
                             class="px-3 py-1 bg-blue-900 text-white rounded hover:bg-blue-800 text-sm"
                         >
                             Editar
                         </button>
-
-                        <!-- ELIMINAR -->
                         <button
                             @click="confirmarEliminar(item.id)"
                             class="px-3 py-1 bg-red-700 text-white rounded hover:bg-red-600 text-sm"
                         >
                             Eliminar
                         </button>
-
-                        <!-- DUPLICAR (si aplica) -->
                         <button
                             @click="duplicarIntegracion(item.id)"
                             class="px-3 py-1 bg-green-700 text-white rounded hover:bg-green-600 text-sm"
                         >
                             Duplicar
                         </button>
-
-                        <!-- VER -->
                         <button
-                            @click="
-                                router.get(route('integraciones.show', item.id))
-                            "
+                            @click="verIntegracion(item.id)"
                             class="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 text-sm"
                         >
                             Ver
+                        </button>
+                        <button
+                            @click="
+                                router.get(
+                                    route('integraciones_tarea.index', {
+                                        integracion_id: item.id,
+                                    }),
+                                )
+                            "
+                            class="px-3 py-1 bg-purple-700 text-white rounded hover:bg-purple-600 text-sm"
+                        >
+                            Crear tareas
                         </button>
                     </td>
                 </tr>
@@ -211,10 +224,10 @@ onMounted(() => {
                 Anterior
             </button>
 
-            <span>
-                Página {{ integraciones.current_page }} de
-                {{ integraciones.last_page }}
-            </span>
+            <span
+                >Página {{ integraciones.current_page }} de
+                {{ integraciones.last_page }}</span
+            >
 
             <button
                 class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
@@ -239,7 +252,7 @@ onMounted(() => {
         <SuccessModals
             v-model:show="showSuccessModal"
             title="Operación exitosa"
-            message="La integración fue eliminada correctamente."
+            :message="successMessage"
         />
     </AppLayout>
 </template>

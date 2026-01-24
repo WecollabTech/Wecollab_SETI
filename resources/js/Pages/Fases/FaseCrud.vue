@@ -4,9 +4,10 @@ import { reactive, ref, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import axios from "axios";
 import AppLayout from "@/Layouts/AppLayout.vue";
-
+import PageHeader from "@/Components/Layout/PageHeader.vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
 import FormInput from "@/Components/Formulario/FormInput.vue";
+import CardInput from "@/Components/Formulario/CardInput.vue";
 import SuccessModal from "@/Components/Modal/SuccessModal.vue";
 
 // --- FORMULARIO ---
@@ -40,26 +41,22 @@ const handleSuccess = (message) => {
     showModal.value = false;
     setTimeout(() => (showModal.value = true), 50);
     resetForm();
-
-    // Redirigir al cerrar modal
     setTimeout(() => router.get("/fases"), 4000);
 };
 
-// Limpiar errores al cambiar campos
 watch(
     () => form.nombre,
-    () => (errors.nombre = null)
+    () => (errors.nombre = null),
 );
 watch(
     () => form.descripcion,
-    () => (errors.descripcion = null)
+    () => (errors.descripcion = null),
 );
 watch(
     () => form.minutos_base,
-    () => (errors.minutos_base = null)
+    () => (errors.minutos_base = null),
 );
 
-// --- SUBMIT ---
 const submit = async () => {
     if (sending.value) return;
     sending.value = true;
@@ -72,7 +69,7 @@ const submit = async () => {
         if (err.response?.status === 422) {
             const validationErrors = err.response.data.errors;
             Object.keys(validationErrors).forEach(
-                (f) => (errors[f] = validationErrors[f][0])
+                (f) => (errors[f] = validationErrors[f][0]),
             );
         } else console.error("Error al guardar:", err.message);
     } finally {
@@ -80,53 +77,57 @@ const submit = async () => {
     }
 };
 
-// Cancelar → regresar al listado
 const cancel = () => router.get("/fases");
 </script>
 
 <template>
     <Head title="Registrar nueva Fase" />
+
     <AppLayout>
         <template #title>
             <PageHeader title="Nueva Fase" />
         </template>
 
         <FormWrapper title="Ingresa los datos de la Fase">
-            <FormInput
-                label="Nombre"
-                v-model="form.nombre"
-                :error="errors.nombre"
-                placeholder="Nombre de la fase"
-            />
-            <p v-if="errors.nombre" class="text-red-600 text-sm mt-1">
-                {{ errors.nombre }}
-            </p>
+            <!-- GRID DOS COLUMNAS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- NOMBRE -->
+                <CardInput>
+                    <FormInput
+                        label="Nombre"
+                        v-model="form.nombre"
+                        :error="errors.nombre"
+                        placeholder="Nombre de la fase"
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Descripción"
-                type="textarea"
-                v-model="form.descripcion"
-                :error="errors.descripcion"
-                placeholder="Descripción breve"
-            />
-            <p v-if="errors.descripcion" class="text-red-600 text-sm mt-1">
-                {{ errors.descripcion }}
-            </p>
+                <!-- MINUTOS BASE -->
+                <CardInput>
+                    <FormInput
+                        label="Minutos Base"
+                        type="number"
+                        v-model="form.minutos_base"
+                        :error="errors.minutos_base"
+                        placeholder="Duración en minutos"
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Minutos Base"
-                type="number"
-                v-model="form.minutos_base"
-                :error="errors.minutos_base"
-                placeholder="Duración en minutos"
-            />
-            <p v-if="errors.minutos_base" class="text-red-600 text-sm mt-1">
-                {{ errors.minutos_base }}
-            </p>
+                <!-- DESCRIPCIÓN (OCUPA 2 COLUMNAS) -->
+                <CardInput class="md:col-span-2">
+                    <FormInput
+                        label="Descripción"
+                        type="textarea"
+                        v-model="form.descripcion"
+                        :error="errors.descripcion"
+                        placeholder="Descripción breve"
+                    />
+                </CardInput>
+            </div>
 
+            <!-- BOTONES -->
             <template #actions>
                 <div
-                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4"
+                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4 mt-6"
                 >
                     <button
                         type="button"
@@ -135,6 +136,7 @@ const cancel = () => router.get("/fases");
                     >
                         Cancelar
                     </button>
+
                     <button
                         type="button"
                         @click="submit"

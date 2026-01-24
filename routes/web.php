@@ -66,6 +66,23 @@ Route::get('/integraciones/{integracion}', function (Integrationes $integracion)
 })->name('integraciones.show');
 
 
+//Rutas Integraciones Tareas 
+Route::get('/integraciones_tarea', function () {
+    return Inertia::render('IntegracionesTareas/IntegracionesTareasCrud');
+})->name('integraciones_tarea.index');
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Listar fases 
@@ -92,15 +109,21 @@ Route::get('/fases/{fase}', [FaseController::class, 'show'])
 
 
 //RUTAS DE VISTAS DE TARRAS WEB.PHP
-Route::get('/tareas', fn () =>
+Route::get(
+    '/tareas',
+    fn() =>
     Inertia::render('Tareas/TareaList')
 )->name('tareas.index');
 
-Route::get('/tareas/create', fn () =>
+Route::get(
+    '/tareas/create',
+    fn() =>
     Inertia::render('Tareas/TareaCrud')
 )->name('tareas.create');
 
-Route::get('/tareas/{tarea}/edit', fn ($tarea) =>
+Route::get(
+    '/tareas/{tarea}/edit',
+    fn($tarea) =>
     Inertia::render('Tareas/TareaEdit', ['tareaId' => $tarea])
 )->name('tareas.edit');
 
@@ -120,15 +143,15 @@ Route::get('/estimacion', function () {
 
 
 //RUTAS PARA EL NIVEL DE COMPLEJIDAD
-Route::get('/niveles', function() {
+Route::get('/niveles', function () {
     return Inertia::render('NivelComplejidad/NivelesList');
 })->name('niveles.index');
 
-Route::get('/niveles/create', function() {
+Route::get('/niveles/create', function () {
     return Inertia::render('NivelComplejidad/NivelCreate');
 })->name('niveles.create');
 
-Route::get('/niveles/{nivel}/edit', function($nivel) {
+Route::get('/niveles/{nivel}/edit', function ($nivel) {
     return Inertia::render('NivelComplejidad/NivelEdit', [
         'nivelId' => $nivel
     ]);
@@ -160,4 +183,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

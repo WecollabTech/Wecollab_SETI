@@ -20,13 +20,13 @@ const handleSubmit = () => {
 <template>
     <!-- FormWrapper.vue -->
     <section
-        class="max-w-[1100px] mx-auto bg-white rounded-2xl shadow-2xl border border-gray-300"
+        class="w-full max-w-none 2xl:max-w-[1300px] mx-auto bg-white rounded-2xl shadow-2xl border border-gray-300"
     >
         <!-- HEADER -->
         <div
             class="p-6 border-b text-center flex justify-center items-center gap-2"
         >
-            <h2 class="text-1xl font-bold" style="color: #422782">
+            <h2 class="text-xl font-bold text-[#422782]">
                 {{ title }}
             </h2>
             <slot name="headerExtra" />
@@ -34,9 +34,7 @@ const handleSubmit = () => {
 
         <!-- FORM -->
         <form class="p-8 space-y-6" @submit.prevent="handleSubmit">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <slot />
-            </div>
+            <slot />
 
             <!-- ACTIONS -->
             <div class="flex justify-center gap-4 p-6 border-t">

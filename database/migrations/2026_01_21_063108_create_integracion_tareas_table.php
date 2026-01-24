@@ -10,19 +10,20 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('tareas', function (Blueprint $table) {
+        Schema::create('integracion_tareas', function (Blueprint $table) {
             $table->id();
+            // Relación con Integraciones
+            $table->foreignId('integracion_id')
+                ->constrained('integraciones')
+                ->onDelete('cascade');
+
+            // Campos principales del formulario
             $table->string('titulo');
-            $table->string('id_proceso');
+            $table->string('id_proceso')->nullable();
             $table->text('descripcion')->nullable();
-            $table->enum('estado', ['pendiente', 'en_proceso', 'completado', 'cancelado'])->default('pendiente');
             $table->boolean('activo')->default(true);
             $table->integer('duracion_minuto')->nullable();
-            $table->integer('orden')->default('1');
-            // 🔑 Llave foránea
-            $table->foreignId('fase_id')->constrained('fases')->onDelete('cascade');
-
-
+            $table->integer('orden')->default(1);
             $table->timestamps();
         });
     }
@@ -32,6 +33,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('tareas');
+        Schema::dropIfExists('integracion_tareas');
     }
 };

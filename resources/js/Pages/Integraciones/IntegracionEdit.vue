@@ -3,7 +3,7 @@ import { Head } from "@inertiajs/vue3";
 import { reactive, ref, watch, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import axios from "axios";
-
+import CardInput from "@/Components/Formulario/CardInput.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PageHeader from "@/Components/Layout/PageHeader.vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
@@ -40,7 +40,7 @@ const sending = ref(false);
 const cargarIntegracion = async () => {
     try {
         const res = await axios.get(
-            `/api/integraciones/${integracionIdNumber}`
+            `/api/integraciones/${integracionIdNumber}`,
         );
 
         form.nombre = res.data.data.nombre;
@@ -57,12 +57,12 @@ onMounted(() => {
 // --- WATCHERS (IGUAL QUE CREATE) ---
 watch(
     () => form.nombre,
-    () => (errors.nombre = null)
+    () => (errors.nombre = null),
 );
 
 watch(
     () => form.descripcion,
-    () => (errors.descripcion = null)
+    () => (errors.descripcion = null),
 );
 
 // --- SUBMIT ---
@@ -75,7 +75,7 @@ const submit = async () => {
     try {
         const res = await axios.put(
             `/api/integraciones/${integracionIdNumber}`,
-            form
+            form,
         );
 
         if (res.data.success) {
@@ -92,7 +92,7 @@ const submit = async () => {
         if (err.response?.status === 422) {
             const validationErrors = err.response.data.errors;
             Object.keys(validationErrors).forEach(
-                (f) => (errors[f] = validationErrors[f][0])
+                (f) => (errors[f] = validationErrors[f][0]),
             );
         } else {
             console.error("Error al actualizar:", err);
@@ -112,35 +112,43 @@ const cancel = () => router.get("/integraciones");
         <template #title>
             <PageHeader title="Editar Integración" />
         </template>
-
         <FormWrapper title="Actualizar datos de la Integración">
-            <!-- NOMBRE -->
-            <FormInput
-                label="Nombre"
-                v-model="form.nombre"
-                :error="errors.nombre"
-                placeholder="Nombre de la integración"
-            />
-            <p v-if="errors.nombre" class="text-red-600 text-sm mt-1">
-                {{ errors.nombre }}
-            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- NOMBRE -->
+                <CardInput>
+                    <FormInput
+                        label="Nombre"
+                        v-model="form.nombre"
+                        :error="errors.nombre"
+                        placeholder="Nombre de la integración"
+                    />
+                    <p v-if="errors.nombre" class="text-red-600 text-sm mt-1">
+                        {{ errors.nombre }}
+                    </p>
+                </CardInput>
 
-            <!-- DESCRIPCIÓN -->
-            <FormInput
-                label="Descripción"
-                type="textarea"
-                v-model="form.descripcion"
-                :error="errors.descripcion"
-                placeholder="Descripción breve"
-            />
-            <p v-if="errors.descripcion" class="text-red-600 text-sm mt-1">
-                {{ errors.descripcion }}
-            </p>
+                <!-- DESCRIPCIÓN -->
+                <CardInput>
+                    <FormInput
+                        label="Descripción"
+                        type="textarea"
+                        v-model="form.descripcion"
+                        :error="errors.descripcion"
+                        placeholder="Descripción breve"
+                    />
+                    <p
+                        v-if="errors.descripcion"
+                        class="text-red-600 text-sm mt-1"
+                    >
+                        {{ errors.descripcion }}
+                    </p>
+                </CardInput>
+            </div>
 
             <!-- ACCIONES -->
             <template #actions>
                 <div
-                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4"
+                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4 mt-6"
                 >
                     <button
                         type="button"

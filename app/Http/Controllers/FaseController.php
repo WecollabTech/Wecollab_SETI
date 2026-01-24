@@ -11,12 +11,12 @@ class FaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-  // Listar todas las fases
-public function index()
-{
-    $tipos = Fase::orderBy('id', 'desc')->paginate(5);
-    return response()->json($tipos);
-}
+    // Listar todas las fases
+    public function index()
+    {
+        $tipos = Fase::orderBy('id', 'desc')->paginate(5);
+        return response()->json($tipos);
+    }
 
 
 
@@ -38,17 +38,28 @@ public function index()
     /**
      * Store a newly created resource in storage.
      */
-   // Crear fase
+    // Crear fase
 
-   public function store(Request $request)
+    public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'minutos_base' => 'nullable|integer|min:0',
-        ]);
+        $request->validate(
+            [
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'minutos_base' => 'nullable|integer|min:0',
+            ],
+            [
+                'nombre.required' => 'El nombre de la fase es obligatorio.',
+                'nombre.string' => 'El nombre debe ser un texto válido.',
+                'nombre.max' => 'El nombre no puede superar los 255 caracteres.',
 
-        // Solo tomamos los campos permitidos para evitar MassAssignmentException
+                'descripcion.string' => 'La descripción debe ser un texto válido.',
+
+                'minutos_base.integer' => 'Los minutos base deben ser un número entero.',
+                'minutos_base.min' => 'Los minutos base no pueden ser negativos.',
+            ]
+        );
+
         $data = $request->only(['nombre', 'descripcion', 'minutos_base']);
 
         $fase = Fase::create($data);
@@ -59,7 +70,7 @@ public function index()
             'data' => $fase,
         ]);
     }
-    
+
 
 
 
@@ -73,22 +84,22 @@ public function index()
     /**
      * Display the specified resource.
      */
-      // Mostrar fase específica
-public function show(Fase $fase)
-{
-    // Si es llamada API
-    if (request()->expectsJson()) {
-        return response()->json([
-            'success' => true,
-            'data' => $fase,
+    // Mostrar fase específica
+    public function show(Fase $fase)
+    {
+        // Si es llamada API
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'data' => $fase,
+            ]);
+        }
+
+        // Si es vista Inertia
+        return Inertia::render('Fases/FaseShow', [
+            'fase' => $fase,
         ]);
     }
-
-    // Si es vista Inertia
-    return Inertia::render('Fases/FaseShow', [
-        'fase' => $fase,
-    ]);
-}
 
     /**
      * Show the form for editing the specified resource.
@@ -102,7 +113,7 @@ public function show(Fase $fase)
      * Update the specified resource in storage.
      */
     // Actualizar fase
-   public function update(Request $request, Fase $fase)
+    public function update(Request $request, Fase $fase)
     {
         $request->validate([
             'nombre' => 'required|string|max:255',

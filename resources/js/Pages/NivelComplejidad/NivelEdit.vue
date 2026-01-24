@@ -7,7 +7,7 @@ import PageHeader from "@/Components/Layout/PageHeader.vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
 import FormInput from "@/Components/Formulario/FormInput.vue";
 import SuccessModal from "@/Components/Modal/SuccessModal.vue";
-
+import CardInput from "@/Components/Formulario/CardInput.vue";
 // --- Props ---
 const props = defineProps({
     nivelId: { type: [Number, String], required: true },
@@ -50,7 +50,7 @@ const submit = async () => {
         if (err.response?.status === 422) {
             const validationErrors = err.response.data.errors;
             Object.keys(validationErrors).forEach(
-                (k) => (errors[k] = validationErrors[k][0])
+                (k) => (errors[k] = validationErrors[k][0]),
             );
         } else console.error("Error al actualizar nivel:", err);
     } finally {
@@ -60,56 +60,80 @@ const submit = async () => {
 
 const cancel = () => router.get(route("niveles.index"));
 </script>
-
 <template>
     <Head title="Editar Nivel" />
+
     <AppLayout>
         <template #title>
             <PageHeader title="Editar Nivel" />
         </template>
-
         <FormWrapper title="Actualizar Nivel de Complejidad">
-            <FormInput
-                label="Nombre"
-                v-model="form.nombre"
-                :error="errors.nombre"
-                placeholder="Nombre del nivel"
-            />
-            <FormInput
-                label="Factor"
-                v-model="form.factor"
-                type="number"
-                :error="errors.factor"
-                placeholder="Factor numérico"
-            />
-            <FormInput
-                label="Descripción"
-                type="textarea"
-                v-model="form.descripcion"
-                :error="errors.descripcion"
-                placeholder="Descripción"
-            />
-            <FormInput
-                label="Rúbricas"
-                type="textarea"
-                v-model="form.rubricas"
-                :error="errors.rubricas"
-                placeholder="Ingresa las rúbricas del nivel"
-            />
+            <!-- GRID DE CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- NOMBRE -->
+                <CardInput>
+                    <FormInput
+                        label="Nombre"
+                        v-model="form.nombre"
+                        :error="errors.nombre"
+                        placeholder="Nombre del nivel"
+                        required
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Estado"
-                type="select"
-                v-model="form.estado"
-                :options="[
-                    { value: 1, label: 'Activo' },
-                    { value: 0, label: 'Inactivo' },
-                ]"
-            />
+                <!-- FACTOR -->
+                <CardInput>
+                    <FormInput
+                        label="Factor"
+                        type="number"
+                        v-model="form.factor"
+                        :error="errors.factor"
+                        placeholder="Factor numérico"
+                        required
+                    />
+                </CardInput>
 
+                <!-- DESCRIPCIÓN (2 columnas) -->
+                <CardInput>
+                    <FormInput
+                        label="Descripción"
+                        type="textarea"
+                        v-model="form.descripcion"
+                        :error="errors.descripcion"
+                        placeholder="Descripción"
+                    />
+                </CardInput>
+
+                <!-- RÚBRICAS (2 columnas) -->
+                <CardInput>
+                    <FormInput
+                        label="Rúbricas"
+                        type="textarea"
+                        v-model="form.rubricas"
+                        :error="errors.rubricas"
+                        placeholder="Ingresa las rúbricas del nivel"
+                    />
+                </CardInput>
+
+                <!-- ESTADO -->
+                <CardInput>
+                    <FormInput
+                        label="Estado"
+                        type="select"
+                        v-model="form.estado"
+                        :error="errors.estado"
+                        :options="[
+                            { value: 1, label: 'Activo' },
+                            { value: 0, label: 'Inactivo' },
+                        ]"
+                    />
+                </CardInput>
+            </div>
+
+            <!-- ACCIONES -->
             <template #actions>
                 <div
-                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4"
+                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4 mt-8"
                 >
                     <button
                         type="button"
@@ -118,6 +142,7 @@ const cancel = () => router.get(route("niveles.index"));
                     >
                         Cancelar
                     </button>
+
                     <button
                         type="button"
                         @click="submit"

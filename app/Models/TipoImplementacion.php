@@ -18,7 +18,7 @@ class TipoImplementacion extends Model
         'descripcion',
         'rubrica',
         'estado',
-        
+
     ];
 
     // Casts (opcional, pero recomendado)
@@ -42,21 +42,21 @@ class TipoImplementacion extends Model
 
     // Relación muchos a muchos con fases
     public function fases()
-        {
-            return $this->belongsToMany(
-                Fase::class,
-                'fase_tipo_implementacion',
-                'tipo_implementacion_id',
-                'fase_id'
-            );
-        }
+    {
+        return $this->belongsToMany(
+            Fase::class,
+            'fase_tipo_implementacion',
+            'tipo_implementacion_id',
+            'fase_id'
+        )->with('tareas');
+    }
 
 
-// Relación uno a muchos con estimaciones
+    // Relación uno a muchos con estimaciones
     public function estimaciones()
     {
         return $this->hasMany(Estimacion::class);
     }
-    
+
 
 }
