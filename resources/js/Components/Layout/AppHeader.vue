@@ -30,7 +30,7 @@
                     </span>
                 </button>
 
-                <!-- MENU DROPDOWN DESKTOP (hover) -->
+                <!-- MENU DROPDOWN DESKTOP -->
                 <ul
                     class="absolute right-0 mt-5 min-w-[260px] bg-white/95 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,.35)] opacity-0 invisible translate-y-[-14px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:translate-x-4 z-[999999]"
                 >
@@ -39,6 +39,7 @@
                         :key="item.text"
                         class="relative group/item"
                     >
+                        <!-- Item sin children -->
                         <div v-if="!item.children">
                             <Link
                                 :href="item.href"
@@ -48,6 +49,7 @@
                             </Link>
                         </div>
 
+                        <!-- Item con children -->
                         <div
                             v-else
                             @click="toggleSub(i)"
@@ -64,7 +66,7 @@
                             ></i>
                         </div>
 
-                        <!-- Submenu -->
+                        <!-- SUBMENU ACORDEÓN DESKTOP -->
                         <ul
                             v-if="item.children && openSub === i"
                             class="ml-4 bg-white/90 rounded-xl shadow-inner mt-1"
@@ -89,6 +91,7 @@
                         </ul>
                     </li>
 
+                    <!-- Logout -->
                     <li class="border-t border-slate-200/60">
                         <Link
                             href="#"
@@ -138,15 +141,27 @@
             class="md:hidden bg-white/95 backdrop-blur-xl shadow-xl"
         >
             <div v-for="(item, i) in menu" :key="i">
+                <!-- Item sin children -->
+                <div v-if="!item.children">
+                    <Link
+                        :href="item.href"
+                        class="flex gap-3 items-center px-6 py-4 font-medium text-[#341e68]"
+                        @click="toggleMenu"
+                    >
+                        <i :class="item.icon"></i> {{ item.text }}
+                    </Link>
+                </div>
+
+                <!-- Item con children -->
                 <div
+                    v-else
                     @click="toggleSub(i)"
-                    class="flex justify-between px-6 py-4 font-medium text-[#341e68]"
+                    class="flex justify-between px-6 py-4 font-medium text-[#341e68] cursor-pointer"
                 >
                     <span class="flex gap-3 items-center">
                         <i :class="item.icon"></i> {{ item.text }}
                     </span>
                     <i
-                        v-if="item.children"
                         :class="[
                             'fa-solid fa-chevron-down transition',
                             openSub === i ? 'rotate-180' : '',
@@ -154,6 +169,7 @@
                     ></i>
                 </div>
 
+                <!-- Submenu Mobile -->
                 <div
                     v-if="item.children && openSub === i"
                     class="pl-10 pb-3 text-sm text-slate-600"
@@ -163,6 +179,7 @@
                         :key="c.text"
                         :href="c.href"
                         class="block py-2"
+                        @click="toggleMenu"
                     >
                         <i
                             :class="c.icon || 'fa-solid fa-circle-dot text-xs'"
@@ -172,6 +189,7 @@
                 </div>
             </div>
 
+            <!-- Logout -->
             <button
                 @click="logout"
                 class="w-full text-left px-6 py-4 text-red-600 border-t"
