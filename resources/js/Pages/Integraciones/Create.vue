@@ -8,6 +8,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import PageHeader from "@/Components/Layout/PageHeader.vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
 import FormInput from "@/Components/Formulario/FormInput.vue";
+import CardInput from "@/Components/Formulario/CardInput.vue";
 import SuccessModal from "@/Components/Modal/SuccessModal.vue";
 
 // --- FORM ---
@@ -29,12 +30,12 @@ const sending = ref(false);
 // --- WATCHERS (LIMPIAN ERROR AL ESCRIBIR) ---
 watch(
     () => form.nombre,
-    () => (errors.nombre = null)
+    () => (errors.nombre = null),
 );
 
 watch(
     () => form.descripcion,
-    () => (errors.descripcion = null)
+    () => (errors.descripcion = null),
 );
 
 // --- SUBMIT ---
@@ -60,7 +61,7 @@ const submit = async () => {
         if (err.response?.status === 422) {
             const validationErrors = err.response.data.errors;
             Object.keys(validationErrors).forEach(
-                (f) => (errors[f] = validationErrors[f][0])
+                (f) => (errors[f] = validationErrors[f][0]),
             );
         } else {
             console.error("Error al guardar:", err);
@@ -82,36 +83,36 @@ const cancel = () => router.get("/integraciones");
         </template>
 
         <FormWrapper title="Ingresa los datos de la Integración">
-            <!-- NOMBRE -->
-            <div class="flex flex-col gap-1">
-                <FormInput
-                    label="Nombre"
-                    v-model="form.nombre"
-                    :error="errors.nombre"
-                    placeholder="Nombre de la integración"
-                    required
-                />
-                <span v-if="errors.nombre" class="text-red-600 text-sm">
-                    {{ errors.nombre }}
-                </span>
-            </div>
+            <!-- GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- NOMBRE -->
+                <CardInput>
+                    <FormInput
+                        label="Nombre"
+                        v-model="form.nombre"
+                        :error="errors.nombre"
+                        placeholder="Nombre de la integración"
+                        required
+                    />
+                </CardInput>
 
-            <div class="flex flex-col gap-1">
-                <FormInput
-                    label="Descripción"
-                    type="textarea"
-                    v-model="form.descripcion"
-                    :error="errors.descripcion"
-                    placeholder="Descripción breve"
-                />
-                <span v-if="errors.descripcion" class="text-red-600 text-sm">
-                    {{ errors.descripcion }}
-                </span>
+                <!-- DESCRIPCIÓN (OCUPA 2 COLUMNAS) -->
+                <CardInput>
+                    <FormInput
+                        label="Descripción"
+                        type="textarea"
+                        v-model="form.descripcion"
+                        :error="errors.descripcion"
+                        placeholder="Descripción breve"
+                    />
+                </CardInput>
             </div>
 
             <!-- ACCIONES -->
             <template #actions>
-                <div class="flex justify-end gap-4 mt-6">
+                <div
+                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4 mt-6"
+                >
                     <button
                         type="button"
                         @click="cancel"
@@ -124,7 +125,7 @@ const cancel = () => router.get("/integraciones");
                         type="button"
                         @click="submit"
                         :disabled="sending"
-                        class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                     >
                         Guardar
                     </button>

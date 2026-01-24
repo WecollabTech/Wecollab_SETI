@@ -31,7 +31,7 @@ const cargarTipos = async (page = 1) => {
     loading.value = true;
     try {
         const res = await axios.get(
-            `/api/tipoimplementacion?page=${page}&search=${search.value}`
+            `/api/tipoimplementacion?page=${page}&search=${search.value}`,
         );
         tipos.value = res.data;
     } catch (error) {
@@ -139,7 +139,7 @@ onMounted(() => cargarTipos());
                         <button
                             @click="
                                 router.get(
-                                    route('tipoimplementacion.edit', item.id)
+                                    route('tipoimplementacion.edit', item.id),
                                 )
                             "
                             class="px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded hover:from-blue-700 hover:to-blue-800 text-sm transition"
@@ -155,7 +155,7 @@ onMounted(() => cargarTipos());
                         <button
                             @click="
                                 router.get(
-                                    route('tipoimplementacion.show', item.id)
+                                    route('tipoimplementacion.show', item.id),
                                 )
                             "
                             class="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-800 text-sm transition"

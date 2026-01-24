@@ -33,7 +33,7 @@ const cargarTareas = async (page = 1) => {
     loading.value = true;
     try {
         const res = await axios.get(
-            `/api/tareas?page=${page}&search=${search.value}`
+            `/api/tareas?page=${page}&search=${search.value}`,
         );
         tareas.value = res.data;
     } catch (error) {

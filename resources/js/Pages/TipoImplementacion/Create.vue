@@ -81,23 +81,23 @@ const handleSuccess = (message) => {
 // --- Watchers para limpiar errores ---
 watch(
     () => form.nombre,
-    () => (errors.nombre = null)
+    () => (errors.nombre = null),
 );
 watch(
     () => form.descripcion,
-    () => (errors.descripcion = null)
+    () => (errors.descripcion = null),
 );
 watch(
     () => form.rubrica,
-    () => (errors.rubrica = null)
+    () => (errors.rubrica = null),
 );
 watch(
     () => form.activo,
-    () => (errors.activo = null)
+    () => (errors.activo = null),
 );
 watch(
     () => form.integraciones,
-    () => (errors.integraciones = null)
+    () => (errors.integraciones = null),
 );
 
 // --- Validación frontend simple opcional ---
@@ -161,9 +161,8 @@ const submit = async () => {
 
         if (err.response?.status === 422) {
             const validationErrors = err.response.data.errors;
-            // Mapea los errores backend a nuestro objeto errors
             Object.keys(validationErrors).forEach(
-                (f) => (errors[f] = validationErrors[f][0])
+                (f) => (errors[f] = validationErrors[f][0]),
             );
         } else if (err.response?.data?.message) {
             // Muestra error general del backend
@@ -176,7 +175,7 @@ const submit = async () => {
             showModal.value = true;
             console.error(
                 "Error al guardar:",
-                err.response?.data?.message || err.message
+                err.response?.data?.message || err.message,
             );
         }
     } finally {
@@ -186,6 +185,11 @@ const submit = async () => {
 
 // --- Cancelar ---
 const cancel = () => router.get("/tipoimplementacion");
+
+// --- CERRAR MODAL Y REDIRECCIONAR ---
+const onModalClose = () => {
+    router.get("/tipoimplementacion"); // redirige al listado de tareas
+};
 
 // --- On mounted ---
 onMounted(() => cargarIntegraciones());
@@ -200,98 +204,137 @@ onMounted(() => cargarFases());
         </template>
 
         <FormWrapper title="Ingresa los datos de la Implementación">
-            <!-- Nombre -->
-            <FormInput
-                label="Nombre"
-                v-model="form.nombre"
-                :error="errors.nombre"
-                placeholder="Nombre de la implementación"
-            />
-
-            <!-- Rúbrica -->
-            <FormInput
-                label="Rúbrica"
-                v-model="form.rubrica"
-                :error="errors.rubrica"
-                placeholder="Rúbrica asociada"
-            />
-
-            <!-- Descripción -->
-            <FormInput
-                label="Descripción"
-                type="textarea"
-                v-model="form.descripcion"
-                :error="errors.descripcion"
-                placeholder="Descripción breve"
-            />
-
-            <!-- Integraciones -->
-            <div class="mb-4">
-                <label class="block font-semibold mb-1">Integraciones</label>
-                <Multiselect
-                    v-model="form.integraciones"
-                    :options="integracionesOptions"
-                    track-by="id"
-                    label="nombre"
-                    placeholder="Selecciona integraciones"
-                    multiple
-                    :close-on-select="false"
-                    :hide-selected="true"
-                />
-                <p
-                    v-if="errors.integraciones"
-                    class="text-red-600 text-sm mt-1"
-                >
-                    {{ errors.integraciones }}
-                </p>
-            </div>
-
-            <!-- Fases -->
-            <div class="mb-4">
-                <label class="block font-semibold mb-1">Fases</label>
-                <Multiselect
-                    v-model="form.fases"
-                    :options="fasesOptions"
-                    track-by="id"
-                    label="nombre"
-                    placeholder="Selecciona las Fases"
-                    multiple
-                    :close-on-select="false"
-                    :hide-selected="true"
-                />
-                <p v-if="errors.fases" class="text-red-600 text-sm mt-1">
-                    {{ errors.fases }}
-                </p>
-            </div>
-
-            <!-- Activo como toggle debajo del título -->
-            <div class="mb-6">
-                <span class="block font-semibold text-gray-700 mb-1"
-                    >Activo</span
-                >
+            <!-- GRID PRINCIPAL DE CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- CARD: Nombre -->
                 <div
-                    class="w-12 h-6 rounded-full p-0.5 flex items-center transition-colors duration-300 cursor-pointer"
-                    :class="form.activo ? 'bg-green-500' : 'bg-gray-300'"
-                    @click="form.activo = !form.activo"
+                    class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
-                    <div
-                        class="bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300"
-                        :class="form.activo ? 'translate-x-6' : 'translate-x-0'"
-                    ></div>
+                    <FormInput
+                        label="Nombre"
+                        v-model="form.nombre"
+                        :error="errors.nombre"
+                        placeholder="Ej: Implementación módulo ventas"
+                    />
                 </div>
-                <p v-if="errors.activo" class="text-red-600 text-sm mt-1">
-                    {{ errors.activo }}
-                </p>
+
+                <!-- CARD: Rúbrica -->
+                <div
+                    class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <FormInput
+                        label="Rúbrica"
+                        v-model="form.rubrica"
+                        :error="errors.rubrica"
+                        placeholder="Ej: Rúbrica asociada al proyecto"
+                    />
+                </div>
+
+                <!-- CARD: Descripción -->
+                <div
+                    class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <FormInput
+                        label="Descripción"
+                        type="textarea"
+                        v-model="form.descripcion"
+                        :error="errors.descripcion"
+                        placeholder="Descripción breve"
+                    />
+                    <!-- Contador de caracteres -->
+                    <p class="text-gray-400 text-sm mt-1">
+                        {{ form.descripcion.length }}/1000 caracteres
+                    </p>
+                </div>
+
+                <!-- CARD: Integraciones -->
+                <div
+                    class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <label class="block font-semibold mb-1"
+                        >Integraciones</label
+                    >
+                    <Multiselect
+                        v-model="form.integraciones"
+                        :options="integracionesOptions"
+                        track-by="id"
+                        label="nombre"
+                        placeholder="Selecciona integraciones"
+                        multiple
+                        :close-on-select="false"
+                        :hide-selected="true"
+                        taggable
+                        class="w-full"
+                    />
+                    <p
+                        v-if="errors.integraciones"
+                        class="text-red-600 text-sm mt-1 transition-opacity duration-300"
+                    >
+                        {{ errors.integraciones }}
+                    </p>
+                </div>
+
+                <!-- CARD: Fases -->
+                <div
+                    class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                    <label class="block font-semibold mb-1">Fases</label>
+                    <Multiselect
+                        v-model="form.fases"
+                        :options="fasesOptions"
+                        track-by="id"
+                        label="nombre"
+                        placeholder="Selecciona las Fases"
+                        multiple
+                        :close-on-select="false"
+                        :hide-selected="true"
+                        class="w-full"
+                    />
+                    <p
+                        v-if="errors.fases"
+                        class="text-red-600 text-sm mt-1 transition-opacity duration-300"
+                    >
+                        {{ errors.fases }}
+                    </p>
+                </div>
+
+                <!-- CARD: Activo -->
+                <div
+                    class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center items-start"
+                >
+                    <span class="block font-semibold text-gray-700 mb-2"
+                        >Activo</span
+                    >
+                    <div
+                        class="w-14 h-7 rounded-full p-0.5 flex items-center transition-colors duration-300 cursor-pointer"
+                        :class="form.activo ? 'bg-green-500' : 'bg-gray-300'"
+                        @click="form.activo = !form.activo"
+                    >
+                        <div
+                            class="bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300"
+                            :class="
+                                form.activo ? 'translate-x-7' : 'translate-x-0'
+                            "
+                        ></div>
+                    </div>
+                    <p
+                        v-if="errors.activo"
+                        class="text-red-600 text-sm mt-1 transition-opacity duration-300"
+                    >
+                        {{ errors.activo }}
+                    </p>
+                </div>
             </div>
 
+            <!-- BOTONES DE ACCIÓN -->
             <template #actions>
                 <div
-                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4"
+                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4 mt-6"
                 >
                     <button
                         type="button"
                         @click="cancel"
-                        class="px-6 py-2.5 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+                        class="px-6 py-2.5 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 active:scale-95 transition-transform duration-150"
                     >
                         Cancelar
                     </button>
@@ -299,7 +342,7 @@ onMounted(() => cargarFases());
                         type="button"
                         @click="submit"
                         :disabled="sending"
-                        class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-transform duration-150"
                     >
                         Guardar
                     </button>
@@ -307,11 +350,17 @@ onMounted(() => cargarFases());
             </template>
         </FormWrapper>
 
+        <!-- MODAL DE ÉXITO -->
         <SuccessModal
             :show.sync="showModal"
             :message="modalMessage"
             :type="modalType"
             :auto-close="4000"
+            @update:show="
+                (val) => {
+                    if (!val) onModalClose();
+                }
+            "
         />
     </AppLayout>
 </template>

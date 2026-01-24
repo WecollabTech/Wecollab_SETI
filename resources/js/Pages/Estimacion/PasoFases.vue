@@ -159,130 +159,165 @@ const continuar = () => {
                 nombreProyecto
             }}</span>
         </template>
-
-        <!-- FASES -->
-        <h1 class="mt-4 mb-2 font-bold text-lg">Fases de Implementación</h1>
-        <div class="space-y-4 col-span-2">
-            <div
-                v-for="fase in fases"
-                :key="fase.id"
-                class="border rounded-2xl bg-white shadow-sm hover:shadow-md transition"
-            >
-                <button
-                    type="button"
-                    class="w-full px-6 py-4 bg-blue-50 hover:bg-blue-100 font-semibold text-blue-700"
-                    @click="toggleFase(fase.id)"
-                >
-                    <div class="flex justify-between items-center w-full">
-                        <span>{{ fase.nombre }}</span>
-                        <span>{{ horasPorBloque(fase, "fase") }} h</span>
-                    </div>
-                </button>
-
-                <div v-if="faseActiva === fase.id" class="divide-y">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <!-- COLUMNA IZQUIERDA: FASES -->
+            <div>
+                <h1 class="mt-4 mb-2 font-bold text-lg">
+                    Fases de Implementación
+                </h1>
+                <div class="space-y-2">
                     <div
-                        v-for="tarea in fase.tareas"
-                        :key="tarea.id"
-                        class="flex justify-between px-6 py-3 items-center hover:bg-gray-50 transition"
+                        v-for="fase in fases"
+                        :key="fase.id"
+                        class="border rounded-2xl bg-white shadow-sm hover:shadow-md transition"
                     >
-                        <div class="flex items-center gap-3">
-                            <input
-                                type="checkbox"
-                                v-model="tareasSeleccionadasFases"
-                                :value="tarea.id"
-                                class="rounded border-gray-300"
-                            />
-                            <span>{{ tarea.titulo }}</span>
+                        <button
+                            type="button"
+                            class="w-full px-6 py-4 bg-blue-50 hover:bg-blue-100 font-semibold text-blue-700"
+                            @click="toggleFase(fase.id)"
+                        >
+                            <div
+                                class="flex justify-between items-center w-full"
+                            >
+                                <span>{{ fase.nombre }}</span>
+                                <span
+                                    >{{ horasPorBloque(fase, "fase") }} h</span
+                                >
+                            </div>
+                        </button>
+
+                        <div v-if="faseActiva === fase.id" class="divide-y">
+                            <div
+                                v-for="tarea in fase.tareas"
+                                :key="tarea.id"
+                                class="flex justify-between px-6 py-3 items-center hover:bg-gray-50 transition"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <input
+                                        type="checkbox"
+                                        v-model="tareasSeleccionadasFases"
+                                        :value="tarea.id"
+                                        class="rounded border-gray-300"
+                                    />
+                                    <span>{{ tarea.titulo }}</span>
+                                </div>
+                                <span class="text-gray-500"
+                                    >{{ tarea.duracion_minuto }} min</span
+                                >
+                            </div>
+
+                            <div
+                                class="flex justify-end gap-3 px-6 py-3 bg-gray-50 border-t"
+                            >
+                                <button
+                                    @click.stop="seleccionarTodo(fase, 'fase')"
+                                    class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                >
+                                    Seleccionar todo
+                                </button>
+                                <button
+                                    @click.stop="limpiarTareas(fase, 'fase')"
+                                    class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                                >
+                                    Limpiar
+                                </button>
+                            </div>
                         </div>
-                        <span class="text-gray-500"
-                            >{{ tarea.duracion_minuto }} min</span
-                        >
-                    </div>
-
-                    <div
-                        class="flex justify-end gap-3 px-6 py-3 bg-gray-50 border-t"
-                    >
-                        <button
-                            @click.stop="seleccionarTodo(fase, 'fase')"
-                            class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                        >
-                            Seleccionar todo
-                        </button>
-                        <button
-                            @click.stop="limpiarTareas(fase, 'fase')"
-                            class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
-                        >
-                            Limpiar
-                        </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- INTEGRACIONES -->
-        <h1 class="mt-6 mb-2 font-bold text-lg">Integraciones Asociadas</h1>
-        <div class="space-y-4 col-span-2">
-            <div
-                v-for="intg in integraciones"
-                :key="intg.id"
-                class="border rounded-2xl bg-white shadow-sm hover:shadow-md transition"
-            >
-                <button
-                    type="button"
-                    class="w-full px-6 py-4 bg-yellow-50 hover:bg-yellow-100 font-semibold text-yellow-800"
-                    @click="toggleIntegracion(intg.id)"
-                >
-                    <div class="flex justify-between items-center w-full">
-                        <span>{{ intg.nombre }}</span>
-                        <span>{{ horasPorBloque(intg, "integracion") }} h</span>
-                    </div>
-                </button>
-
-                <div v-if="integracionActiva === intg.id" class="divide-y">
+            <!-- COLUMNA DERECHA: INTEGRACIONES -->
+            <div>
+                <h1 class="mt-4 mb-2 font-bold text-lg">
+                    Integraciones Asociadas
+                </h1>
+                <div class="space-y-4">
                     <div
-                        v-for="tarea in intg.tareas"
-                        :key="tarea.id"
-                        class="flex justify-between px-6 py-3 items-center hover:bg-gray-50 transition"
+                        v-for="intg in integraciones"
+                        :key="intg.id"
+                        class="border rounded-2xl bg-white shadow-sm hover:shadow-md transition"
                     >
-                        <div class="flex items-center gap-3">
-                            <input
-                                type="checkbox"
-                                v-model="tareasSeleccionadasIntegraciones"
-                                :value="tarea.id"
-                                class="rounded border-gray-300"
-                            />
-                            <span>{{ tarea.titulo }}</span>
+                        <button
+                            type="button"
+                            class="w-full px-6 py-4 bg-yellow-50 hover:bg-yellow-100 font-semibold text-yellow-800"
+                            @click="toggleIntegracion(intg.id)"
+                        >
+                            <div
+                                class="flex justify-between items-center w-full"
+                            >
+                                <span>{{ intg.nombre }}</span>
+                                <span
+                                    >{{
+                                        horasPorBloque(intg, "integracion")
+                                    }}
+                                    h</span
+                                >
+                            </div>
+                        </button>
+
+                        <div
+                            v-if="integracionActiva === intg.id"
+                            class="divide-y"
+                        >
+                            <div
+                                v-for="tarea in intg.tareas"
+                                :key="tarea.id"
+                                class="flex justify-between px-6 py-3 items-center hover:bg-gray-50 transition"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <input
+                                        type="checkbox"
+                                        v-model="
+                                            tareasSeleccionadasIntegraciones
+                                        "
+                                        :value="tarea.id"
+                                        class="rounded border-gray-300"
+                                    />
+                                    <span>{{ tarea.titulo }}</span>
+                                </div>
+                                <span class="text-gray-500"
+                                    >{{ tarea.duracion_minuto }} min</span
+                                >
+                            </div>
+
+                            <div
+                                class="flex justify-end gap-3 px-6 py-3 bg-gray-50 border-t"
+                            >
+                                <button
+                                    @click.stop="
+                                        seleccionarTodo(intg, 'integracion')
+                                    "
+                                    class="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200"
+                                >
+                                    Seleccionar todo
+                                </button>
+                                <button
+                                    @click.stop="
+                                        limpiarTareas(intg, 'integracion')
+                                    "
+                                    class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                                >
+                                    Limpiar
+                                </button>
+                            </div>
                         </div>
-                        <span class="text-gray-500"
-                            >{{ tarea.duracion_minuto }} min</span
-                        >
-                    </div>
-
-                    <div
-                        class="flex justify-end gap-3 px-6 py-3 bg-gray-50 border-t"
-                    >
-                        <button
-                            @click.stop="seleccionarTodo(intg, 'integracion')"
-                            class="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200"
-                        >
-                            Seleccionar todo
-                        </button>
-                        <button
-                            @click.stop="limpiarTareas(intg, 'integracion')"
-                            class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
-                        >
-                            Limpiar
-                        </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- RESUMEN -->
-        <div
-            class="col-span-2 mt-6 max-w-md mx-auto border rounded-xl bg-gray-50 p-6 shadow-sm text-center font-bold text-blue-700"
-        >
-            Total de horas estimadas: {{ totalHoras }} h
+            <!-- RESUMEN -->
+            <div
+                class="md:col-span-2 md:row-start-2 mt-6 max-w-md mx-auto border rounded-xl bg-gray-50 p-6 shadow-sm text-center text-blue-700"
+            >
+                <div class="text-base md:text-lg font-bold">
+                    Total de horas estimadas
+                </div>
+
+                <div class="text-xl md:text-2xl font-semibold">
+                    {{ totalHoras }} h
+                </div>
+            </div>
         </div>
 
         <!-- ACCIONES -->
