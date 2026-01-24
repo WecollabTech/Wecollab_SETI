@@ -7,7 +7,7 @@
 
         <!-- ================= NIVEL 2 ================= -->
         <div
-            class="relative flex h-[40px] md:h-[48px] bg-slate-100/80 backdrop-blur-xl z-[30] md:flex hidden"
+            class="relative h-[40px] md:h-[48px] bg-slate-100/80 backdrop-blur-xl z-[30] md:flex hidden"
         >
             <div
                 class="w-[70%] md:w-[580px] h-full bg-gradient-to-r from-[#2e165f] to-[#5b34c9] rounded-br-[80px] md:rounded-br-[100px] shadow-[0_8px_22px_rgba(0,0,0,.25)]"
