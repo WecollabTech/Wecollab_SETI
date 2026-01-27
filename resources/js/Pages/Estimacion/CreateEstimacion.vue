@@ -58,7 +58,7 @@ const guardarEstimacion = async (estimacion) => {
     };
 
     console.log("📦 PAYLOAD FINAL:", payload);
-    // await axios.post("/api/estimaciones", payload);
+    await axios.post("/api/estimaciones", payload);
 };
 </script>
 

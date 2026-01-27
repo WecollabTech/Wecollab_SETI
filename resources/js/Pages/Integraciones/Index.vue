@@ -159,7 +159,13 @@ onMounted(() => {
                     class="border-b hover:bg-gray-50 transition"
                 >
                     <td class="py-3 px-3 font-medium">{{ item.nombre }}</td>
-                    <td class="py-3 px-3">{{ item.descripcion ?? "-" }}</td>
+                    <td
+                        class="py-3 px-3 max-w-[250px] truncate"
+                        :title="item.descripcion"
+                    >
+                        {{ item.descripcion ?? "-" }}
+                    </td>
+
                     <td class="py-3 px-3 flex justify-center gap-2 flex-wrap">
                         <button
                             @click="editarIntegracion(item.id)"

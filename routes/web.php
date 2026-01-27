@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EstimacionController;
 use App\Http\Controllers\FaseController;
 use App\Http\Controllers\IntegrationesController;
 use App\Http\Controllers\NivelComplejidadController;
@@ -136,10 +137,26 @@ Route::get('/tareas/{tarea}', [TareaController::class, 'Apishow'])->name('tareas
 
 
 
-//Rutas de Cotización
+//Rutas de Estimaciones para las vistas 
 Route::get('/estimacion', function () {
     return Inertia::render('Estimacion/CreateEstimacion');
 })->name('estimacion');
+
+
+Route::get('/estimaciones', function () {
+    return Inertia::render('Estimacion/Index');
+})->name('estimaciones');
+
+Route::get('/estimaciones/{estimacion}', function ($estimacion) {
+    return Inertia::render('Estimacion/Show', [
+        'estimacionId' => $estimacion
+    ]);
+})->name('estimaciones.show');
+
+Route::get('/estimaciones/{estimacion}/pdf', [EstimacionController::class, 'exportarPdf'])
+    ->name('estimaciones.pdf');
+
+
 
 
 //RUTAS PARA EL NIVEL DE COMPLEJIDAD

@@ -43,4 +43,10 @@ class Integrationes extends Model
 
 
 
+    //Relacion de estimacion con integraciones 
+    public function estimaciones()
+    {
+        return $this->hasMany(EstimacionIntegracion::class);
+    }
+
 }

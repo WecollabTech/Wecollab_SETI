@@ -32,7 +32,7 @@ const cargarFases = async (page = 1) => {
     loading.value = true;
     try {
         const res = await axios.get(
-            `/api/fases?page=${page}&search=${search.value}`
+            `/api/fases?page=${page}&search=${search.value}`,
         );
         fases.value = res.data;
     } catch (error) {
@@ -118,7 +118,7 @@ onMounted(() => {
                 <tr>
                     <th class="py-3 px-3 text-left">Nombre</th>
                     <th class="py-3 px-3 text-left">Descripción</th>
-                    <th class="py-3 px-3 text-left">Minutos Base</th>
+                    <!-- <th class="py-3 px-3 text-left">Minutos Base</th> -->
                     <th class="py-3 px-3 text-center">Acciones</th>
                 </tr>
             </template>
@@ -138,9 +138,9 @@ onMounted(() => {
                         {{ item.descripcion ?? "-" }}
                     </td>
 
-                    <td class="py-3 px-3">
+                    <!-- <td class="py-3 px-3">
                         {{ item.minutos_base }}
-                    </td>
+                    </td> -->
 
                     <td class="py-3 px-3 flex justify-center gap-2">
                         <button

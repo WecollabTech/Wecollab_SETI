@@ -88,3 +88,6 @@ Route::get('/nivel-complejidad', [NivelComplejidadController::class, 'apiindex']
 
 //RUTAS PARA GUARDAR ESTIMACION DE PROYECTOS
 Route::post('/estimaciones', [EstimacionController::class, 'store']);
+Route::get('/estimaciones', [EstimacionController::class, 'index']);
+Route::get('/estimaciones/{estimacion}', [EstimacionController::class, 'show']);
+Route::delete('/estimaciones/{estimacion}', [EstimacionController::class, 'destroy']);

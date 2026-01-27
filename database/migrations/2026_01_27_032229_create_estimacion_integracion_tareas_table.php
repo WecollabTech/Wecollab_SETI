@@ -10,13 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('tipo_implementacion', function (Blueprint $table) {
+        Schema::create('estimacion_integracion_tareas', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100);
-            $table->text('descripcion');
-            $table->string('rubrica')->nullable();
-            $table->string('alcance')->nullable();
-            $table->boolean('estado')->default(true);
+            $table->foreignId('estimacion_integracion_id')
+                ->constrained('estimacion_integraciones')
+                ->cascadeOnDelete();
+
+            $table->string('nombre_tarea_integracion');
+            $table->integer('duracion_estimada_minutos');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('tipo_implementacion');
+        Schema::dropIfExists('estimacion_integracion_tareas');
     }
 };

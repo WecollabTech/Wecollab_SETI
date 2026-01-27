@@ -256,6 +256,11 @@ const menu = [
                 href: "/estimacion",
                 icon: "fa-solid fa-hourglass-half",
             },
+            {
+                text: "Lista de Estimación",
+                href: "/estimaciones",
+                icon: "fa-solid fa-list-check",
+            },
         ],
     },
 ];

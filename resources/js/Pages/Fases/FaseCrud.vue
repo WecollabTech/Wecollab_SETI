@@ -102,7 +102,7 @@ const cancel = () => router.get("/fases");
                 </CardInput>
 
                 <!-- MINUTOS BASE -->
-                <CardInput>
+                <!-- <CardInput>
                     <FormInput
                         label="Minutos Base"
                         type="number"
@@ -110,10 +110,10 @@ const cancel = () => router.get("/fases");
                         :error="errors.minutos_base"
                         placeholder="Duración en minutos"
                     />
-                </CardInput>
+                </CardInput> -->
 
                 <!-- DESCRIPCIÓN (OCUPA 2 COLUMNAS) -->
-                <CardInput class="md:col-span-2">
+                <CardInput>
                     <FormInput
                         label="Descripción"
                         type="textarea"

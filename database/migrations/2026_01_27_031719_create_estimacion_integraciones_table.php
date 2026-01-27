@@ -10,13 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('tipo_implementacion', function (Blueprint $table) {
+        Schema::create('estimacion_integraciones', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100);
-            $table->text('descripcion');
-            $table->string('rubrica')->nullable();
-            $table->string('alcance')->nullable();
-            $table->boolean('estado')->default(true);
+            $table->foreignId('estimacion_id')
+                ->constrained('estimaciones')
+                ->cascadeOnDelete();
+
+            $table->foreignId('integracion_id')
+                ->constrained('integraciones')
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('tipo_implementacion');
+        Schema::dropIfExists('estimacion_integraciones');
     }
 };

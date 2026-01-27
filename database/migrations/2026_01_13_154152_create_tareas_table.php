@@ -15,7 +15,12 @@ return new class extends Migration {
             $table->string('titulo');
             $table->string('id_proceso');
             $table->text('descripcion')->nullable();
-            $table->enum('estado', ['pendiente', 'en_proceso', 'completado', 'cancelado'])->default('pendiente');
+            $table->enum(
+                'estado',
+                ['pendiente', 'en_proceso', 'completado', 'cancelado']
+            )->nullable()->default('pendiente');
+
+
             $table->boolean('activo')->default(true);
             $table->integer('duracion_minuto')->nullable();
             $table->integer('orden')->default('1');

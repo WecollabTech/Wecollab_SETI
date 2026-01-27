@@ -8,7 +8,7 @@ import PageHeader from "@/Components/Layout/PageHeader.vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
 import FormInput from "@/Components/Formulario/FormInput.vue";
 import SuccessModal from "@/Components/Modal/SuccessModal.vue";
-
+import CardInput from "@/Components/Formulario/CardInput.vue";
 // --- PROPS ---
 const props = defineProps({
     faseId: {
@@ -57,15 +57,15 @@ onMounted(() => {
 // --- WATCHERS PARA VALIDACION ---
 watch(
     () => form.nombre,
-    () => (errors.nombre = null)
+    () => (errors.nombre = null),
 );
 watch(
     () => form.descripcion,
-    () => (errors.descripcion = null)
+    () => (errors.descripcion = null),
 );
 watch(
     () => form.minutos_base,
-    () => (errors.minutos_base = null)
+    () => (errors.minutos_base = null),
 );
 
 // --- FUNCIONES ---
@@ -88,7 +88,7 @@ const submit = async () => {
         if (err.response?.status === 422) {
             const validationErrors = err.response.data.errors;
             Object.keys(validationErrors).forEach(
-                (f) => (errors[f] = validationErrors[f][0])
+                (f) => (errors[f] = validationErrors[f][0]),
             );
         } else console.error("Error al actualizar:", err.message);
     } finally {
@@ -107,28 +107,30 @@ const cancel = () => router.get("/fases");
         </template>
 
         <FormWrapper title="Actualizar los datos de la Fase">
-            <FormInput
-                label="Nombre"
-                v-model="form.nombre"
-                :error="errors.nombre"
-                placeholder="Nombre de la fase"
-            />
-            <p v-if="errors.nombre" class="text-red-600 text-sm mt-1">
-                {{ errors.nombre }}
-            </p>
-
-            <FormInput
-                label="Descripción"
-                type="textarea"
-                v-model="form.descripcion"
-                :error="errors.descripcion"
-                placeholder="Descripción breve"
-            />
-            <p v-if="errors.descripcion" class="text-red-600 text-sm mt-1">
-                {{ errors.descripcion }}
-            </p>
-
-            <FormInput
+            <CardInput>
+                <FormInput
+                    label="Nombre"
+                    v-model="form.nombre"
+                    :error="errors.nombre"
+                    placeholder="Nombre de la fase"
+                />
+                <p v-if="errors.nombre" class="text-red-600 text-sm mt-1">
+                    {{ errors.nombre }}
+                </p>
+            </CardInput>
+            <CardInput>
+                <FormInput
+                    label="Descripción"
+                    type="textarea"
+                    v-model="form.descripcion"
+                    :error="errors.descripcion"
+                    placeholder="Descripción breve"
+                />
+                <p v-if="errors.descripcion" class="text-red-600 text-sm mt-1">
+                    {{ errors.descripcion }}
+                </p>
+            </CardInput>
+            <!-- <FormInput
                 label="Minutos Base"
                 type="number"
                 v-model="form.minutos_base"
@@ -137,7 +139,7 @@ const cancel = () => router.get("/fases");
             />
             <p v-if="errors.minutos_base" class="text-red-600 text-sm mt-1">
                 {{ errors.minutos_base }}
-            </p>
+            </p> -->
 
             <template #actions>
                 <div

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,7 +13,7 @@ return new class extends Migration
         Schema::create('estimacion_tareas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('estimacion_fase_id')->constrained('estimacion_fases')->onDelete('cascade');
-            $table->string('titulo');
+            $table->string('nombre_tarea');
             $table->integer('duracion_minuto');
             $table->timestamps();
         });
