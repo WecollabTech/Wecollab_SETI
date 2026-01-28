@@ -98,7 +98,7 @@
                 <Link
                     v-if="!isLogin"
                     href="/login"
-                    class="px-5 py-2.5 rounded-2xl bg-white/90 backdrop-blur border shadow font-semibold text-[#341e68]"
+                    class="px-5 py-2.5 rounded-2xl font-semibold text-white text-center shadow-lg bg-[#5B34C9] /* Default */ hover:bg-[#35B749] /* Hover */ disabled:bg-[#90C097] /* Disabled */ disabled:cursor-not-allowed"
                 >
                     Iniciar sesión
                 </Link>
@@ -119,7 +119,7 @@
         >
             <div class="flex items-center gap-3">
                 <img
-                    src="/img/wecollab.png"
+                    src="/img/seti.png"
                     class="w-[36px] md:w-[58px] h-[36px] md:h-[58px]"
                 />
                 <h1
@@ -216,7 +216,12 @@
                                 v-if="!isLogin"
                                 href="/login"
                                 @click="toggleMenu"
-                                class="px-5 py-2 rounded-2xl bg-white/90 backdrop-blur border shadow font-semibold text-[#341e68] text-center"
+                                :class="[
+                                    'px-5 py-2 rounded-2xl font-semibold text-white text-center transition-colors duration-300',
+                                    isDisabled
+                                        ? 'bg-gray-400 cursor-not-allowed' // estado disabled
+                                        : 'bg-gradient-to-r from-[#FF7F2D] via-[#35B749] to-[#5B34C9] hover:brightness-90 shadow-lg', // default + hover
+                                ]"
                             >
                                 Iniciar sesión
                             </Link>

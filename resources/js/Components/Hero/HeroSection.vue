@@ -40,7 +40,7 @@
                                     </h1>
 
                                     <p
-                                        class="text-sm md:text-base xl:text-lg leading-relaxed text-white/90 max-w-xl mx-auto md:mx-0 text-center md:text-left"
+                                        class="text-sm md:text-base xl:text-lg leading-relaxed text-white/90 max-w-xl mx-auto md:mx-0 text-justify"
                                     >
                                         {{ slide.description }}
                                     </p>
@@ -212,7 +212,7 @@ const slides = [
         title: "Bienvenidos a SynergyFlow™ PlanCore",
         description:
             "Tu punto de partida para estimaciones precisas y planificación eficiente. Estructura requerimientos, calcula horas por fase y complejidad, y toma decisiones con información confiable y trazable.",
-        image: "/img/logov2.png",
+        image: "/img/Bannerlogofondo.jpg",
         link: "/estimacion",
         cta: "Comenzar",
     },
@@ -221,7 +221,7 @@ const slides = [
         title: "SynergyFlow™ PlanCore",
         description:
             "Sistema interno de We-collab para la estimación y planificación de implementaciones, alineado a criterios técnicos, trazabilidad y consistencia corporativa.",
-        image: "/img/banner1.jpeg",
+        image: "/img/logov2.png",
         link: "/estimacion",
         cta: "Comenzar",
     },
@@ -230,7 +230,7 @@ const slides = [
         title: "Estimaciones claras y confiables",
         description:
             "Todas las estimaciones oficiales de alcance y horas se realizan mediante PlanCore, garantizando resultados consistentes y confiables.",
-        image: "/img/wecollab.png",
+        image: "/img/Banner2.jpg",
         link: "/estimacion",
         cta: "Ver planificación",
     },
@@ -239,7 +239,7 @@ const slides = [
         title: "Un módulo alineado a We-collab",
         description:
             "PlanCore puede operar como módulo interno o integración independiente, manteniendo coherencia visual, técnica y metodológica.",
-        image: "/img/banner2.jpg",
+        image: "/img/logov2.png",
         link: "/estimacion",
         cta: "Empezar ahora",
     },
