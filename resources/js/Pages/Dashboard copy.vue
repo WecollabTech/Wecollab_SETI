@@ -1,12 +1,12 @@
 <script setup>
-import { Head, Link } from "@inertiajs/vue3";
-import AppLayout from "@/Layouts/AppLayout.vue";
-import HeroSection from "@/Components/Hero/HeroSection.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { Head } from "@inertiajs/vue3";
 </script>
 
 <template>
-    <Head title="Welcome" />
-    <AppLayout>
+    <Head title="Dashboard" />
+
+    <AuthenticatedLayout>
         <template #header>
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
@@ -26,5 +26,5 @@ import HeroSection from "@/Components/Hero/HeroSection.vue";
                 </div>
             </div>
         </div>
-    </AppLayout>
+    </AuthenticatedLayout>
 </template>

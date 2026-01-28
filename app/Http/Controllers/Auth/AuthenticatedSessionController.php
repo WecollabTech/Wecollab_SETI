@@ -27,9 +27,16 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
-        $request->authenticate();
+        try {
+            $request->authenticate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Devuelve un mensaje personalizado si falla la autenticación
+            return back()->withErrors([
+                'email' => 'Correo electrónico o contraseña incorrecta.',
+            ])->withInput($request->only('email'));
+        }
 
         $request->session()->regenerate();
 

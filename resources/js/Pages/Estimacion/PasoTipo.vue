@@ -3,7 +3,7 @@ import { ref, watch, onMounted } from "vue";
 import axios from "axios";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
 import FormEstimacion from "@/Components/Formulario/FormEstimacion.vue";
-
+import CardInput from "@/Components/Formulario/CardInput.vue";
 const emit = defineEmits(["next"]);
 
 const estimacion = ref({
@@ -107,114 +107,129 @@ const colorNivel = (nivel, index) => {
     <FormWrapper
         title="Para poder realizar la estimación es necesario llenar el formulario"
     >
-        <!-- Tipo de Implementación -->
-        <div class="bg-white rounded-xl shadow p-4 mb-4">
-            <FormEstimacion
-                label="Tipo de implementación"
-                type="select"
-                :options="
-                    tiposImplementacion.map((t) => ({
-                        value: t.id,
-                        label: t.nombre,
-                    }))
-                "
-                v-model="estimacion.tipoImplementacionId"
-            />
-            <div
-                v-if="estimacion.tipoImplementacionId"
-                class="mt-2 text-gray-600 text-sm"
-            >
-                {{
-                    tiposImplementacion.find(
-                        (t) => t.id === Number(estimacion.tipoImplementacionId),
-                    )?.descripcion || "Sin descripción disponible"
-                }}
-            </div>
-        </div>
-
-        <!-- Integraciones -->
-        <div class="bg-white rounded-xl shadow p-4 mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2"
-                >Integraciones</label
-            >
-            <ul class="divide-y divide-gray-200 max-h-60 overflow-y-auto">
-                <li
-                    v-for="i in integracionesDisponibles"
-                    :key="i.id"
-                    class="flex items-center justify-between py-2"
-                >
-                    <div class="flex items-center gap-3">
-                        <input
-                            type="checkbox"
-                            :value="i.id"
-                            v-model="estimacion.integraciones"
-                            :id="'integracion-' + i.id"
-                            class="h-5 w-5 text-blue-600 rounded"
-                        />
-                        <label
-                            :for="'integracion-' + i.id"
-                            class="text-gray-800 text-sm break-words"
-                            :title="i.nombre"
-                        >
-                            {{ i.nombre }}
-                        </label>
-                    </div>
-                    <span
-                        v-if="i.descripcion"
-                        class="text-xs text-gray-400 italic"
-                        >{{ i.descripcion }}</span
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Tipo de Implementación -->
+            <CardInput>
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <FormEstimacion
+                        label="Tipo de implementación"
+                        type="select"
+                        :options="
+                            tiposImplementacion.map((t) => ({
+                                value: t.id,
+                                label: t.nombre,
+                            }))
+                        "
+                        v-model="estimacion.tipoImplementacionId"
+                    />
+                    <div
+                        v-if="estimacion.tipoImplementacionId"
+                        class="mt-2 text-gray-600 text-sm"
                     >
-                </li>
-            </ul>
-        </div>
+                        {{
+                            tiposImplementacion.find(
+                                (t) =>
+                                    t.id ===
+                                    Number(estimacion.tipoImplementacionId),
+                            )?.descripcion || "Sin descripción disponible"
+                        }}
+                    </div>
+                </div>
+            </CardInput>
 
-        <!-- Complejidad -->
-        <div class="bg-white rounded-xl shadow p-4 mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2"
-                >Nivel de complejidad</label
-            >
-            <div class="flex flex-wrap gap-2">
-                <button
-                    v-for="(nivel, index) in nivelesComplejidad"
-                    :key="nivel.id"
-                    type="button"
-                    @click="estimacion.complejidad = nivel"
-                    :style="{
-                        backgroundColor:
-                            estimacion.complejidad?.id === nivel.id
-                                ? colorNivel(nivel, index)
-                                : '#fff',
-                        color:
-                            estimacion.complejidad?.id === nivel.id
-                                ? '#fff'
-                                : '#1f2937',
-                        borderColor:
-                            estimacion.complejidad?.id === nivel.id
-                                ? colorNivel(nivel, index)
-                                : '#d1d5db',
-                    }"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors"
-                >
-                    {{ nivel.nombre }}
-                </button>
-            </div>
-            <div
-                v-if="estimacion.complejidad"
-                class="mt-2 text-gray-600 text-sm"
-            >
-                {{ estimacion.complejidad.descripcion }}
-            </div>
-        </div>
+            <!-- Integraciones -->
+            <CardInput>
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Integraciones
+                    </label>
+                    <ul
+                        class="divide-y divide-gray-200 max-h-60 overflow-y-auto"
+                    >
+                        <li
+                            v-for="i in integracionesDisponibles"
+                            :key="i.id"
+                            class="flex items-center justify-between py-2"
+                        >
+                            <div class="flex items-center gap-3">
+                                <input
+                                    type="checkbox"
+                                    :value="i.id"
+                                    v-model="estimacion.integraciones"
+                                    :id="'integracion-' + i.id"
+                                    class="h-5 w-5 text-blue-600 rounded"
+                                />
+                                <label
+                                    :for="'integracion-' + i.id"
+                                    class="text-gray-800 text-sm truncate max-w-xs"
+                                    :title="i.nombre"
+                                >
+                                    {{ i.nombre }}
+                                </label>
+                            </div>
+                            <span
+                                v-if="i.descripcion"
+                                class="text-xs text-gray-400 italic truncate max-w-[250px]"
+                                :title="i.descripcion"
+                            >
+                                {{ i.descripcion }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </CardInput>
 
-        <!-- Comentarios -->
-        <div class="bg-white rounded-xl shadow p-4 mb-4">
-            <FormEstimacion
-                label="Comentarios"
-                type="textarea"
-                v-model="estimacion.comentarios"
-            />
-        </div>
+            <!-- Complejidad -->
+            <CardInput>
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                        >Nivel de complejidad</label
+                    >
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            v-for="(nivel, index) in nivelesComplejidad"
+                            :key="nivel.id"
+                            type="button"
+                            @click="estimacion.complejidad = nivel"
+                            :style="{
+                                backgroundColor:
+                                    estimacion.complejidad?.id === nivel.id
+                                        ? colorNivel(nivel, index)
+                                        : '#fff',
+                                color:
+                                    estimacion.complejidad?.id === nivel.id
+                                        ? '#fff'
+                                        : '#1f2937',
+                                borderColor:
+                                    estimacion.complejidad?.id === nivel.id
+                                        ? colorNivel(nivel, index)
+                                        : '#d1d5db',
+                            }"
+                            class="px-4 py-2 rounded-lg text-sm font-semibold border transition-colors"
+                        >
+                            {{ nivel.nombre }}
+                        </button>
+                    </div>
+                    <div
+                        v-if="estimacion.complejidad"
+                        class="mt-2 text-gray-600 text-sm"
+                    >
+                        {{ estimacion.complejidad.descripcion }}
+                    </div>
+                </div>
+            </CardInput>
 
+            <CardInput>
+                <!-- Comentarios -->
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <FormEstimacion
+                        label="Comentarios"
+                        type="textarea"
+                        v-model="estimacion.comentarios"
+                    />
+                </div>
+            </CardInput>
+        </div>
         <!-- Botón Siguiente -->
         <template #actions>
             <div class="flex justify-end mt-4">

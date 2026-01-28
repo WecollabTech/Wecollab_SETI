@@ -65,7 +65,9 @@ const guardarEstimacion = async (estimacion) => {
 <template>
     <AppLayout>
         <Head title="Nueva Estimación" />
-        <PageHeader title="Estimar horas de implementación" />
+        <template #title>
+            <PageHeader title="Estimar horas de implementación" />
+        </template>
 
         <!-- PASO 1 -->
         <PasoTipo
