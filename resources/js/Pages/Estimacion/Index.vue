@@ -111,7 +111,9 @@ onMounted(() => {
                 <tr
                     class="bg-indigo-100 text-indigo-900 uppercase text-sm font-semibold"
                 >
+                    <th class="py-3 px-3 text-left">ID</th>
                     <th class="py-3 px-3 text-left">Tipo Implementación</th>
+                    <th class="py-3 px-3 text-left">Empresa</th>
                     <th class="py-3 px-3 text-left">Complejidad</th>
                     <th class="py-3 px-3 text-left">Total Horas</th>
                     <th class="py-3 px-3 text-left">Total Minutos</th>
@@ -128,9 +130,20 @@ onMounted(() => {
                     class="border-b hover:bg-indigo-50 transition"
                 >
                     <td class="py-3 px-3 font-medium">
+                        {{ item.id ?? item.id?.id }}
+                    </td>
+
+                    <td class="py-3 px-3 font-medium">
                         {{
                             item.nombre_tipo_implementacion ??
                             item.tipo_implementacion?.nombre
+                        }}
+                    </td>
+
+                    <td class="py-3 px-3 font-medium">
+                        {{
+                            item.nombre_empresa ??
+                            item.nombre_empresa?.nombre_empresa
                         }}
                     </td>
 
