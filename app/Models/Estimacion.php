@@ -14,7 +14,11 @@ class Estimacion extends Model
         'complejidad_id',
         'total_minutos',
         'total_horas',
-        'comentarios'
+        'comentarios',
+        // 🔹 Nuevos campos
+        'nombre_empresa',
+        'responsable',
+        'id_negocio',
     ];
 
     //Tipos de Implementacio que estara relacionada a cada estimacion

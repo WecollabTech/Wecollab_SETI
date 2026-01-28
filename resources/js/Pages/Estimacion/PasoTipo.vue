@@ -13,6 +13,9 @@ const estimacion = ref({
     complejidad: null,
     integraciones: [], // IDs seleccionadas
     comentarios: "",
+    nombreEmpresa: "", // <-- aquí
+    responsable: "", // <-- aquí
+    idNegocio: "", // <-- aquí
 });
 
 const tiposImplementacion = ref([]);
@@ -86,6 +89,10 @@ const continuar = () => {
     emit("next", {
         tipoImplementacionId: Number(estimacion.value.tipoImplementacionId),
         nombreTipoImplementacion: tipoSeleccionado?.nombre || "",
+        nombreEmpresa: estimacion.value.nombreEmpresa, // ✅ agregado
+        responsable: estimacion.value.responsable, // ✅ agregado
+        idNegocio: estimacion.value.idNegocio, // ✅ agregado
+
         integraciones: integracionesSeleccionadas, // ✅ SOLO estas
         complejidad: estimacion.value.complejidad,
         comentarios: estimacion.value.comentarios,
@@ -136,13 +143,12 @@ const colorNivel = (nivel, index) => {
                     </div>
                 </div>
             </CardInput>
-
             <!-- Integraciones -->
             <CardInput>
                 <div class="bg-white rounded-xl shadow p-4 mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Integraciones
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                        >Integraciones</label
+                    >
                     <ul
                         class="divide-y divide-gray-200 max-h-60 overflow-y-auto"
                     >
@@ -161,7 +167,7 @@ const colorNivel = (nivel, index) => {
                                 />
                                 <label
                                     :for="'integracion-' + i.id"
-                                    class="text-gray-800 text-sm truncate max-w-xs"
+                                    class="text-gray-800 text-sm break-words"
                                     :title="i.nombre"
                                 >
                                     {{ i.nombre }}
@@ -169,16 +175,13 @@ const colorNivel = (nivel, index) => {
                             </div>
                             <span
                                 v-if="i.descripcion"
-                                class="text-xs text-gray-400 italic truncate max-w-[250px]"
-                                :title="i.descripcion"
+                                class="text-xs text-gray-400 italic"
+                                >{{ i.descripcion }}</span
                             >
-                                {{ i.descripcion }}
-                            </span>
                         </li>
                     </ul>
                 </div>
             </CardInput>
-
             <!-- Complejidad -->
             <CardInput>
                 <div class="bg-white rounded-xl shadow p-4 mb-4">
@@ -218,14 +221,44 @@ const colorNivel = (nivel, index) => {
                     </div>
                 </div>
             </CardInput>
-
+            <!-- Comentarios -->
             <CardInput>
-                <!-- Comentarios -->
                 <div class="bg-white rounded-xl shadow p-4 mb-4">
                     <FormEstimacion
                         label="Comentarios"
                         type="textarea"
                         v-model="estimacion.comentarios"
+                    />
+                </div>
+            </CardInput>
+
+            <CardInput>
+                <!-- Nombre de la empresa -->
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <FormEstimacion
+                        label="Nombre de la empresa"
+                        type="text"
+                        v-model="estimacion.nombreEmpresa"
+                    />
+                </div>
+            </CardInput>
+            <!-- Responsable -->
+            <CardInput>
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <FormEstimacion
+                        label="Responsable"
+                        type="text"
+                        v-model="estimacion.responsable"
+                    />
+                </div>
+            </CardInput>
+            <!-- ID del negocio -->
+            <CardInput>
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <FormEstimacion
+                        label="ID del negocio"
+                        type="text"
+                        v-model="estimacion.idNegocio"
                     />
                 </div>
             </CardInput>

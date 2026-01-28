@@ -91,6 +91,12 @@ class EstimacionController extends Controller
                 'comentarios' => $request->comentarios,
                 'total_horas' => $request->total_horas,
                 'total_minutos' => round($request->total_horas * 60),
+
+
+                // 🔹 Nuevos campos
+                'nombre_empresa' => $request->nombre_empresa,
+                'responsable' => $request->responsable,
+                'id_negocio' => $request->id_negocio,
             ]);
 
             // 2️⃣ Guardar fases + tareas

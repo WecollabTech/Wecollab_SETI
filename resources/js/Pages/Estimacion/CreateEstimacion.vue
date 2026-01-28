@@ -14,6 +14,11 @@ const paso = ref(1);
 const estimacion = ref({
     tipoImplementacionId: null,
     nombreTipoImplementacion: "",
+
+    nombreEmpresa: "", // ✅ nuevo
+    responsable: "", // ✅ nuevo
+    idNegocio: "", // ✅ nuevo
+
     integraciones: [],
     complejidad: null,
     comentarios: "",
@@ -35,6 +40,9 @@ const guardarEstimacion = async (estimacion) => {
     const payload = {
         tipo_implementacion_id: estimacion.tipoImplementacionId,
         nombre_tipo_implementacion: estimacion.nombreTipoImplementacion,
+        nombre_empresa: estimacion.nombreEmpresa,
+        responsable: estimacion.responsable,
+        id_negocio: estimacion.idNegocio,
         complejidad_id: estimacion.complejidad.id,
         comentarios: estimacion.comentarios,
         total_minutos: estimacion.totalMinutos,
@@ -65,9 +73,7 @@ const guardarEstimacion = async (estimacion) => {
 <template>
     <AppLayout>
         <Head title="Nueva Estimación" />
-        <template #title>
-            <PageHeader title="Estimar horas de implementación" />
-        </template>
+        <PageHeader title="Estimar horas de implementación" />
 
         <!-- PASO 1 -->
         <PasoTipo

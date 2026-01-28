@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,8 +16,12 @@ return new class extends Migration
             $table->string('nombre_tipo_implementacion')->nullable();
             $table->foreignId('complejidad_id')->constrained('nivel_complejidads')->onDelete('cascade');
             $table->integer('total_minutos');
-            $table->decimal('total_horas', 8,2);
+            $table->decimal('total_horas', 8, 2);
             $table->text('comentarios')->nullable();
+            // Datos adicionales que agregaste
+            $table->string('nombre_empresa');
+            $table->string('responsable');
+            $table->string('id_negocio');
             $table->timestamps();
         });
     }

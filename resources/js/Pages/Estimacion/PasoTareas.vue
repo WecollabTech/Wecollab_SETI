@@ -9,6 +9,7 @@ const props = defineProps({
     bloquesFases: { type: Array, default: () => [] },
     bloquesIntegraciones: { type: Array, default: () => [] },
     totalHoras: { type: Number, default: 0 },
+    totalMinutos: { type: Number, default: 0 },
 });
 
 const emit = defineEmits(["back", "finish"]);
@@ -324,6 +325,7 @@ const generarPDF = () => {
                             bloquesFases,
                             bloquesIntegraciones,
                             totalHoras,
+                            totalMinutos,
                         })
                     "
                 >
