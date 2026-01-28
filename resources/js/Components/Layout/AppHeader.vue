@@ -103,13 +103,13 @@
                     Iniciar sesión
                 </Link>
 
-                <Link
+                <!-- <Link
                     v-if="!isRegister"
                     href="/register"
                     class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#2e165f] to-[#5b34c9] text-white font-semibold shadow"
                 >
                     Registrarse
-                </Link>
+                </Link> -->
             </div>
         </div>
 
@@ -221,14 +221,14 @@
                                 Iniciar sesión
                             </Link>
 
-                            <Link
+                            <!-- <Link
                                 v-if="!isRegister"
                                 href="/register"
                                 @click="toggleMenu"
                                 class="px-5 py-2 rounded-2xl bg-gradient-to-r from-[#2e165f] to-[#5b34c9] text-white font-semibold shadow text-center"
                             >
                                 Registrarse
-                            </Link>
+                            </Link> -->
                         </li>
                     </template>
                 </ul>

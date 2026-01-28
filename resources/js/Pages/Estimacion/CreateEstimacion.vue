@@ -106,6 +106,7 @@ const guardarEstimacion = async (estimacion) => {
 
         <PasoTareas
             v-if="paso === 3"
+            :estimacion="estimacion"
             :nombreProyecto="estimacion.nombreTipoImplementacion"
             :bloquesFases="estimacion.bloquesFases"
             :bloquesIntegraciones="estimacion.bloquesIntegraciones"

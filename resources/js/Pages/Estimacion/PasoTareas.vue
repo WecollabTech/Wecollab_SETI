@@ -5,12 +5,93 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable"; // Import correcto
 
 const props = defineProps({
+    estimacion: Object,
     nombreProyecto: { type: String, default: "" },
     bloquesFases: { type: Array, default: () => [] },
     bloquesIntegraciones: { type: Array, default: () => [] },
     totalHoras: { type: Number, default: 0 },
     totalMinutos: { type: Number, default: 0 },
 });
+
+const crearGrupoBitrixDesdeProps = async () => {
+    try {
+        const est = props.estimacion;
+
+        if (!est) {
+            alert("No hay datos de estimación disponibles");
+            return;
+        }
+
+        const nombre_empresa = est.nombreEmpresa;
+        const responsable = est.responsable;
+        const id_negocio = est.idNegocio;
+
+        if (!nombre_empresa) {
+            alert("El nombre de la empresa es obligatorio");
+            return;
+        }
+
+        // 1️⃣ Crear el grupo en Bitrix
+        const payload = {
+            NAME: nombre_empresa,
+            DESCRIPTION: `Responsable: ${responsable} | ID negocio: ${id_negocio}`,
+            VISIBLE: "Y",
+            OPENED: "Y",
+        };
+
+        const response = await fetch(
+            "https://wecollab.bitrix24.mx/rest/281/s5qyzs1hdkmr09kz/sonet_group.create",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            },
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+            console.error("Error detalle Bitrix:", data);
+            throw new Error(
+                data.error_description ||
+                    `Error en el envío: ${response.status}`,
+            );
+        }
+
+        const groupId = data.result; // ✅ ID del grupo
+        console.log("Grupo creado en Bitrix con ID:", groupId);
+
+        // 2️⃣ Preparar todas las tareas (fases + integraciones)
+        const tareas = [
+            ...props.bloquesFases.flatMap((b) => b.tareas),
+            ...props.bloquesIntegraciones.flatMap((b) => b.tareas),
+        ];
+
+        // 3️⃣ Enviar tareas al grupo
+        for (const tarea of tareas) {
+            await fetch(
+                "https://wecollab.bitrix24.mx/rest/281/s5qyzs1hdkmr09kz/tasks.task.add",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        fields: {
+                            TITLE: tarea.titulo,
+                            DESCRIPTION: `Duración: ${tarea.duracion_minuto} min`,
+                            GROUP_ID: groupId,
+                            RESPONSIBLE_ID: 1, // Puedes poner otro ID si quieres asignar a alguien específico
+                        },
+                    }),
+                },
+            );
+        }
+
+        alert("Grupo y tareas enviadas a Bitrix ✅");
+    } catch (error) {
+        console.error("Error al crear grupo o enviar tareas en Bitrix:", error);
+        alert(`Error: ${error.message}`);
+    }
+};
 
 const emit = defineEmits(["back", "finish"]);
 
@@ -316,6 +397,13 @@ const generarPDF = () => {
                     @click="generarPDF"
                 >
                     Vista Previa PDF
+                </button>
+
+                <button
+                    class="w-full md:w-auto px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+                    @click="crearGrupoBitrixDesdeProps"
+                >
+                    Crear Grupo en Bitrix
                 </button>
 
                 <button
