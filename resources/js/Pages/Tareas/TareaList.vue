@@ -91,9 +91,9 @@ onMounted(() => {
     <Head title="Tareas" />
 
     <AppLayout>
-        <template #title>
+        <!-- <template #title>
             <PageHeader title="Tareas" />
-        </template>
+        </template> -->
 
         <TablaSeccion :data="tareas.data" title="Lista de Tareas">
             <!-- TOOLBAR -->
@@ -121,7 +121,7 @@ onMounted(() => {
                 >
                     <th class="py-3 px-3 text-left">Título</th>
                     <th class="py-3 px-3 text-left">Descripción</th>
-                    <th class="py-3 px-3 text-left">Estado</th>
+                    <!-- <th class="py-3 px-3 text-left">Estado</th> -->
                     <th class="py-3 px-3 text-left">Duración</th>
                     <th class="py-3 px-3 text-left">Activo</th>
                     <th class="py-3 px-3 text-left">Fase</th>
@@ -142,7 +142,7 @@ onMounted(() => {
                     <td class="py-3 px-3 text-gray-600">
                         {{ item.descripcion ?? "-" }}
                     </td>
-                    <td class="py-3 px-3">
+                    <!-- <td class="py-3 px-3">
                         <span
                             :class="[
                                 item.estado === 'Activo'
@@ -153,7 +153,7 @@ onMounted(() => {
                         >
                             {{ item.estado }}
                         </span>
-                    </td>
+                    </td> -->
                     <td class="py-3 px-3 text-gray-700">
                         {{ item.duracion_minuto ?? "-" }} min
                     </td>
