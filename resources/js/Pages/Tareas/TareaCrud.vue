@@ -241,7 +241,7 @@ const onModalClose = () => router.get("/tareas");
                 </div>
 
                 <!-- CARD: Estado -->
-                <div class="card">
+                <!-- <div class="card">
                     <FormInput
                         label="Estado"
                         type="select"
@@ -254,7 +254,7 @@ const onModalClose = () => router.get("/tareas");
                             { label: 'Cancelado', value: 'cancelado' },
                         ]"
                     />
-                </div>
+                </div> -->
 
                 <!-- CARD: Fase -->
                 <div class="card">

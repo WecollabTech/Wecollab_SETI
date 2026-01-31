@@ -116,7 +116,7 @@ onMounted(() => {
                     <th class="py-3 px-3 text-left">Empresa</th>
                     <th class="py-3 px-3 text-left">Complejidad</th>
                     <th class="py-3 px-3 text-left">Total Horas</th>
-                    <th class="py-3 px-3 text-left">Total Minutos</th>
+                    <!-- <th class="py-3 px-3 text-left">Total Minutos</th> -->
                     <th class="py-3 px-3 text-left">Fecha</th>
                     <th class="py-3 px-3 text-center">Acciones</th>
                 </tr>
@@ -155,12 +155,12 @@ onMounted(() => {
                         {{ item.total_horas }} h
                     </td>
 
-                    <td class="py-3 px-3 text-gray-700">
+                    <!-- <td class="py-3 px-3 text-gray-700">
                         {{ item.total_minutos }} min
-                    </td>
+                    </td> -->
 
                     <td class="py-3 px-3 text-gray-600">
-                        {{ item.created_at }}
+                        {{ new Date(item.created_at).toLocaleString("es-MX") }}
                     </td>
 
                     <td class="py-3 px-3 flex justify-center gap-2">

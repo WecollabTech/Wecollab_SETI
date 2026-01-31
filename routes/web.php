@@ -74,7 +74,9 @@ Route::get('/integraciones_tarea', function () {
 
 
 
-
+Route::get('/fases', function () {
+    return Inertia::render('Fases/Prueba');
+})->name('fases.prueba');
 
 
 

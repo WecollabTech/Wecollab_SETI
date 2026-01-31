@@ -17,6 +17,7 @@ class TipoImplementacion extends Model
         'nombre',
         'descripcion',
         'rubrica',
+        'alcance',
         'estado',
 
     ];

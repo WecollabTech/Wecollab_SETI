@@ -36,45 +36,53 @@ class TipoImplementacionController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validación backend
+            // ✅ Validación backend
             $data = $request->validate([
-                'nombre' => 'required|string|max:255|min:3',
+                'nombre' => 'required|string|min:3|max:255',
                 'descripcion' => 'nullable|string|max:1000',
                 'rubrica' => 'nullable|string|max:255',
+                'alcance' => 'nullable|string|min:10|max:1000', // 👈 NUEVO
                 'activo' => 'required|boolean',
-                'integraciones' => 'nullable|array', // <-- validar array
-                'integraciones.*' => 'exists:integraciones,id', // cada ID debe existir
-                'fases' => 'nullable|array', // <-- validar array
-                'fases.*' => 'exists:fases,id', // cada ID debe existir
+
+                'integraciones' => 'nullable|array',
+                'integraciones.*' => 'exists:integraciones,id',
+
+                'fases' => 'nullable|array',
+                'fases.*' => 'exists:fases,id',
             ], [
                 'nombre.required' => 'El nombre de la implementación es obligatorio.',
                 'nombre.min' => 'El nombre debe tener al menos 3 caracteres.',
+
+                'alcance.min' => 'El alcance debe tener al menos 10 caracteres.',
+                'alcance.max' => 'El alcance no puede superar los 1000 caracteres.',
+
                 'activo.required' => 'Debes seleccionar el estado.',
+
                 'integraciones.array' => 'Las integraciones deben ser un arreglo válido.',
                 'integraciones.*.exists' => 'Una de las integraciones seleccionadas no es válida.',
-                'fases.array' => 'Las integraciones deben ser un arreglo válido.',
-                'fases.*.exists' => 'Una de las integraciones seleccionadas no es válida.',
+
+                'fases.array' => 'Las fases deben ser un arreglo válido.',
+                'fases.*.exists' => 'Una de las fases seleccionadas no es válida.',
             ]);
 
-            // Crear Tipo de Implementación
+            // ✅ Crear Tipo de Implementación
             $tipo = TipoImplementacion::create([
                 'nombre' => $data['nombre'],
                 'descripcion' => $data['descripcion'] ?? null,
                 'rubrica' => $data['rubrica'] ?? null,
+                'alcance' => $data['alcance'] ?? null, // 👈 NUEVO
                 'estado' => $data['activo'],
             ]);
 
-            // Asociar integraciones (si hay)
+            // ✅ Asociar integraciones (si hay)
             if (!empty($data['integraciones'])) {
                 $tipo->integraciones()->sync($data['integraciones']);
             }
 
-
-            // Asociar Fases (si hay)
+            // ✅ Asociar fases (si hay)
             if (!empty($data['fases'])) {
                 $tipo->fases()->sync($data['fases']);
             }
-
 
             return response()->json([
                 'success' => true,
@@ -86,16 +94,18 @@ class TipoImplementacionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Hay errores en el formulario',
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
             ], 422);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ocurrió un error al guardar: ' . $e->getMessage(),
+                'message' => 'Ocurrió un error al guardar.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
 
 
@@ -134,44 +144,86 @@ class TipoImplementacionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $tipo = TipoImplementacion::findOrFail($id);
+        try {
+            // 🔎 Buscar el registro
+            $tipo = TipoImplementacion::findOrFail($id);
 
-        $data = $request->validate([
-            'nombre' => 'required|string|max:255|min:3',
-            'descripcion' => 'nullable|string|max:1000',
-            'rubrica' => 'nullable|string|max:255',
-            'activo' => 'required|boolean',
-            'integraciones' => 'nullable|array',
-            'integraciones.*' => 'exists:integraciones,id',
-            'fases' => 'nullable|array',
-            'fases.*' => 'exists:fases,id',
-        ], [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'activo.required' => 'Debes seleccionar el estado.',
-        ]);
+            // ✅ Validación backend
+            $data = $request->validate([
+                'nombre' => 'required|string|min:3|max:255',
+                'descripcion' => 'nullable|string|max:1000',
+                'rubrica' => 'nullable|string|max:255',
+                'alcance' => 'nullable|string|min:10|max:1000', // 👈 ALCANCE
+                'activo' => 'required|boolean',
 
-        $tipo->update([
-            'nombre' => $data['nombre'],
-            'descripcion' => $data['descripcion'] ?? null,
-            'rubrica' => $data['rubrica'] ?? null,
-            'estado' => $data['activo'],
-        ]);
+                'integraciones' => 'nullable|array',
+                'integraciones.*' => 'exists:integraciones,id',
 
-        // Actualizar relaciones
-        if (isset($data['integraciones'])) {
-            $tipo->integraciones()->sync($data['integraciones']);
+                'fases' => 'nullable|array',
+                'fases.*' => 'exists:fases,id',
+            ], [
+                'nombre.required' => 'El nombre de la implementación es obligatorio.',
+                'nombre.min' => 'El nombre debe tener al menos 3 caracteres.',
+
+                'alcance.min' => 'El alcance debe tener al menos 10 caracteres.',
+                'alcance.max' => 'El alcance no puede superar los 1000 caracteres.',
+
+                'activo.required' => 'Debes seleccionar el estado.',
+
+                'integraciones.array' => 'Las integraciones deben ser un arreglo válido.',
+                'integraciones.*.exists' => 'Una de las integraciones seleccionadas no es válida.',
+
+                'fases.array' => 'Las fases deben ser un arreglo válido.',
+                'fases.*.exists' => 'Una de las fases seleccionadas no es válida.',
+            ]);
+
+            // 📝 Actualizar datos principales
+            $tipo->update([
+                'nombre' => $data['nombre'],
+                'descripcion' => $data['descripcion'] ?? null,
+                'rubrica' => $data['rubrica'] ?? null,
+                'alcance' => $data['alcance'] ?? null, // 👈 ALCANCE
+                'estado' => $data['activo'],
+            ]);
+
+            // 🔗 Sincronizar integraciones
+            if (array_key_exists('integraciones', $data)) {
+                $tipo->integraciones()->sync($data['integraciones'] ?? []);
+            }
+
+            // 🔗 Sincronizar fases
+            if (array_key_exists('fases', $data)) {
+                $tipo->fases()->sync($data['fases'] ?? []);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tipo de implementación actualizado correctamente',
+                'data' => $tipo,
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hay errores en el formulario',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El tipo de implementación no existe.',
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al actualizar.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        if (isset($data['fases'])) {
-            $tipo->fases()->sync($data['fases']);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Tipo de implementación actualizado correctamente',
-            'data' => $tipo,
-        ]);
     }
+
 
 
     public function destroy($id)

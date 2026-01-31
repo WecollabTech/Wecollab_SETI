@@ -16,6 +16,7 @@ const form = reactive({
     nombre: "",
     descripcion: "",
     rubrica: "",
+    alcance: "", // 👈 NUEVO
     activo: true,
     integraciones: [], // Array de integraciones seleccionadas
     fases: [],
@@ -26,6 +27,7 @@ const errors = reactive({
     nombre: null,
     descripcion: null,
     rubrica: null,
+    alcance: null, // 👈 NUEVO
     activo: null,
     integraciones: null,
     fases: null,
@@ -65,6 +67,7 @@ const resetForm = () => {
     form.nombre = "";
     form.descripcion = "";
     form.rubrica = "";
+    form.alcance = ""; // 👈 NUEVO
     form.activo = true;
     form.integraciones = [];
     Object.keys(errors).forEach((k) => (errors[k] = null));
@@ -83,6 +86,11 @@ watch(
     () => form.nombre,
     () => (errors.nombre = null),
 );
+watch(
+    () => form.alcance,
+    () => (errors.alcance = null),
+);
+
 watch(
     () => form.descripcion,
     () => (errors.descripcion = null),
@@ -124,6 +132,11 @@ const validateFront = () => {
         valid = false;
     }
 
+    if (!form.alcance || form.alcance.length < 10) {
+        errors.alcance = "El alcance debe tener al menos 10 caracteres.";
+        valid = false;
+    }
+
     return valid;
 };
 
@@ -142,6 +155,7 @@ const submit = async () => {
             nombre: form.nombre,
             descripcion: form.descripcion,
             rubrica: form.rubrica,
+            alcance: form.alcance, // 👈 NUEVO
             activo: form.activo,
             integraciones: form.integraciones.map((i) => i.id),
             fases: form.fases.map((f) => f.id),
@@ -219,7 +233,7 @@ onMounted(() => cargarFases());
                 </div>
 
                 <!-- CARD: Rúbrica -->
-                <div
+                <!-- <div
                     class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
                     <FormInput
@@ -228,7 +242,7 @@ onMounted(() => cargarFases());
                         :error="errors.rubrica"
                         placeholder="Ej: Rúbrica asociada al proyecto"
                     />
-                </div>
+                </div> -->
 
                 <!-- CARD: Descripción -->
                 <div
@@ -324,6 +338,22 @@ onMounted(() => cargarFases());
                         {{ errors.activo }}
                     </p>
                 </div>
+            </div>
+
+            <!-- CARD: Alcance -->
+            <div
+                class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
+            >
+                <FormInput
+                    label="Alcance"
+                    type="textarea"
+                    v-model="form.alcance"
+                    :error="errors.alcance"
+                    placeholder="Describe el alcance de la implementación"
+                />
+                <p class="text-gray-400 text-sm mt-1">
+                    {{ form.alcance.length }}/1000 caracteres
+                </p>
             </div>
 
             <!-- BOTONES DE ACCIÓN -->

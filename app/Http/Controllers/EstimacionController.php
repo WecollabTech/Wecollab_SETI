@@ -9,6 +9,8 @@ use App\Models\EstimacionFase;
 use App\Models\EstimacionTarea;
 use App\Models\EstimacionIntegracion;
 use App\Models\EstimacionIntegracionTarea;
+use Spatie\Browsershot\Browsershot;
+use Illuminate\Support\Facades\Storage;
 
 class EstimacionController extends Controller
 {
@@ -171,21 +173,31 @@ class EstimacionController extends Controller
 
 
 
-    //funcion para Generar PDF de la estimacion 
+
+
+
     public function exportarPdf($id)
     {
         $estimacion = Estimacion::with([
             'fases.fase',
             'fases.tareas',
             'integraciones.integracion',
-            'complejidad',
             'integraciones.tareas',
+            'complejidad',
         ])->findOrFail($id);
 
-        $pdf = Pdf::loadView('pdf.estimacion', [
-            'estimacion' => $estimacion
-        ])->setPaper('a4', 'portrait');
+        $html = view('pdf.estimacion', compact('estimacion'))->render();
 
-        return $pdf->stream('estimacion_' . $estimacion->id . '.pdf');
+        $path = storage_path('app/public/estimacion_' . $estimacion->id . '.pdf');
+
+        Browsershot::html($html)
+            ->format('letter')
+            ->showBackground()
+            ->savePdf($path);
+
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline'
+        ]);
     }
 }

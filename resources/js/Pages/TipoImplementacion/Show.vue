@@ -71,13 +71,22 @@ const goEdit = () =>
                     <div
                         class="bg-gray-50 p-5 rounded-xl shadow-inner hover:shadow transition"
                     >
-                        <h3
+                        <!-- <h3
                             class="font-semibold text-gray-600 text-sm uppercase mb-2"
                         >
                             Rúbrica
                         </h3>
                         <p class="text-gray-700">
                             {{ props.tipo.rubrica || "Sin rúbrica" }}
+                        </p> -->
+
+                        <h3
+                            class="font-semibold text-gray-600 text-sm uppercase mt-4 mb-2"
+                        >
+                            Alcance
+                        </h3>
+                        <p class="text-gray-700">
+                            {{ props.tipo.alcance || "Sin alcance" }}
                         </p>
 
                         <h3
@@ -169,7 +178,8 @@ const goEdit = () =>
                 :headers="['Campo', 'Valor']"
                 :rows="[
                     ['Nombre', props.tipo.nombre || '-'],
-                    ['Rúbrica', props.tipo.rubrica || '-'],
+                    // ['Rúbrica', props.tipo.rubrica || '-'],
+                    ['Alcance', props.tipo.alcance || '-'],
                     ['Descripción', props.tipo.descripcion || '-'],
                     ['Estado', props.tipo.estado ? 'Activo' : 'Inactivo'],
                     [

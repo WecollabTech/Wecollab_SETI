@@ -352,8 +352,6 @@
             align-self: stretch;
         }
 
-
-
         /* ===== ESTILOS DE IMPRESIÓN CORREGIDOS ===== */
         @media print {
 
@@ -366,74 +364,106 @@
                 print-color-adjust: exact;
                 display: block;
                 width: 100%;
-                height: auto;
-                position: relative;
+                height: 100%;
             }
 
-            /* ===== HEADER SIN MÁRGENES ===== */
+            /* ===== HEADER SOLO EN PRIMERA PÁGINA ===== */
             .header-section {
                 position: relative;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 50%, #1a3a6c 100%) !important;
+                padding: 8mm 20mm 4mm 20mm !important;
+                background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 50%, #1a3a6c 100%);
                 page-break-after: avoid;
                 break-after: avoid;
+                height: auto;
                 box-shadow: none !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                width: 100% !important;
-                height: auto !important;
-                min-height: 40mm !important;
+                z-index: 1;
             }
 
-            .header-content {
-                padding: 8mm 20mm 0 20mm !important;
-                margin: 0 !important;
-                max-width: 100% !important;
+            .header-section::before {
+                position: relative !important;
             }
 
             .header-title {
-                margin: 2mm 20mm !important;
-                padding: 3mm !important;
+                margin: 1mm 0 !important;
+                padding: 1mm !important;
             }
 
-            /* ===== CONTENIDO PRINCIPAL ===== */
+            /* ===== CONTENIDO CON ESPACIO GARANTIZADO ===== */
             .content-section {
-                padding: 0 20mm !important;
-                margin: 0 !important;
+                padding: 3mm 25mm 20mm 25mm !important;
+                /* 20mm abajo para espacio */
+                margin: 0;
                 width: 100%;
                 position: relative;
+                min-height: calc(100vh - 40mm);
             }
 
             .content-wrapper {
                 box-shadow: none !important;
                 border-radius: 0 !important;
-                padding: 5mm 0 15mm 0 !important;
-                /* Aumentado de 10mm a 15mm */
+                padding: 0 !important;
                 margin: 0 auto;
                 max-width: 100%;
+                min-height: auto;
                 background: white !important;
+
+                /* IMPORTANTE: Margen inferior en todas las páginas */
+                padding-bottom: 25mm !important;
+                /* Espacio para evitar footer */
             }
 
             .info-section {
-                padding: 5mm 0 !important;
-                margin-bottom: 10px !important;
+                padding: 6mm 0 !important;
+                margin-bottom: 12px;
                 page-break-inside: avoid;
                 break-inside: avoid;
                 background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
             }
 
-            /* ===== SECCIONES Y TABLAS ===== */
-            .phase-section {
-                padding: 5mm 0 !important;
-                margin-bottom: 10px !important;
-                page-break-inside: avoid;
-                break-inside: avoid;
+            /* ===== CORRECCIÓN CRÍTICA: Evitar contenido debajo del footer ===== */
+
+            /* 1. Zona de exclusión en TODAS las páginas */
+            body::after {
+                content: '';
+                display: block;
+                height: 20mm !important;
+                /* Zona donde NO puede entrar contenido */
+                width: 100%;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 9998;
+                background: transparent;
+                pointer-events: none;
             }
 
-            table {
+            /* 2. En nueva página, comenzar con márgen */
+            .phase-section {
+                padding: 8mm 0 6mm 0 !important;
+                /* 8mm arriba en nueva página */
+                margin-bottom: 8px !important;
+
+                /* Permitir división si es necesario */
                 page-break-inside: auto !important;
-                margin-bottom: 8mm !important;
+                break-inside: auto !important;
+            }
+
+            /* 3. Si es la primera sección después de salto, más espacio */
+            .phase-section:first-of-type {
+                padding-top: 5mm !important;
+                /* Menos espacio si es primera */
+            }
+
+            /* 4. Si NO es primera, más espacio (porque viene después de salto) */
+            .content-section .phase-section:not(:first-of-type) {
+                padding-top: 15mm !important;
+                /* Más espacio después de salto de página */
+            }
+
+            /* 5. Control de tablas */
+            thead {
+                display: table-header-group !important;
             }
 
             tr {
@@ -441,109 +471,86 @@
                 page-break-after: auto !important;
             }
 
-            /* ===== FOOTER MÁS ALTO Y SEPARADO ===== */
+            td,
+            th {
+                page-break-inside: avoid !important;
+            }
+
+            /* 6. Si una tabla es muy larga y causa salto, ajustar */
+            table {
+                page-break-inside: auto !important;
+                margin-bottom: 10mm !important;
+                /* Espacio después de tabla */
+            }
+
+            /* ===== FOOTER FIJO CORREGIDO ===== */
             .footer-section {
+                position: fixed !important;
+                left: 0;
+                right: 0;
+                bottom: 5mm !important;
+                /* 5mm del borde (más razonable) */
+                width: 100%;
+                height: 15mm !important;
+                min-height: 15mm !important;
+                padding: 3mm 20mm !important;
+                background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 100%) !important;
+                z-index: 9999 !important;
+                /* Z-index ALTO para estar encima */
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                page-break-inside: avoid !important;
+                border-top: 2px solid #d4af37 !important;
+
+                /* IMPORTANTE: Solo en última página */
+                display: none !important;
+            }
+
+            .footer-section::before {
+                display: block !important;
+                height: 2px !important;
+            }
+
+            /* MOSTRAR footer SOLO en la última página */
+            body:last-of-type .footer-section {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
+            /* OCULTAR footer en TODAS las demás páginas */
+            body:not(:last-of-type) .footer-section {
                 display: none !important;
                 visibility: hidden !important;
                 opacity: 0 !important;
                 height: 0 !important;
                 min-height: 0 !important;
+                max-height: 0 !important;
                 padding: 0 !important;
                 margin: 0 !important;
             }
 
-            /* Mostrar footer SOLO en la última página - MÁS ALTO Y SEPARADO */
-            body:last-child .footer-section {
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                position: fixed !important;
-                bottom: 0mm !important;
-                /* Separado 3mm del borde inferior */
-                left: 0 !important;
-                right: 0 !important;
-                width: 100% !important;
-                height: 25mm !important;
-                /* Aumentado de 15mm a 20mm */
-                min-height: 20mm !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 100%) !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                z-index: 9999 !important;
-                page-break-inside: avoid !important;
-                border-top: 2px solid #d4af37 !important;
-                border-bottom: 2px solid #d4af37 !important;
-                /* Borde inferior también */
-            }
-
-            /* Contenido del footer con más espacio */
-            body:last-child .footer-content {
-                padding: 4mm 20mm !important;
-                /* Aumentado de 3mm a 4mm */
-                margin: 0 !important;
-                height: 100% !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-            }
-
-            /* Aumentar tamaño de texto en footer para mejor legibilidad */
-            body:last-child .footer-logo {
-                font-size: 16px !important;
-            }
-
-            body:last-child .footer-text {
-                font-size: 11px !important;
-                /* Aumentado de 10px a 11px */
-                line-height: 1.4 !important;
-            }
-
-            body:last-child .footer-date {
-                font-size: 12px !important;
-                /* Aumentado de 11px a 12px */
-                padding: 3mm 12px !important;
-                /* Más padding */
-            }
-
-            /* ===== CONFIGURACIÓN DE PÁGINA ===== */
-            @page {
-                margin: 0 !important;
-                padding: 0 !important;
-                size: auto;
-            }
-
-            /* Primera página */
-            @page :first {
-                margin-top: 0 !important;
-                margin-bottom: 0 !important;
-            }
-
-            /* Todas las páginas sin márgenes */
-            @page {
-                margin-top: 0 !important;
-                margin-bottom: 0 !important;
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-            }
-
-            /* Última página con espacio para footer separado */
-            @page :last {
-                margin-bottom: 3mm !important;
-                /* Espacio para el footer separado */
-            }
-
-            /* ===== AJUSTES PARA CONTENIDO EN ÚLTIMA PÁGINA ===== */
-            /* Más espacio en la última página para el footer más alto */
-            body:last-child .content-wrapper {
+            /* ===== AJUSTES PARA ÚLTIMA PÁGINA ===== */
+            body:last-of-type .content-section {
                 padding-bottom: 25mm !important;
-                /* Aumentado de 20mm a 25mm */
+                /* Más espacio en última página */
             }
 
-            /* Asegurar que el último elemento no esté muy cerca del footer */
-            body:last-child .phase-section:last-child {
-                margin-bottom: 15mm !important;
+            body:last-of-type .content-wrapper {
+                padding-bottom: 10mm !important;
+                /* Extra espacio para footer */
+            }
+
+            /* Última tabla tiene menos espacio abajo */
+            body:last-of-type .phase-section:last-child {
+                padding-bottom: 8mm !important;
+                margin-bottom: 5mm !important;
+            }
+
+            /* ===== REGLA DE SEGURIDAD: NUNCA contenido en últimos 25mm ===== */
+            /* Esto previene que cualquier contenido entre en el área del footer */
+            * {
+                max-height: calc(100% - 25mm) !important;
             }
 
             /* ===== ESTILOS ADICIONALES ===== */
@@ -552,21 +559,40 @@
                 box-shadow: none !important;
             }
 
+            .footer-content {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                gap: 10px;
+            }
+
             .info-box {
                 box-shadow: none !important;
                 border: 1px solid #e0e0e0 !important;
                 transition: none !important;
             }
+        }
 
-            /* Ocultar efectos hover en impresión */
-            tr:hover {
-                background-color: inherit !important;
-            }
+        /* ===== CONFIGURACIÓN DE PÁGINA CORREGIDA ===== */
+        @page {
+            margin: 0 !important;
+            padding: 0 !important;
+            size: auto;
+        }
 
-            /* Eliminar sombras y efectos visuales */
-            .phase-title {
-                box-shadow: none !important;
-            }
+        @page :first {
+            margin-top: 0 !important;
+        }
+
+        @page :last {
+            margin-bottom: 10mm !important;
+            /* Espacio para footer en última página */
+        }
+
+        /* Márgen inferior en TODAS las páginas para evitar contenido cerca del borde */
+        @page {
+            margin-bottom: 20mm !important;
         }
     </style>
 </head>
@@ -593,7 +619,6 @@
             <h1>📊 REPORTE DE PROYECTO</h1>
             <div class="header-subtitle">Seguimiento y Control de Actividades</div>
         </div>
-
     </div>
 
     <!-- ===== SECCIÓN 2: CONTENIDO ===== -->
@@ -685,21 +710,6 @@
                         <tr>
                             <td>2. Asignación de recursos del equipo</td>
                             <td class="time-cell">3 h</td>
-                            <td class="time-cell">Jefe Proyecto</td>
-                        </tr>
-                        <tr>
-                            <td>3. Establecimiento de hitos clave</td>
-                            <td class="time-cell">4 h</td>
-                            <td class="time-cell">Jefe Proyecto</td>
-                        </tr>
-                        <tr>
-                            <td>3. Establecimiento de hitos clave</td>
-                            <td class="time-cell">4 h</td>
-                            <td class="time-cell">Jefe Proyecto</td>
-                        </tr>
-                        <tr>
-                            <td>3. Establecimiento de hitos clave</td>
-                            <td class="time-cell">4 h</td>
                             <td class="time-cell">Jefe Proyecto</td>
                         </tr>
                         <tr>

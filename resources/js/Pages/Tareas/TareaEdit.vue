@@ -8,7 +8,7 @@ import PageHeader from "@/Components/Layout/PageHeader.vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
 import FormInput from "@/Components/Formulario/FormInput.vue";
 import SuccessModal from "@/Components/Modal/SuccessModal.vue";
-
+import CardInput from "@/Components/Formulario/CardInput.vue";
 // --- PROPS ---
 const props = defineProps({
     tareaId: {
@@ -150,94 +150,115 @@ onMounted(() => {
         </template>
 
         <FormWrapper title="Actualizar los datos de la Tarea">
-            <FormInput
-                label="Título"
-                v-model="form.titulo"
-                :error="errors.titulo"
-                placeholder="Título de la tarea"
-            />
-            <p v-if="errors.titulo" class="text-red-600 text-sm mt-1">
-                {{ errors.titulo }}
-            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CardInput>
+                    <FormInput
+                        label="Título"
+                        v-model="form.titulo"
+                        :error="errors.titulo"
+                        placeholder="Título de la tarea"
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Id Proceso"
-                type="text"
-                v-model="form.id_proceso"
-                :error="errors.id_proceso"
-                placeholder="ID del proceso"
-            />
-            <p v-if="errors.id_proceso" class="text-red-600 text-sm mt-1">
-                {{ errors.id_proceso }}
-            </p>
+                <CardInput>
+                    <FormInput
+                        label="Id Proceso"
+                        type="text"
+                        v-model="form.id_proceso"
+                        :error="errors.id_proceso"
+                        placeholder="ID del proceso"
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Descripción"
-                type="textarea"
-                v-model="form.descripcion"
-                :error="errors.descripcion"
-                placeholder="Descripción de la tarea"
-            />
-            <p v-if="errors.descripcion" class="text-red-600 text-sm mt-1">
-                {{ errors.descripcion }}
-            </p>
+                <CardInput>
+                    <FormInput
+                        label="Descripción"
+                        type="textarea"
+                        v-model="form.descripcion"
+                        :error="errors.descripcion"
+                        placeholder="Descripción de la tarea"
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Estado"
-                type="select"
-                v-model="form.estado"
-                :options="[
-                    { label: 'Pendiente', value: 'pendiente' },
-                    { label: 'En proceso', value: 'en_proceso' },
-                    { label: 'Completado', value: 'completado' },
-                    { label: 'Cancelado', value: 'cancelado' },
-                ]"
-                :error="errors.estado"
-            />
-            <p v-if="errors.estado" class="text-red-600 text-sm mt-1">
-                {{ errors.estado }}
-            </p>
+                <!-- <CardInput>
+                    <FormInput
+                        label="Estado"
+                        type="select"
+                        v-model="form.estado"
+                        :options="[
+                            { label: 'Pendiente', value: 'pendiente' },
+                            { label: 'En proceso', value: 'en_proceso' },
+                            { label: 'Completado', value: 'completado' },
+                            { label: 'Cancelado', value: 'cancelado' },
+                        ]"
+                        :error="errors.estado"
+                    />
+                </CardInput> -->
 
-            <FormInput
-                label="Duración (minutos)"
-                type="number"
-                v-model="form.duracion_minuto"
-                :error="errors.duracion_minuto"
-                placeholder="Ej. 30"
-            />
-            <p v-if="errors.duracion_minuto" class="text-red-600 text-sm mt-1">
-                {{ errors.duracion_minuto }}
-            </p>
+                <CardInput>
+                    <FormInput
+                        label="Duración (minutos)"
+                        type="number"
+                        v-model="form.duracion_minuto"
+                        :error="errors.duracion_minuto"
+                        placeholder="Ej. 30"
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Orden"
-                type="number"
-                v-model="form.orden"
-                :error="errors.orden"
-                placeholder="Ej. 1"
-            />
-            <p v-if="errors.orden" class="text-red-600 text-sm mt-1">
-                {{ errors.orden }}
-            </p>
+                <CardInput>
+                    <FormInput
+                        label="Orden"
+                        type="number"
+                        v-model="form.orden"
+                        :error="errors.orden"
+                        placeholder="Ej. 1"
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Fase"
-                type="select"
-                v-model="form.fase_id"
-                :options="fases.map((f) => ({ label: f.nombre, value: f.id }))"
-                :error="errors.fase_id"
-            />
-            <p v-if="errors.fase_id" class="text-red-600 text-sm mt-1">
-                {{ errors.fase_id }}
-            </p>
+                <CardInput>
+                    <FormInput
+                        label="Fase"
+                        type="select"
+                        v-model="form.fase_id"
+                        :options="
+                            fases.map((f) => ({ label: f.nombre, value: f.id }))
+                        "
+                        :error="errors.fase_id"
+                    />
+                </CardInput>
 
-            <FormInput
-                label="Activa"
-                type="checkbox"
-                v-model="form.activo"
-                :error="errors.activo"
-            />
-
+                <CardInput>
+                    <div class="mt-4">
+                        <span
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                            Activo
+                        </span>
+                        <div
+                            class="w-12 h-6 rounded-full p-0.5 flex items-center transition-colors duration-300 cursor-pointer"
+                            :class="
+                                form.activo ? 'bg-green-500' : 'bg-gray-300'
+                            "
+                            @click="form.activo = !form.activo"
+                        >
+                            <div
+                                class="bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300"
+                                :class="
+                                    form.activo
+                                        ? 'translate-x-6'
+                                        : 'translate-x-0'
+                                "
+                            ></div>
+                        </div>
+                        <p
+                            v-if="errors.activo"
+                            class="text-red-600 text-sm mt-1"
+                        >
+                            {{ errors.activo }}
+                        </p>
+                    </div>
+                </CardInput>
+            </div>
             <template #actions>
                 <div
                     class="flex flex-col md:flex-row justify-center md:justify-end gap-4"

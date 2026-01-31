@@ -593,7 +593,6 @@
             <h1>📊 REPORTE DE PROYECTO</h1>
             <div class="header-subtitle">Seguimiento y Control de Actividades</div>
         </div>
-
     </div>
 
     <!-- ===== SECCIÓN 2: CONTENIDO ===== -->
