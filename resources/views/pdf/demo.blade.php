@@ -3,145 +3,197 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Plan de Desarrollo del Proyecto</title>
-
+    <title>Estimación {{ $estimacion->id }}</title>
     <style>
-        /* ===== FORZAR COLORES EN PDF ===== */
-        * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            box-sizing: border-box;
-        }
-
-        html,
         body {
+            font-family: 'DejaVu Sans', Arial, sans-serif;
+            font-size: 12px;
             margin: 0;
             padding: 0;
-            font-family: Helvetica, Arial, sans-serif;
-            background: #ffffff !important;
             color: #333;
+            position: relative;
         }
 
-        /* ===== HEADER FIJO ===== */
-        .pdf-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 90px;
-            padding: 18px 40px;
-            background-color: #5B34C9 !important;
-            background-image: linear-gradient(135deg, #5B34C9, #341e68) !important;
-            color: #fff !important;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .header-left {
+        /* ===== Encabezado mejorado ===== */
+        header {
+            background: linear-gradient(135deg, #0D47A1, #1976D2);
+            height: 120px;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
-            gap: 15px;
+            padding: 0 40px;
+            color: white;
         }
 
-        .header-left img {
-            height: 45px;
+        /* ===== Contenedor texto a la izquierda ===== */
+        header .header-text {
+            flex: 1;
         }
 
-        .header-text h1 {
+        header .header-text h1 {
             margin: 0;
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
 
-        .header-text span {
-            font-size: 13px;
+        header .header-text p {
+            margin: 4px 0 0 0;
+            font-size: 14px;
             opacity: 0.9;
         }
 
-        .header-right {
-            font-size: 13px;
-            text-align: right;
+        /* ===== Logo a la derecha ===== */
+        header .logo {
+            flex-shrink: 0;
         }
 
-        /* ===== FOOTER FIJO ===== */
-        .pdf-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50px;
-            background-color: #f1f1f1 !important;
-            border-top: 1px solid #ddd;
-            color: #666;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            z-index: 1000;
+        header .logo img {
+            height: 70px;
         }
 
-        .pdf-footer strong {
-            color: #5B34C9;
+        /* ===== Marca de agua ===== */
+        .watermark {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.05;
+            width: 400px;
+            height: 400px;
+            background: url('/img/logo.png') no-repeat center center;
+            background-size: contain;
+            z-index: 0;
         }
 
-        /* ===== CONTENIDO ===== */
-        main.container {
-            /* padding-top = header + margen extra, padding-bottom = footer */
-            padding: 120px 40px 80px;
-            max-width: 900px;
-            margin: 0 auto;
+        /* ===== Contenido ===== */
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 30px 40px 120px;
+        }
+
+        .info {
+            padding: 15px 0;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .info p {
+            margin: 5px 0;
         }
 
         h2 {
-            color: #5B34C9;
-            margin-bottom: 20px;
-            page-break-after: avoid;
-        }
-
-        .fase {
-            margin-bottom: 25px;
-            padding: 18px 20px;
-            border-radius: 10px;
-            background: #f8f7fc;
-            border-left: 5px solid #5B34C9;
-            page-break-inside: avoid;
-            /* evita que la fase se rompa */
-        }
-
-        .fase h3 {
-            margin-top: 0;
-            color: #341e68;
-            font-size: 16px;
-        }
-
-        ul {
-            margin: 10px 0 0 20px;
-            padding: 0;
-        }
-
-        ul li {
-            margin-bottom: 8px;
+            margin: 30px 0 10px;
             font-size: 14px;
-            line-height: 1.5;
+            color: #0D47A1;
+            border-bottom: 2px solid #1976D2;
+            padding-bottom: 4px;
         }
 
-        /* ===== PDF & PAGE SETTINGS ===== */
-        @page {
-            margin: 0;
-            /* header/footer fijos */
+        /* ===== Tablas ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            table-layout: fixed;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #1976D2;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 30%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 50%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 20%;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:hover {
+            background-color: #E3F2FD;
+        }
+
+        /* ===== Pie de página ===== */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #E3F2FD;
+            padding: 12px 40px;
+            border-top: 2px solid #0D47A1;
+            display: flex;
+            align-items: center;
+            font-size: 10px;
+            color: #0D47A1;
+            justify-content: flex-start;
+            gap: 15px;
+        }
+
+        footer .arrow {
+            display: inline-block;
+            width: 15px;
+            height: 10px;
+            border-right: 10px solid #0D47A1;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        footer .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         @media print {
-            body {
-                margin: 0;
+
+            header,
+            footer {
+                position: fixed;
             }
 
-            /* fuerza un padding-top constante al inicio de cada página */
-            main.container {
-                padding-top: 120px;
+            body {
+                margin-top: 150px;
+                margin-bottom: 80px;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
             }
         }
     </style>
@@ -149,95 +201,88 @@
 
 <body>
 
-    <!-- HEADER FIJO -->
-    <header class="pdf-header">
-        <div class="header-left">
-            <img src="https://via.placeholder.com/120x50?text=LOGO" alt="Logo">
-            <div class="header-text">
-                <h1>Plan de Desarrollo del Proyecto</h1>
-                <span>Fases y Tareas</span>
-            </div>
+    <!-- ===== Encabezado mejorado ===== -->
+    <header>
+        <div class="header-text">
+            <h1>THYNK UNLIMITED</h1>
+            <p>Creative Company</p>
         </div>
-        <div class="header-right">
-            <span>Fecha:</span><br>
-            <strong>29/01/2026</strong>
+        <div class="logo">
+            <img src="/img/logo.png" alt="Logo">
         </div>
     </header>
 
-    <!-- CONTENIDO -->
-    <main class="container">
-        <h2>Fases de Desarrollo</h2>
+    <!-- ===== Marca de agua ===== -->
+    <div class="watermark"></div>
 
-        <div class="fase">
-            <h3>1. Análisis y Requerimientos</h3>
-            <ul>
-                <li>Levantamiento de información con el cliente</li>
-                <li>Definición de objetivos y alcance</li>
-                <li>Identificación de requerimientos funcionales</li>
-                <li>Identificación de requerimientos técnicos</li>
-                <li>Documentación de requerimientos</li>
-            </ul>
+    <!-- ===== Contenido ===== -->
+    <div class="content">
+        <div class="info">
+            <p><strong>Tipo de Implementación:</strong> {{ $estimacion->nombre_tipo_implementacion ?? '-' }}</p>
+            <p><strong>Comentarios:</strong> {{ $estimacion->comentarios ?? '-' }}</p>
+            <p><strong>Total Horas:</strong> {{ $estimacion->total_horas }} h</p>
+            <p><strong>Complejidad:</strong> {{ $estimacion->complejidad->nombre ?? '-' }}</p>
         </div>
 
-        <div class="fase">
-            <h3>2. Diseño</h3>
-            <ul>
-                <li>Diseño de arquitectura del sistema</li>
-                <li>Diseño de base de datos</li>
-                <li>Diseño de interfaces UI/UX</li>
-                <li>Definición de flujos de navegación</li>
-                <li>Validación del diseño</li>
-            </ul>
-        </div>
+        {{-- Fases --}}
+        @if($estimacion->fases->count())
+            <h2>Fases</h2>
+            @foreach($estimacion->fases as $fase)
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fase</th>
+                            <th>Tarea</th>
+                            <th>Duración (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($fase->tareas as $tarea)
+                            <tr>
+                                <td>{{ $fase->fase->nombre ?? '-' }}</td>
+                                <td>{{ $tarea->nombre_tarea ?? '-' }}</td>
+                                <td>{{ $tarea->duracion_minuto ?? '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endforeach
+        @endif
 
-        <div class="fase">
-            <h3>3. Desarrollo</h3>
-            <ul>
-                <li>Configuración del entorno de desarrollo</li>
-                <li>Programación de funcionalidades</li>
-                <li>Integración de APIs y servicios</li>
-                <li>Control de versiones</li>
-                <li>Documentación técnica</li>
-            </ul>
-        </div>
+        {{-- Integraciones --}}
+        @if($estimacion->integraciones->count())
+            <h2>Integraciones</h2>
+            @foreach($estimacion->integraciones as $integracion)
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Integración</th>
+                            <th>Tarea</th>
+                            <th>Duración (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($integracion->tareas as $tarea)
+                            <tr>
+                                <td>{{ $integracion->integracion->nombre ?? '-' }}</td>
+                                <td>{{ $tarea->nombre_tarea_integracion ?? '-' }}</td>
+                                <td>{{ $tarea->duracion_estimada_minutos ?? '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endforeach
+        @endif
+    </div>
 
-        <div class="fase">
-            <h3>4. Pruebas</h3>
-            <ul>
-                <li>Pruebas unitarias</li>
-                <li>Pruebas funcionales</li>
-                <li>Pruebas de integración</li>
-                <li>Corrección de errores</li>
-                <li>Validación final</li>
-            </ul>
-        </div>
-
-        <div class="fase">
-            <h3>5. Implementación</h3>
-            <ul>
-                <li>Despliegue en ambiente productivo</li>
-                <li>Configuración de servidor</li>
-                <li>Pruebas en producción</li>
-                <li>Capacitación al usuario</li>
-                <li>Entrega del proyecto</li>
-            </ul>
-        </div>
-
-        <div class="fase">
-            <h3>6. Mantenimiento y Soporte</h3>
-            <ul>
-                <li>Soporte técnico continuo</li>
-                <li>Corrección de incidencias</li>
-                <li>Mejoras y optimización</li>
-                <li>Actualizaciones de seguridad</li>
-                <li>Monitoreo del sistema</li>
-            </ul>
-        </div>
-    </main>
-
-    <!-- FOOTER FIJO -->
-    <footer class="pdf-footer">
-        © 2026 <strong>Soudev Team</strong> • Documento generado en HTML
+    <!-- ===== Pie de página ===== -->
+    <footer>
+        <div class="arrow"></div>
+        <div class="arrow"></div>
+        <div class="arrow"></div>
+        <div class="contact-item">🌐 www.reallygreatsite.com</div>
+        <div class="contact-item">📞 123-456-7890</div>
+        <div class="contact-item">✉ hello@reallygreatsite.com</div>
     </footer>
 
 </body>

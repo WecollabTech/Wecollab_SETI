@@ -191,13 +191,18 @@ class EstimacionController extends Controller
         $path = storage_path('app/public/estimacion_' . $estimacion->id . '.pdf');
 
         Browsershot::html($html)
-            ->format('letter')
+            ->format('Letter')
+            ->landscape(false) // Portrait mode
+            ->margins(10, 15, 10, 15) // Top, Right, Bottom, Left en mm
             ->showBackground()
+            ->waitUntilNetworkIdle()
+            ->setOption('args', ['--disable-web-security'])
+            ->noSandbox()
             ->savePdf($path);
 
         return response()->file($path, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline'
+            'Content-Disposition' => 'inline; filename="estimacion_' . $estimacion->id . '.pdf"'
         ]);
     }
 }

@@ -26,6 +26,7 @@
             width: 100%;
             background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 50%, #1a3a6c 100%);
             color: white;
+            padding: 30px 40px;
             position: relative;
             overflow: hidden;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
@@ -42,97 +43,71 @@
             background: linear-gradient(90deg, #d4af37 0%, #f0e68c 50%, #d4af37 100%);
         }
 
-        .header-container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 25px 40px 15px 40px;
-            position: relative;
-        }
-
-        .header-top {
+        .header-content {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            align-items: flex-start;
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        /* Logos con 1cm (38px aprox) de margen */
-        .logo-left-container {
-            width: 150px;
-            padding-left: 38px;
-            /* 1cm aprox */
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-        }
-
-        .logo-right-container {
-            width: 150px;
-            padding-right: 38px;
-            /* 1cm aprox */
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
-
-        .logo-left {
-            height: 50px;
-            width: auto;
-            max-width: 150px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        }
-
-        .logo-right {
-            height: 50px;
-            width: auto;
-            max-width: 150px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        }
-
-        .header-center {
-            text-align: center;
+        .header-left {
             flex: 1;
-            padding: 0 20px;
-        }
-
-        .header-center h1 {
-            font-size: 24px;
-            font-weight: 800;
-            color: #ffffff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .header-subtitle {
-            font-size: 13px;
-            color: #d4af37;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        .header-info {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-
-        .info-item {
             display: flex;
-            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .company-logo {
+            height: 60px;
+            width: auto;
+            max-width: 120px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .logo-placeholder {
+            height: 60px;
+            width: 120px;
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a3a6c;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            padding: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .header-right {
+            text-align: right;
+            margin-left: 20px;
+        }
+
+        .project-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .header-label {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: #d4af37;
             text-transform: uppercase;
@@ -142,10 +117,37 @@
         }
 
         .header-value {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: #ffffff;
+            margin-bottom: 8px;
             display: block;
+        }
+
+        .header-title {
+            text-align: center;
+            margin: 20px auto;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            max-width: 800px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+            letter-spacing: 1px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #d4af37;
+            margin-top: 5px;
+            font-weight: 500;
         }
 
         /* ===== SECCIÓN CONTENIDO ===== */
@@ -308,6 +310,8 @@
             width: 100%;
             background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 100%);
             color: white;
+            padding: 12px 40px;
+            text-align: center;
             position: relative;
             margin-top: auto;
             box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
@@ -327,12 +331,6 @@
             z-index: 101;
         }
 
-        .footer-container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 12px 0;
-        }
-
         .footer-content {
             display: flex;
             justify-content: space-between;
@@ -343,39 +341,18 @@
             margin: 0 auto;
         }
 
-        /* Contenedores de logos en footer con 1cm de margen */
-        .footer-logo-left-container {
+        .footer-left,
+        .footer-right {
             flex: 1;
             min-width: 200px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-left: 38px;
-            /* 1cm aprox */
-            justify-content: flex-start;
         }
 
-        .footer-logo-right-container {
-            flex: 1;
-            min-width: 200px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-right: 38px;
-            /* 1cm aprox */
-            justify-content: flex-end;
+        .footer-left {
+            text-align: left;
         }
 
-        .footer-logo-img {
-            height: 25px;
-            width: auto;
-            max-width: 80px;
-            object-fit: contain;
-        }
-
-        .footer-text-container {
-            display: flex;
-            flex-direction: column;
+        .footer-right {
+            text-align: right;
         }
 
         .footer-logo {
@@ -428,10 +405,10 @@
                 position: relative;
             }
 
-            /* ===== HEADER EN IMPRESIÓN ===== */
+            /* ===== HEADER CON LOGO EN IMPRESIÓN ===== */
             .header-section {
                 position: relative;
-                padding: 5mm 0 3mm 0 !important;
+                padding: 0 !important;
                 margin: 0 !important;
                 background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 50%, #1a3a6c 100%) !important;
                 page-break-after: avoid;
@@ -441,79 +418,47 @@
                 print-color-adjust: exact !important;
                 width: 100% !important;
                 height: auto !important;
-                min-height: 40mm !important;
+                min-height: 45mm !important;
+                /* Aumentado para el logo */
             }
 
-            .header-container {
-                padding: 0 !important;
-                margin: 0 auto !important;
-                width: 100% !important;
-            }
-
-            .header-top {
+            .header-content {
+                padding: 5mm 20mm 0 20mm !important;
+                margin: 0 !important;
+                max-width: 100% !important;
                 display: flex !important;
                 justify-content: space-between !important;
-                align-items: center !important;
-                margin-bottom: 3mm !important;
-                padding-bottom: 2mm !important;
-                border-bottom: 0.5px solid rgba(255, 255, 255, 0.3) !important;
-                width: 100% !important;
+                align-items: flex-start !important;
             }
 
-            /* Logos con 1cm (10mm) de margen en impresión */
-            .logo-left-container {
-                width: auto !important;
-                padding-left: 10mm !important;
-                /* 1cm */
+            .header-left {
                 display: flex !important;
-                justify-content: flex-start !important;
-                align-items: center !important;
+                align-items: flex-start !important;
+                gap: 15px !important;
             }
 
-            .logo-right-container {
-                width: auto !important;
-                padding-right: 10mm !important;
-                /* 1cm */
+            .logo-container {
                 display: flex !important;
-                justify-content: flex-end !important;
                 align-items: center !important;
             }
 
-            .logo-left,
-            .logo-right {
-                height: 15mm !important;
+            .company-logo,
+            .logo-placeholder {
+                height: 50px !important;
                 width: auto !important;
-                max-width: 40mm !important;
+                max-width: 100px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
-            .header-center h1 {
-                font-size: 6mm !important;
-                margin-bottom: 1mm !important;
+            .logo-placeholder {
+                background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%) !important;
+                border: 2px solid rgba(255, 255, 255, 0.3) !important;
             }
 
-            .header-subtitle {
-                font-size: 3mm !important;
-            }
-
-            .header-info {
-                display: grid !important;
-                grid-template-columns: repeat(4, 1fr) !important;
-                gap: 3mm !important;
-                margin-top: 3mm !important;
-                padding: 3mm 20mm !important;
-                /* 20mm laterales para info */
-                background: rgba(255, 255, 255, 0.08) !important;
-            }
-
-            .header-label {
-                font-size: 2.5mm !important;
-                margin-bottom: 1mm !important;
-            }
-
-            .header-value {
-                font-size: 3.5mm !important;
+            .header-title {
+                margin: 2mm 20mm !important;
+                padding: 3mm !important;
             }
 
             /* ===== CONTENIDO PRINCIPAL ===== */
@@ -559,7 +504,7 @@
                 page-break-after: auto !important;
             }
 
-            /* ===== FOOTER EN IMPRESIÓN ===== */
+            /* ===== FOOTER MÁS ALTO Y SEPARADO ===== */
             .footer-section {
                 display: none !important;
                 visibility: hidden !important;
@@ -570,7 +515,7 @@
                 margin: 0 !important;
             }
 
-            /* Mostrar footer SOLO en la última página */
+            /* Mostrar footer SOLO en la última página - MÁS ALTO Y SEPARADO */
             body:last-child .footer-section {
                 display: block !important;
                 visibility: visible !important;
@@ -593,72 +538,29 @@
                 border-bottom: 2px solid #d4af37 !important;
             }
 
-            /* Contenedor del footer */
-            body:last-child .footer-container {
-                padding: 0 !important;
-                margin: 0 auto !important;
-                width: 100% !important;
-                height: 100% !important;
-            }
-
-            /* Contenido del footer con 1cm de margen */
+            /* Contenido del footer con más espacio */
             body:last-child .footer-content {
-                padding: 4mm 0 !important;
-                margin: 0 auto !important;
+                padding: 4mm 20mm !important;
+                margin: 0 !important;
                 height: 100% !important;
-                width: 100% !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
             }
 
-            /* Logos en footer con 1cm de margen */
-            body:last-child .footer-logo-left-container {
-                padding-left: 10mm !important;
-                /* 1cm */
-                display: flex !important;
-                align-items: center !important;
-                gap: 3mm !important;
-                justify-content: flex-start !important;
-            }
-
-            body:last-child .footer-logo-right-container {
-                padding-right: 10mm !important;
-                /* 1cm */
-                display: flex !important;
-                align-items: center !important;
-                gap: 3mm !important;
-                justify-content: flex-end !important;
-            }
-
-            body:last-child .footer-logo-img {
-                height: 8mm !important;
-                width: auto !important;
-                max-width: 25mm !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
             /* Aumentar tamaño de texto en footer para mejor legibilidad */
             body:last-child .footer-logo {
-                font-size: 4mm !important;
-                margin-bottom: 1mm !important;
+                font-size: 16px !important;
             }
 
             body:last-child .footer-text {
-                font-size: 2.5mm !important;
-                line-height: 1.3 !important;
+                font-size: 11px !important;
+                line-height: 1.4 !important;
             }
 
             body:last-child .footer-date {
-                font-size: 3mm !important;
-                padding: 1mm 3mm !important;
-            }
-
-            body:last-child .footer-divider {
-                height: 10mm !important;
-                width: 0.5px !important;
-                margin: 0 5mm !important;
+                font-size: 12px !important;
+                padding: 3mm 12px !important;
             }
 
             /* ===== CONFIGURACIÓN DE PÁGINA ===== */
@@ -726,79 +628,40 @@
 <body>
     <!-- ===== SECCIÓN 1: HEADER ===== -->
     <div class="header-section">
-        <div class="header-container">
-            <!-- FILA SUPERIOR CON LOGOS Y TÍTULO -->
-            <div class="header-top">
-                <!-- LOGO IZQUIERDO CON 1cm DE MARGEN -->
-                <div class="logo-left-container">
-                    @php
-                        // Convertir logos a base64
-                        $logoBase64 = null;
-                        $setiBase64 = null;
+        <div class="header-content">
+            <div class="header-left">
+                <!-- LOGO DE LA EMPRESA -->
+                <div class="logo-container">
+                    <!-- Opción 1: Usar un logo real (descomentar y cambiar la ruta) -->
+                    <!-- 
+                    <img src="ruta/a/tu/logo.png" alt="Logo Empresa" class="company-logo">
+                    -->
 
-                        if (file_exists(public_path('img/logov2.png'))) {
-                            $logoBase64 = 'data:image/png;base64,' .
-                                base64_encode(file_get_contents(public_path('img/logov2.png')));
-                        }
-
-                        if (file_exists(public_path('img/seti.png'))) {
-                            $setiBase64 = 'data:image/png;base64,' .
-                                base64_encode(file_get_contents(public_path('img/seti.png')));
-                        }
-                    @endphp
-
-                    @if($logoBase64)
-                        <img src="{{ $logoBase64 }}" alt="Logo Empresa" class="logo-left">
-                    @else
-                        <div style="height: 50px; width: 150px; background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%); 
-                                     border-radius: 8px; display: flex; align-items: center; justify-content: center; 
-                                     color: #1a3a6c; font-weight: bold; font-size: 12px; text-align: center; padding: 5px;
-                                     border: 2px solid rgba(255, 255, 255, 0.3);">
-                            LOGO<br>EMPRESA
-                        </div>
-                    @endif
+                    <!-- Opción 2: Placeholder para logo (se puede reemplazar) -->
+                    <div class="logo-placeholder">
+                        LOGO<br>EMPRESA
+                    </div>
                 </div>
 
-                <!-- TÍTULO CENTRAL -->
-                <div class="header-center">
-                    <h1>📊 REPORTE DE PROYECTO</h1>
-                    <div class="header-subtitle">Seguimiento y Control de Actividades</div>
-                </div>
-
-                <!-- LOGO DERECHO CON 1cm DE MARGEN -->
-                <div class="logo-right-container">
-                    @if($setiBase64)
-                        <img src="{{ $setiBase64 }}" alt="SETI" class="logo-right">
-                    @else
-                        <div style="height: 50px; width: 150px; background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 100%); 
-                                     border-radius: 8px; display: flex; align-items: center; justify-content: center; 
-                                     color: #d4af37; font-weight: bold; font-size: 12px; text-align: center; padding: 5px;
-                                     border: 2px solid rgba(255, 255, 255, 0.3);">
-                            SETI
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- INFORMACIÓN DEL PROYECTO -->
-            <div class="header-info">
-                <div class="info-item">
+                <div class="company-info">
                     <span class="header-label">Nombre del Proyecto</span>
-                    <span class="header-value">{{ $estimacion->id }}</span>
-                </div>
-                <div class="info-item">
+                    <span class="header-value">[Nombre del Proyecto]</span>
                     <span class="header-label">Encargado del Proyecto</span>
                     <span class="header-value">[Nombre del Encargado]</span>
                 </div>
-                <div class="info-item">
-                    <span class="header-label">Periodo del Reporte</span>
-                    <span class="header-value">DD/MM/AAAA - DD/MM/AAAA</span>
-                </div>
-                <div class="info-item">
-                    <span class="header-label">Preparado por</span>
-                    <span class="header-value">[Nombre]</span>
-                </div>
             </div>
+            <div class="header-right">
+                <span class="header-label">Periodo del Reporte</span>
+                <span class="header-value">DD/MM/AAAA - DD/MM/AAAA</span>
+                <span class="header-label">Preparado por</span>
+                <span class="header-value">[Nombre]</span>
+            </div>
+            <img src="" alt="Logo Derecha" style="height: 60px;">
+        </div>
+
+        <div class="header-title">
+            <h1>📊 REPORTE DE PROYECTO</h1>
+            <div class="header-subtitle">Seguimiento y Control de Actividades</div>
         </div>
     </div>
 
@@ -981,35 +844,19 @@
 
     <!-- ===== SECCIÓN 3: FOOTER ===== -->
     <div class="footer-section">
-        <div class="footer-container">
-            <div class="footer-content">
-                <!-- LOGO IZQUIERDO EN FOOTER CON 1cm DE MARGEN -->
-                <div class="footer-logo-left-container">
-                    @if(isset($logoBase64) && $logoBase64)
-                        <img src="{{ $logoBase64 }}" alt="Logo" class="footer-logo-img">
-                    @endif
+        <div class="footer-content">
+            <div class="footer-left">
+                <span class="footer-logo">PROYECTO</span>
+                <div class="footer-text">© 2026 - Todos los derechos reservados</div>
+                <div class="footer-text">Documento confidencial - Uso interno</div>
+            </div>
 
-                    <div class="footer-text-container">
-                        <span class="footer-logo">PROYECTO</span>
-                        <div class="footer-text">© 2026 - Todos los derechos reservados</div>
-                        <div class="footer-text">Documento confidencial - Uso interno</div>
-                    </div>
-                </div>
+            <div class="footer-divider"></div>
 
-                <div class="footer-divider"></div>
-
-                <!-- LOGO DERECHO EN FOOTER CON 1cm DE MARGEN -->
-                <div class="footer-logo-right-container">
-                    <div class="footer-text-container" style="text-align: right;">
-                        <div class="footer-text">📄 Reporte generado el:</div>
-                        <div class="footer-date">30 de Enero de 2026</div>
-                        <div class="footer-text">Versión 1.0</div>
-                    </div>
-
-                    @if(isset($setiBase64) && $setiBase64)
-                        <img src="{{ $setiBase64 }}" alt="SETI" class="footer-logo-img">
-                    @endif
-                </div>
+            <div class="footer-right">
+                <div class="footer-text">📄 Reporte generado el:</div>
+                <div class="footer-date">30 de Enero de 2026</div>
+                <div class="footer-text">Versión 1.0</div>
             </div>
         </div>
     </div>
