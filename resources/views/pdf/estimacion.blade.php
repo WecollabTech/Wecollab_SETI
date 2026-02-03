@@ -3,1015 +3,446 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Proyecto</title>
+    <title>Estimación {{ $estimacion->id }}</title>
     <style>
+        /* ======================================================
+           VARIABLES CORPORATIVAS
+        ====================================================== */
+        :root {
+            --header-height: 110px;
+            --footer-height: 90px;
+            --primary: #1a3a6c;
+            --primary-dark: #0d2a52;
+            --gray: #475569;
+            --gray-light: #64748b;
+            --light-gray: #f8fafc;
+            --blue-soft: #f0f5ff;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ======================================================
+           BASE
+        ====================================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            color: #333;
-            background-color: #f5f7fa;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 11.5pt;
+            line-height: 1.5;
+            color: var(--text-main);
+            background-color: #fff;
+            orphans: 3;
+            widows: 3;
         }
 
-        /* ===== SECCIÓN HEADER ===== */
+        @page {
+            margin: 0;
+            size: letter;
+        }
+
+        /* ======================================================
+           HEADER
+        ====================================================== */
         .header-section {
-            width: 100%;
-            background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 50%, #1a3a6c 100%);
-            color: white;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-
-        .header-section::before {
-            content: '';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #d4af37 0%, #f0e68c 50%, #d4af37 100%);
+            height: var(--header-height);
+            background: #fff;
+            padding: 12px 45px 8px;
+            box-shadow: var(--shadow-subtle);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
         }
 
-        .header-container {
+        .header-line {
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+            margin-bottom: 8px;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .logo-box {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--blue-soft);
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .logo-box img {
             max-width: 100%;
-            margin: 0 auto;
-            padding: 25px 40px 15px 40px;
-            position: relative;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* Logos con 1cm (38px aprox) de margen */
-        .logo-left-container {
-            width: 150px;
-            padding-left: 38px;
-            /* 1cm aprox */
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-        }
-
-        .logo-right-container {
-            width: 150px;
-            padding-right: 38px;
-            /* 1cm aprox */
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
-
-        .logo-left {
-            height: 50px;
-            width: auto;
-            max-width: 150px;
+            max-height: 100%;
             object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        }
-
-        .logo-right {
-            height: 50px;
-            width: auto;
-            max-width: 150px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            display: block;
         }
 
         .header-center {
             text-align: center;
-            flex: 1;
-            padding: 0 20px;
+            padding: 0 8px;
         }
 
-        .header-center h1 {
-            font-size: 24px;
-            font-weight: 800;
-            color: #ffffff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .header-subtitle {
-            font-size: 13px;
-            color: #d4af37;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        .header-info {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-
-        .info-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: #d4af37;
+        .header-company {
+            font-size: 16pt;
+            font-weight: 700;
+            color: var(--primary-dark);
+            line-height: 1.2;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 3px;
-            display: block;
         }
 
-        .header-value {
-            font-size: 14px;
-            font-weight: 600;
-            color: #ffffff;
-            display: block;
+        .header-doc {
+            font-size: 11pt;
+            margin-top: 4px;
+            color: var(--gray);
+            font-weight: 500;
         }
 
-        /* ===== SECCIÓN CONTENIDO ===== */
-        .content-section {
-            flex: 1;
-            width: 100%;
-            padding: 25mm 25mm 15mm 25mm;
-            position: relative;
-            z-index: 10;
+        /* ======================================================
+           FOOTER
+        ====================================================== */
+        .footer-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--footer-height);
+            padding: 10px 45px;
+            font-size: 9pt;
+            color: var(--gray);
+            background: #fff;
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
         }
 
-        .content-wrapper {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            min-height: calc(100vh - 300px);
+        .footer-line {
+            height: 3px;
+            background: var(--primary);
+            border-radius: 1px;
+            margin-bottom: 8px;
         }
 
-        /* ===== INFO SECTION ===== */
-        .info-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 25px 40px;
-            border-bottom: 3px solid #d4af37;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
+        .footer-table td {
+            padding: 3px 5px;
+            vertical-align: middle;
         }
 
-        .info-box {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border-left: 4px solid #254aa0;
-            transition: transform 0.3s ease;
-        }
-
-        .info-box:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-        }
-
-        .info-box .header-label {
-            color: #254aa0;
-            font-size: 10px;
-            margin-bottom: 5px;
-        }
-
-        .info-box .header-value {
-            color: #1a3a6c;
-            font-size: 14px;
+        .footer-title {
             font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 9.5pt;
+            margin-bottom: 2px;
         }
 
-        /* ===== MEJORAS PARA TABLAS ===== */
-        .phase-section {
-            padding-top: 8mm !important;
-            padding-bottom: 8mm !important;
-            margin-bottom: 15px;
+        .footer-right {
+            text-align: right;
+        }
+
+        /* ======================================================
+           CONTENIDO
+        ====================================================== */
+        .content-section {
+            margin-top: calc(var(--header-height) + 20px);
+            padding-bottom: calc(var(--footer-height) + 20px);
+            padding-left: 25mm;
+            padding-right: 25mm;
             position: relative;
+            z-index: 100;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 11pt;
+        }
+
+        .summary-table td {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .summary-label {
+            width: 26%;
+            background: var(--blue-soft);
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .summary-value {
+            width: 44%;
+            background: var(--light-gray);
+            color: var(--text-main);
+        }
+
+        .summary-period {
+            width: 30%;
+            background: var(--blue-soft);
+            text-align: center;
+            vertical-align: middle !important;
+        }
+
+        .period-title {
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+            font-size: 11.5pt;
+        }
+
+        .period-dates {
+            font-size: 11pt;
+            letter-spacing: 0.5px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* ======================================================
+           PHASE SECTION
+        ====================================================== */
+        .phase-section {
+            margin-top: 10mm;
+            margin-bottom: 12mm;
+            page-break-inside: avoid;
         }
 
         .phase-title {
-            background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 100%);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 18px;
+            font-size: 13pt;
             font-weight: 700;
-            display: inline-block;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            position: relative;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 2.5px solid var(--primary);
         }
 
-        .phase-title::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #d4af37, transparent);
-            border-radius: 2px;
+        /* ======================================================
+           INTEGRATIONS SECTION
+        ====================================================== */
+        .integrations-section {
+            margin-top: 10mm;
+            margin-bottom: 12mm;
+            page-break-inside: avoid;
         }
 
-        /* TABLAS */
-        table {
+        .integrations-title {
+            font-size: 14pt;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 3px solid var(--primary);
+            text-align: center;
+        }
+
+        .integration-group {
+            margin-bottom: 12mm;
+        }
+
+        .integration-name {
+            font-size: 12.5pt;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+            padding-left: 8px;
+            border-left: 3px solid var(--primary);
+            background: var(--blue-soft);
+            padding: 6px 12px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* ======================================================
+           DATA TABLE
+        ====================================================== */
+        table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-size: 10.8pt;
+            margin-top: 6mm;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
         }
 
-        th {
-            background: linear-gradient(135deg, #254aa0 0%, #1a3a6c 100%);
-            color: white;
-            padding: 14px 15px;
+        table.data-table thead th {
+            background: var(--primary);
+            color: #fff;
+            padding: 9px 10px;
+            font-weight: 600;
             text-align: left;
-            font-weight: 700;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        th:first-child {
-            border-top-left-radius: 8px;
-            border-left: 4px solid #d4af37;
+        table.data-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
         }
 
-        th:last-child {
-            border-top-right-radius: 8px;
-        }
-
-        td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-            font-size: 13px;
-            color: #495057;
-        }
-
-        tr:last-child td {
+        table.data-table tr:last-child td {
             border-bottom: none;
         }
 
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
+        table.data-table tr:nth-child(even) {
+            background-color: #fbfcfd;
         }
 
-        tr:hover {
-            background-color: #e7f3ff;
-            transition: background-color 0.2s;
+        table.data-table th:first-child,
+        table.data-table td:first-child {
+            padding-left: 14px;
         }
 
-        .time-cell {
-            font-weight: 700;
-            color: #d4af37;
-            text-align: center;
-            width: 80px;
-            background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%);
-            border-left: 2px solid #d4af37;
-        }
-
-        .empty-row td {
-            background-color: #f8f9fa;
-            color: #6c757d;
-            font-style: italic;
-            font-size: 12px;
-            text-align: center;
-            padding: 15px;
-        }
-
-        /* ===== FOOTER AJUSTADO ===== */
-        .footer-section {
-            width: 100%;
-            background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 100%);
-            color: white;
-            position: relative;
-            margin-top: auto;
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            min-height: 50px;
-        }
-
-        .footer-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 20%;
-            right: 20%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #f0e68c, #d4af37, #f0e68c, transparent);
-            border-radius: 2px;
-            z-index: 101;
-        }
-
-        .footer-container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 12px 0;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Contenedores de logos en footer con 1cm de margen */
-        .footer-logo-left-container {
-            flex: 1;
-            min-width: 200px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-left: 38px;
-            /* 1cm aprox */
-            justify-content: flex-start;
-        }
-
-        .footer-logo-right-container {
-            flex: 1;
-            min-width: 200px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-right: 38px;
-            /* 1cm aprox */
-            justify-content: flex-end;
-        }
-
-        .footer-logo-img {
-            height: 25px;
-            width: auto;
-            max-width: 80px;
-            object-fit: contain;
-        }
-
-        .footer-text-container {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .footer-logo {
-            font-size: 18px;
-            font-weight: 800;
-            color: #d4af37;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .footer-text {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 2px;
-            line-height: 1.3;
-        }
-
-        .footer-date {
-            font-size: 11px;
-            font-weight: 600;
-            color: #d4af37;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 3px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 3px;
-        }
-
-        .footer-divider {
-            height: 35px;
-            width: 1px;
-            background: linear-gradient(0deg, #d4af37 0%, #f0e68c 100%);
-            margin: 0 15px;
-            align-self: stretch;
-        }
-
-        /* ===== ESTILOS DE IMPRESIÓN CORREGIDOS ===== */
-        @media print {
-
-            /* ===== CONFIGURACIÓN GENERAL ===== */
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                display: block;
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            /* ===== HEADER EN IMPRESIÓN ===== */
-            .header-section {
-                position: relative;
-                padding: 5mm 0 3mm 0 !important;
-                margin: 0 !important;
-                background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 50%, #1a3a6c 100%) !important;
-                page-break-after: avoid;
-                break-after: avoid;
-                box-shadow: none !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                width: 100% !important;
-                height: auto !important;
-                min-height: 40mm !important;
-            }
-
-            .header-container {
-                padding: 0 !important;
-                margin: 0 auto !important;
-                width: 100% !important;
-            }
-
-            .header-top {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                margin-bottom: 3mm !important;
-                padding-bottom: 2mm !important;
-                border-bottom: 0.5px solid rgba(255, 255, 255, 0.3) !important;
-                width: 100% !important;
-            }
-
-            /* Logos con 1cm (10mm) de margen en impresión */
-            .logo-left-container {
-                width: auto !important;
-                padding-left: 10mm !important;
-                /* 1cm */
-                display: flex !important;
-                justify-content: flex-start !important;
-                align-items: center !important;
-            }
-
-            .logo-right-container {
-                width: auto !important;
-                padding-right: 10mm !important;
-                /* 1cm */
-                display: flex !important;
-                justify-content: flex-end !important;
-                align-items: center !important;
-            }
-
-            .logo-left,
-            .logo-right {
-                height: 15mm !important;
-                width: auto !important;
-                max-width: 40mm !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            .header-center h1 {
-                font-size: 6mm !important;
-                margin-bottom: 1mm !important;
-            }
-
-            .header-subtitle {
-                font-size: 3mm !important;
-            }
-
-            .header-info {
-                display: grid !important;
-                grid-template-columns: repeat(4, 1fr) !important;
-                gap: 3mm !important;
-                margin-top: 3mm !important;
-                padding: 3mm 20mm !important;
-                /* 20mm laterales para info */
-                background: rgba(255, 255, 255, 0.08) !important;
-            }
-
-            .header-label {
-                font-size: 2.5mm !important;
-                margin-bottom: 1mm !important;
-            }
-
-            .header-value {
-                font-size: 3.5mm !important;
-            }
-
-            /* ===== CONTENIDO PRINCIPAL ===== */
-            .content-section {
-                padding: 0 20mm !important;
-                margin: 0 !important;
-                width: 100%;
-                position: relative;
-            }
-
-            .content-wrapper {
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                padding: 5mm 0 15mm 0 !important;
-                margin: 0 auto;
-                max-width: 100%;
-                background: white !important;
-            }
-
-            .info-section {
-                padding: 5mm 0 !important;
-                margin-bottom: 10px !important;
-                page-break-inside: avoid;
-                break-inside: avoid;
-                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
-            }
-
-            /* ===== SECCIONES Y TABLAS ===== */
-            .phase-section {
-                padding: 5mm 0 !important;
-                margin-bottom: 10px !important;
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-
-            table {
-                page-break-inside: auto !important;
-                margin-bottom: 8mm !important;
-            }
-
-            tr {
-                page-break-inside: avoid !important;
-                page-break-after: auto !important;
-            }
-
-            /* ===== FOOTER EN IMPRESIÓN ===== */
-            .footer-section {
-                display: none !important;
-                visibility: hidden !important;
-                opacity: 0 !important;
-                height: 0 !important;
-                min-height: 0 !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-
-            /* Mostrar footer SOLO en la última página */
-            body:last-child .footer-section {
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                position: fixed !important;
-                bottom: 0mm !important;
-                left: 0 !important;
-                right: 0 !important;
-                width: 100% !important;
-                height: 25mm !important;
-                min-height: 20mm !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 100%) !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                z-index: 9999 !important;
-                page-break-inside: avoid !important;
-                border-top: 2px solid #d4af37 !important;
-                border-bottom: 2px solid #d4af37 !important;
-            }
-
-            /* Contenedor del footer */
-            body:last-child .footer-container {
-                padding: 0 !important;
-                margin: 0 auto !important;
-                width: 100% !important;
-                height: 100% !important;
-            }
-
-            /* Contenido del footer con 1cm de margen */
-            body:last-child .footer-content {
-                padding: 4mm 0 !important;
-                margin: 0 auto !important;
-                height: 100% !important;
-                width: 100% !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-            }
-
-            /* Logos en footer con 1cm de margen */
-            body:last-child .footer-logo-left-container {
-                padding-left: 10mm !important;
-                /* 1cm */
-                display: flex !important;
-                align-items: center !important;
-                gap: 3mm !important;
-                justify-content: flex-start !important;
-            }
-
-            body:last-child .footer-logo-right-container {
-                padding-right: 10mm !important;
-                /* 1cm */
-                display: flex !important;
-                align-items: center !important;
-                gap: 3mm !important;
-                justify-content: flex-end !important;
-            }
-
-            body:last-child .footer-logo-img {
-                height: 8mm !important;
-                width: auto !important;
-                max-width: 25mm !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            /* Aumentar tamaño de texto en footer para mejor legibilidad */
-            body:last-child .footer-logo {
-                font-size: 4mm !important;
-                margin-bottom: 1mm !important;
-            }
-
-            body:last-child .footer-text {
-                font-size: 2.5mm !important;
-                line-height: 1.3 !important;
-            }
-
-            body:last-child .footer-date {
-                font-size: 3mm !important;
-                padding: 1mm 3mm !important;
-            }
-
-            body:last-child .footer-divider {
-                height: 10mm !important;
-                width: 0.5px !important;
-                margin: 0 5mm !important;
-            }
-
-            /* ===== CONFIGURACIÓN DE PÁGINA ===== */
-            @page {
-                margin: 0 !important;
-                padding: 0 !important;
-                size: auto;
-            }
-
-            /* Primera página */
-            @page :first {
-                margin-top: 0 !important;
-                margin-bottom: 0 !important;
-            }
-
-            /* Todas las páginas sin márgenes */
-            @page {
-                margin-top: 0 !important;
-                margin-bottom: 0 !important;
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-            }
-
-            /* Última página con espacio para footer separado */
-            @page :last {
-                margin-bottom: 3mm !important;
-            }
-
-            /* ===== AJUSTES PARA CONTENIDO EN ÚLTIMA PÁGINA ===== */
-            /* Más espacio en la última página para el footer más alto */
-            body:last-child .content-wrapper {
-                padding-bottom: 25mm !important;
-            }
-
-            /* Asegurar que el último elemento no esté muy cerca del footer */
-            body:last-child .phase-section:last-child {
-                margin-bottom: 15mm !important;
-            }
-
-            /* ===== ESTILOS ADICIONALES ===== */
-            .info-box:hover {
-                transform: none !important;
-                box-shadow: none !important;
-            }
-
-            .info-box {
-                box-shadow: none !important;
-                border: 1px solid #e0e0e0 !important;
-                transition: none !important;
-            }
-
-            /* Ocultar efectos hover en impresión */
-            tr:hover {
-                background-color: inherit !important;
-            }
-
-            /* Eliminar sombras y efectos visuales */
-            .phase-title {
-                box-shadow: none !important;
-            }
+        table.data-table th:last-child,
+        table.data-table td:last-child {
+            padding-right: 14px;
+            text-align: right;
         }
     </style>
 </head>
 
 <body>
-    <!-- ===== SECCIÓN 1: HEADER ===== -->
+    @php
+        $logoIzq = file_exists(public_path('img/wecollab.png'))
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('img/wecollab.png')))
+            : null;
+
+        $logoDer = file_exists(public_path('img/seti.png'))
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('img/seti.png')))
+            : null;
+    @endphp
+
+    <!-- HEADER -->
     <div class="header-section">
-        <div class="header-container">
-            <!-- FILA SUPERIOR CON LOGOS Y TÍTULO -->
-            <div class="header-top">
-                <!-- LOGO IZQUIERDO CON 1cm DE MARGEN -->
-                <div class="logo-left-container">
-                    @php
-                        // Convertir logos a base64
-                        $logoBase64 = null;
-                        $setiBase64 = null;
-
-                        if (file_exists(public_path('img/logov2.png'))) {
-                            $logoBase64 = 'data:image/png;base64,' .
-                                base64_encode(file_get_contents(public_path('img/logov2.png')));
-                        }
-
-                        if (file_exists(public_path('img/seti.png'))) {
-                            $setiBase64 = 'data:image/png;base64,' .
-                                base64_encode(file_get_contents(public_path('img/seti.png')));
-                        }
-                    @endphp
-
-                    @if($logoBase64)
-                        <img src="{{ $logoBase64 }}" alt="Logo Empresa" class="logo-left">
-                    @else
-                        <div style="height: 50px; width: 150px; background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%); 
-                                     border-radius: 8px; display: flex; align-items: center; justify-content: center; 
-                                     color: #1a3a6c; font-weight: bold; font-size: 12px; text-align: center; padding: 5px;
-                                     border: 2px solid rgba(255, 255, 255, 0.3);">
-                            LOGO<br>EMPRESA
-                        </div>
+        <div class="header-line"></div>
+        <table class="header-table">
+            <tr>
+                <td width="15%">
+                    @if($logoIzq)
+                        <div class="logo-box"><img src="{{ $logoIzq }}"></div>
                     @endif
-                </div>
-
-                <!-- TÍTULO CENTRAL -->
-                <div class="header-center">
-                    <h1>📊 REPORTE DE PROYECTO</h1>
-                    <div class="header-subtitle">Seguimiento y Control de Actividades</div>
-                </div>
-
-                <!-- LOGO DERECHO CON 1cm DE MARGEN -->
-                <div class="logo-right-container">
-                    @if($setiBase64)
-                        <img src="{{ $setiBase64 }}" alt="SETI" class="logo-right">
-                    @else
-                        <div style="height: 50px; width: 150px; background: linear-gradient(135deg, #1a3a6c 0%, #254aa0 100%); 
-                                     border-radius: 8px; display: flex; align-items: center; justify-content: center; 
-                                     color: #d4af37; font-weight: bold; font-size: 12px; text-align: center; padding: 5px;
-                                     border: 2px solid rgba(255, 255, 255, 0.3);">
-                            SETI
-                        </div>
+                </td>
+                <td width="70%" class="header-center">
+                    <div class="header-company">NOMBRE DE LA EMPRESA S.A. DE C.V.</div>
+                    <div class="header-doc">Reporte de Estimación del Proyecto</div>
+                </td>
+                <td width="15%" align="right">
+                    @if($logoDer)
+                        <div class="logo-box"><img src="{{ $logoDer }}"></div>
                     @endif
-                </div>
-            </div>
-
-            <!-- INFORMACIÓN DEL PROYECTO -->
-            <div class="header-info">
-                <div class="info-item">
-                    <span class="header-label">Nombre del Proyecto</span>
-                    <span class="header-value">{{ $estimacion->id }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="header-label">Encargado del Proyecto</span>
-                    <span class="header-value">[Nombre del Encargado]</span>
-                </div>
-                <div class="info-item">
-                    <span class="header-label">Periodo del Reporte</span>
-                    <span class="header-value">DD/MM/AAAA - DD/MM/AAAA</span>
-                </div>
-                <div class="info-item">
-                    <span class="header-label">Preparado por</span>
-                    <span class="header-value">[Nombre]</span>
-                </div>
-            </div>
-        </div>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <!-- ===== SECCIÓN 2: CONTENIDO ===== -->
+    <!-- CONTENIDO -->
     <div class="content-section">
-        <div class="content-wrapper">
-            <!-- ===== INFO SECTION ===== -->
-            <div class="info-section">
-                <div class="info-box">
-                    <span class="header-label">Proyecto</span>
-                    <span class="header-value">[Nombre del Proyecto]</span>
-                </div>
-                <div class="info-box">
-                    <span class="header-label">Periodo</span>
-                    <span class="header-value">DD/MM/AAAA - DD/MM/AAAA</span>
-                </div>
-                <div class="info-box">
-                    <span class="header-label">Encargado</span>
-                    <span class="header-value">[Nombre]</span>
-                </div>
-                <div class="info-box">
-                    <span class="header-label">Preparado por</span>
-                    <span class="header-value">[Nombre]</span>
-                </div>
-            </div>
+        <table class="summary-table">
+            <tr>
+                <td class="summary-label">Nombre del proyecto</td>
+                <td class="summary-value">{{ $estimacion->comentarios ?? '-' }}</td>
+                <td class="summary-period" rowspan="3">
+                    <div class="period-title">Periodo de la Estimación</div>
+                    <div class="period-dates">DD/MM/AAAA – DD/MM/AAAA</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="summary-label">Responsable</td>
+                <td class="summary-value">{{ $estimacion->responsable ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="summary-label">Preparado por</td>
+                <td class="summary-value">{{ config('app.name') }}</td>
+            </tr>
+        </table>
 
-            <!-- ===== TABLAS MÚLTIPLES PARA PROBAR ===== -->
-            <div class="phase-section">
-                <div class="phase-title">🔍 Análisis - Página 1</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tarea / Actividad</th>
-                            <th class="time-cell">Tiempo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1. Revisión inicial de requerimientos</td>
-                            <td class="time-cell">4 h</td>
-                        </tr>
-                        <tr>
-                            <td>2. Análisis de viabilidad técnica</td>
-                            <td class="time-cell">6 h</td>
-                        </tr>
-                        <tr>
-                            <td>3. Diseño de arquitectura preliminar</td>
-                            <td class="time-cell">8 h</td>
-                        </tr>
-                        <tr>
-                            <td>4. Documentación de especificaciones</td>
-                            <td class="time-cell">6 h</td>
-                        </tr>
-                        <tr>
-                            <td>5. Revisión con equipo técnico</td>
-                            <td class="time-cell">5 h</td>
-                        </tr>
-                        <tr>
-                            <td>6. Ajustes basados en retroalimentación</td>
-                            <td class="time-cell">4 h</td>
-                        </tr>
-                        <tr>
-                            <td>7. Validación con stakeholders</td>
-                            <td class="time-cell">6 h</td>
-                        </tr>
-                        <tr>
-                            <td>8. Documentación final del análisis</td>
-                            <td class="time-cell">8 h</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        @foreach($estimacion->fases as $fase)
+            @if($fase->tareas->count())
+                <div class="phase-section">
+                    <div class="phase-title">Fase: {{ $fase->fase->nombre }}</div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tarea</th>
+                                <th width="90">Minutos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($fase->tareas as $tarea)
+                                <tr>
+                                    <td>{{ $tarea->nombre_tarea }}</td>
+                                    <td>{{ $tarea->duracion_minuto }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        @endforeach
 
-            <div class="phase-section">
-                <div class="phase-title">📋 Planificación - Página 2</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tarea / Actividad</th>
-                            <th class="time-cell">Tiempo</th>
-                            <th class="time-cell">Responsable</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1. Definición de cronograma detallado</td>
-                            <td class="time-cell">5 h</td>
-                            <td class="time-cell">Planificador</td>
-                        </tr>
-                        <tr>
-                            <td>2. Asignación de recursos del equipo</td>
-                            <td class="time-cell">3 h</td>
-                            <td class="time-cell">Jefe Proyecto</td>
-                        </tr>
-                        <tr>
-                            <td>3. Establecimiento de hitos clave</td>
-                            <td class="time-cell">4 h</td>
-                            <td class="time-cell">Jefe Proyecto</td>
-                        </tr>
-                        <tr>
-                            <td>4. Planificación de riesgos y contingencias</td>
-                            <td class="time-cell">6 h</td>
-                            <td class="time-cell">Analista</td>
-                        </tr>
-                        <tr>
-                            <td>5. Definición de métricas de seguimiento</td>
-                            <td class="time-cell">4 h</td>
-                            <td class="time-cell">Analista</td>
-                        </tr>
-                        <tr>
-                            <td>6. Creación de plan de comunicación</td>
-                            <td class="time-cell">3 h</td>
-                            <td class="time-cell">Comunicaciones</td>
-                        </tr>
-                        <tr>
-                            <td>7. Revisión y aprobación del plan</td>
-                            <td class="time-cell">4 h</td>
-                            <td class="time-cell">Director</td>
-                        </tr>
-                    </tbody>
-                </table>
+        @if($estimacion->integraciones->count())
+            <div class="integrations-section">
+                <div class="integrations-title">Integraciones</div>
+                @foreach($estimacion->integraciones as $integracion)
+                    @if($integracion->tareas->count())
+                        <div class="integration-group">
+                            <div class="integration-name">{{ $integracion->integracion->nombre ?? 'Integración' }}</div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Integración</th>
+                                        <th>Tarea</th>
+                                        <th width="100">Duración (min)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($integracion->tareas as $tarea)
+                                        <tr>
+                                            <td>{{ $integracion->integracion->nombre ?? '-' }}</td>
+                                            <td>{{ $tarea->nombre_tarea_integracion ?? '-' }}</td>
+                                            <td>{{ $tarea->duracion_estimada_minutos ?? '-' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                @endforeach
             </div>
+        @endif
 
-            <div class="phase-section">
-                <div class="phase-title">💻 Desarrollo - Página 3</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tarea / Actividad</th>
-                            <th class="time-cell">Tiempo</th>
-                            <th class="time-cell">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1. Configuración del entorno de desarrollo</td>
-                            <td class="time-cell">6 h</td>
-                            <td class="time-cell">✓</td>
-                        </tr>
-                        <tr>
-                            <td>2. Desarrollo de módulo principal</td>
-                            <td class="time-cell">20 h</td>
-                            <td class="time-cell">✓</td>
-                        </tr>
-                        <tr>
-                            <td>3. Desarrollo de interfaz de usuario</td>
-                            <td class="time-cell">15 h</td>
-                            <td class="time-cell">✓</td>
-                        </tr>
-                        <tr>
-                            <td>4. Integración de componentes</td>
-                            <td class="time-cell">10 h</td>
-                            <td class="time-cell">✓</td>
-                        </tr>
-                        <tr>
-                            <td>5. Pruebas unitarias</td>
-                            <td class="time-cell">8 h</td>
-                            <td class="time-cell">✓</td>
-                        </tr>
-                        <tr>
-                            <td>6. Corrección de errores identificados</td>
-                            <td class="time-cell">6 h</td>
-                            <td class="time-cell">✓</td>
-                        </tr>
-                        <tr>
-                            <td>7. Optimización de rendimiento</td>
-                            <td class="time-cell">5 h</td>
-                            <td class="time-cell">✓</td>
-                        </tr>
-                        <tr>
-                            <td>8. Documentación del código</td>
-                            <td class="time-cell">4 h</td>
-                            <td class="time-cell">✓</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
-    <!-- ===== SECCIÓN 3: FOOTER ===== -->
+    <!-- FOOTER -->
     <div class="footer-section">
-        <div class="footer-container">
-            <div class="footer-content">
-                <!-- LOGO IZQUIERDO EN FOOTER CON 1cm DE MARGEN -->
-                <div class="footer-logo-left-container">
-                    @if(isset($logoBase64) && $logoBase64)
-                        <img src="{{ $logoBase64 }}" alt="Logo" class="footer-logo-img">
-                    @endif
-
-                    <div class="footer-text-container">
-                        <span class="footer-logo">PROYECTO</span>
-                        <div class="footer-text">© 2026 - Todos los derechos reservados</div>
-                        <div class="footer-text">Documento confidencial - Uso interno</div>
-                    </div>
-                </div>
-
-                <div class="footer-divider"></div>
-
-                <!-- LOGO DERECHO EN FOOTER CON 1cm DE MARGEN -->
-                <div class="footer-logo-right-container">
-                    <div class="footer-text-container" style="text-align: right;">
-                        <div class="footer-text">📄 Reporte generado el:</div>
-                        <div class="footer-date">30 de Enero de 2026</div>
-                        <div class="footer-text">Versión 1.0</div>
-                    </div>
-
-                    @if(isset($setiBase64) && $setiBase64)
-                        <img src="{{ $setiBase64 }}" alt="SETI" class="footer-logo-img">
-                    @endif
-                </div>
-            </div>
-        </div>
+        <div class="footer-line"></div>
+        <table class="footer-table">
+            <tr>
+                <td width="60%">
+                    <div class="footer-title">Información Corporativa</div>
+                    Primo Feliciano Velazquez 3930, Guadalajara, Jalisco. México.<br>
+                    Tel: +52 33 5121 3546 · contacto@we-collab.tech · https://we-collab.tech/
+                </td>
+                <td width="40%" class="footer-right">
+                    <div class="footer-title">Documento Institucional</div>
+                    Uso interno · Estimación<br>
+                    Página <span class="pageNumber"></span> de <span class="totalPages"></span>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 
