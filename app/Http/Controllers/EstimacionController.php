@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Http;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Estimacion;
@@ -9,8 +11,7 @@ use App\Models\EstimacionFase;
 use App\Models\EstimacionTarea;
 use App\Models\EstimacionIntegracion;
 use App\Models\EstimacionIntegracionTarea;
-use Spatie\Browsershot\Browsershot;
-use Illuminate\Support\Facades\Storage;
+
 
 class EstimacionController extends Controller
 {
@@ -34,7 +35,7 @@ class EstimacionController extends Controller
                     });
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(5);
 
         return response()->json($estimaciones);
     }
@@ -54,6 +55,7 @@ class EstimacionController extends Controller
 
         return response()->json([
             'id' => $estimacion->id,
+            'nombre_empresa' => $estimacion->nombre_empresa, // 👈 AQUÍ
             'nombre_tipo_implementacion' => $estimacion->nombre_tipo_implementacion,
             'comentarios' => $estimacion->comentarios,
             'total_horas' => $estimacion->total_horas,
@@ -170,6 +172,68 @@ class EstimacionController extends Controller
         ]);
     }
 
+    //Crear estimacion en bitrix24
+    public function crearProyecto(Estimacion $estimacion)
+    {
+        if ($estimacion->bitrix_group_id) {
+            return response()->json([
+                'message' => 'Proyecto ya creado'
+            ], 409);
+        }
+
+        // Datos principales
+        $nombreEmpresa = $estimacion->nombre_empresa;
+        $responsable = $estimacion->responsable;
+        $idNegocio = $estimacion->id_negocio;
+
+        // Crear grupo
+        $response = Http::post(
+            config('services.bitrix.webhook') . '/sonet_group.create',
+            [
+                'NAME' => $nombreEmpresa,
+                'DESCRIPTION' =>
+                    "Responsable: {$responsable} | ID negocio: {$idNegocio}",
+                'VISIBLE' => 'Y',
+                'OPENED' => 'Y',
+            ]
+        );
+
+        $groupId = $response['result'];
+
+        // Obtener tareas (fases + integraciones)
+        $tareas = $estimacion->fases
+            ->flatMap(fn($f) => $f->tareas)
+            ->merge(
+                $estimacion->integraciones
+                    ->flatMap(fn($i) => $i->tareas)
+            );
+
+        // Crear tareas en Bitrix
+        foreach ($tareas as $tarea) {
+            Http::post(
+                config('services.bitrix.webhook') . '/tasks.task.add',
+                [
+                    'fields' => [
+                        'TITLE' => $tarea->titulo,
+                        'DESCRIPTION' =>
+                            "Duración: {$tarea->duracion_minuto} min",
+                        'GROUP_ID' => $groupId,
+                    ],
+                ]
+            );
+        }
+
+        // Guardar referencia
+        $estimacion->update([
+            'bitrix_group_id' => $groupId,
+        ]);
+
+        return response()->json([
+            'message' => 'Proyecto creado correctamente',
+            'group_id' => $groupId,
+        ]);
+    }
+
 
 
 
@@ -184,25 +248,15 @@ class EstimacionController extends Controller
             'integraciones.integracion',
             'integraciones.tareas',
             'complejidad',
+            'tipoImplementacion',
         ])->findOrFail($id);
 
-        $html = view('pdf.estimacion', compact('estimacion'))->render();
+        $logo = base64_encode(file_get_contents(public_path('img/wecollab.png')));
 
-        $path = storage_path('app/public/estimacion_' . $estimacion->id . '.pdf');
+        $pdf = Pdf::loadView('pdf.estimacion', compact('estimacion', 'logo'))
+            ->setPaper('letter', 'portrait');
 
-        Browsershot::html($html)
-            ->format('Letter')
-            ->landscape(false) // Portrait mode
-            ->margins(10, 15, 10, 15) // Top, Right, Bottom, Left en mm
-            ->showBackground()
-            ->waitUntilNetworkIdle()
-            ->setOption('args', ['--disable-web-security'])
-            ->noSandbox()
-            ->savePdf($path);
-
-        return response()->file($path, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="estimacion_' . $estimacion->id . '.pdf"'
-        ]);
+        return $pdf->stream('estimacion_' . $estimacion->id . '.pdf');
     }
+
 }

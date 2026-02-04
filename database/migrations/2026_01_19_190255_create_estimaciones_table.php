@@ -20,8 +20,13 @@ return new class extends Migration {
             $table->text('comentarios')->nullable();
             // Datos adicionales que agregaste
             $table->string('nombre_empresa');
-            $table->string('responsable');
+            $table->string('responsable')->nullable();
             $table->string('id_negocio');
+            $table->string('bitrix_group_id')->nullable();
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

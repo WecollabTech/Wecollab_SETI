@@ -6,10 +6,11 @@ use App\Http\Controllers\IntegracionTareaController;
 use App\Http\Controllers\IntegrationesController;
 use App\Http\Controllers\NivelComplejidadController;
 use App\Http\Controllers\TareaController;
-use App\Models\Integrationes;
+
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TipoImplementacionController;
+use App\Models\User;
 
 //RUTAS DE PROYECTO DE IMPLEMENTACIO
 
@@ -91,3 +92,16 @@ Route::post('/estimaciones', [EstimacionController::class, 'store']);
 Route::get('/estimaciones', [EstimacionController::class, 'index']);
 Route::get('/estimaciones/{estimacion}', [EstimacionController::class, 'show']);
 Route::delete('/estimaciones/{estimacion}', [EstimacionController::class, 'destroy']);
+
+Route::post(
+    '/estimaciones/{estimacion}/crear-proyecto-bitrix',
+    [EstimacionController::class, 'crearProyecto']
+);
+
+
+//Ruta para cargar usuarios 
+Route::get('/usuarios', function () {
+    return response()->json(
+        User::select('id', 'name', 'email')->orderBy('name')->get()
+    );
+});

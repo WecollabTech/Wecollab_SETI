@@ -4,446 +4,365 @@
 <head>
     <meta charset="UTF-8">
     <title>Estimación {{ $estimacion->id }}</title>
-    <style>
-        /* ======================================================
-           VARIABLES CORPORATIVAS
-        ====================================================== */
-        :root {
-            --header-height: 110px;
-            --footer-height: 90px;
-            --primary: #1a3a6c;
-            --primary-dark: #0d2a52;
-            --gray: #475569;
-            --gray-light: #64748b;
-            --light-gray: #f8fafc;
-            --blue-soft: #f0f5ff;
-            --border-color: #e2e8f0;
-            --text-main: #1e293b;
-            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
 
-        /* ======================================================
-           BASE
-        ====================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <style>
+        @page {
+            size: letter;
+            margin: 125px 38px 105px 38px;
         }
 
         body {
-            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
-            font-size: 11.5pt;
-            line-height: 1.5;
-            color: var(--text-main);
-            background-color: #fff;
-            orphans: 3;
-            widows: 3;
+            font-family: DejaVu Sans, Arial, sans-serif;
+            font-size: 10pt;
+            color: #2c2c2c;
+            line-height: 1.32;
         }
 
-        @page {
-            margin: 0;
-            size: letter;
-        }
-
-        /* ======================================================
-           HEADER
-        ====================================================== */
+        /* ================= HEADER / FOOTER ================= */
         .header-section {
             position: fixed;
-            top: 0;
+            top: -110px;
             left: 0;
             right: 0;
-            height: var(--header-height);
-            background: #fff;
-            padding: 12px 45px 8px;
-            box-shadow: var(--shadow-subtle);
-            border-bottom: 1px solid var(--border-color);
-            z-index: 1000;
+            height: 110px;
         }
 
-        .header-line {
-            height: 4px;
-            background: var(--primary);
-            border-radius: 2px;
-            margin-bottom: 8px;
+        .footer-section {
+            position: fixed;
+            bottom: -90px;
+            left: 0;
+            right: 0;
+            height: 90px;
+            font-size: 8.5pt;
+            color: #666;
         }
 
         .header-table {
             width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
+            border-bottom: 2px solid #5D2E8C;
+            /* línea morado fuerte corporativo */
+            /* color morado fuerte corporativo */
+            padding-bottom: 6px;
         }
 
         .logo-box {
-            width: 65px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--blue-soft);
-            border-radius: 4px;
-            padding: 4px;
+            width: 70px;
+            vertical-align: middle;
         }
 
         .logo-box img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            display: block;
+            width: 68px;
         }
 
-        .header-center {
-            text-align: center;
-            padding: 0 8px;
-        }
-
-        .header-company {
-            font-size: 16pt;
-            font-weight: 700;
-            color: var(--primary-dark);
-            line-height: 1.2;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .header-doc {
-            font-size: 11pt;
-            margin-top: 4px;
-            color: var(--gray);
-            font-weight: 500;
-        }
-
-        /* ======================================================
-           FOOTER
-        ====================================================== */
-        .footer-section {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: var(--footer-height);
-            padding: 10px 45px;
+        .company-info {
             font-size: 9pt;
-            color: var(--gray);
-            background: #fff;
-            border-top: 1px solid var(--border-color);
-            z-index: 1000;
+            line-height: 1.25;
+            text-align: center;
         }
 
-        .footer-line {
-            height: 3px;
-            background: var(--primary);
-            border-radius: 1px;
-            margin-bottom: 8px;
+        .header-title {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 18pt;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #5D2E8C;
+            /* morado fuerte */
+            line-height: 1.1;
         }
 
-        .footer-table td {
-            padding: 3px 5px;
-            vertical-align: middle;
+        .header-subtitle {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10.5pt;
+            font-weight: normal;
+            letter-spacing: 0.6px;
+            color: #A686D7;
+            /* morado claro */
+            margin-top: 2px;
         }
 
-        .footer-title {
-            font-weight: 700;
-            color: var(--primary-dark);
-            font-size: 9.5pt;
-            margin-bottom: 2px;
-        }
-
-        .footer-right {
+        .title-box {
             text-align: right;
-        }
-
-        /* ======================================================
-           CONTENIDO
-        ====================================================== */
-        .content-section {
-            margin-top: calc(var(--header-height) + 20px);
-            padding-bottom: calc(var(--footer-height) + 20px);
-            padding-left: 25mm;
-            padding-right: 25mm;
-            position: relative;
-            z-index: 100;
-        }
-
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            font-size: 11pt;
-        }
-
-        .summary-table td {
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
+            font-size: 9pt;
             vertical-align: middle;
         }
 
-        .summary-label {
-            width: 26%;
-            background: var(--blue-soft);
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-
-        .summary-value {
-            width: 44%;
-            background: var(--light-gray);
-            color: var(--text-main);
-        }
-
-        .summary-period {
-            width: 30%;
-            background: var(--blue-soft);
-            text-align: center;
-            vertical-align: middle !important;
-        }
-
-        .period-title {
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 5px;
-            font-size: 11.5pt;
-        }
-
-        .period-dates {
-            font-size: 11pt;
-            letter-spacing: 0.5px;
-            color: var(--gray);
-            font-weight: 500;
-        }
-
-        /* ======================================================
-           PHASE SECTION
-        ====================================================== */
-        .phase-section {
-            margin-top: 10mm;
-            margin-bottom: 12mm;
-            page-break-inside: avoid;
-        }
-
-        .phase-title {
-            font-size: 13pt;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 6px;
-            padding-bottom: 4px;
-            border-bottom: 2.5px solid var(--primary);
-        }
-
-        /* ======================================================
-           INTEGRATIONS SECTION
-        ====================================================== */
-        .integrations-section {
-            margin-top: 10mm;
-            margin-bottom: 12mm;
-            page-break-inside: avoid;
-        }
-
-        .integrations-title {
-            font-size: 14pt;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 8px;
-            padding-bottom: 4px;
-            border-bottom: 3px solid var(--primary);
-            text-align: center;
-        }
-
-        .integration-group {
-            margin-bottom: 12mm;
-        }
-
-        .integration-name {
-            font-size: 12.5pt;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 6px;
-            padding-left: 8px;
-            border-left: 3px solid var(--primary);
-            background: var(--blue-soft);
-            padding: 6px 12px;
-            border-radius: 0 4px 4px 0;
-        }
-
-        /* ======================================================
-           DATA TABLE
-        ====================================================== */
-        table.data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 10.8pt;
-            margin-top: 6mm;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        table.data-table thead th {
-            background: var(--primary);
+        /* ================= SECTIONS ================= */
+        .section-title {
+            background: #5D2E8C;
+            /* morado fuerte */
             color: #fff;
-            padding: 9px 10px;
-            font-weight: 600;
-            text-align: left;
+            padding: 6px 10px;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 9.7pt;
+            border-radius: 2px;
+            page-break-after: avoid;
+            page-break-inside: avoid;
         }
 
-        table.data-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-main);
+        .sub-title {
+            font-size: 9.4pt;
+            font-weight: bold;
+            margin-top: 8px;
+            page-break-inside: avoid;
         }
 
-        table.data-table tr:last-child td {
-            border-bottom: none;
+        /* ================= INFO CARD ================= */
+        .info-card {
+            margin-top: 8px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+            border-radius: 4px;
+            padding: 8px;
+            page-break-inside: avoid;
         }
 
-        table.data-table tr:nth-child(even) {
-            background-color: #fbfcfd;
+        .info-grid {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        table.data-table th:first-child,
-        table.data-table td:first-child {
-            padding-left: 14px;
+        .info-grid td {
+            padding: 6px 8px;
+            vertical-align: top;
         }
 
-        table.data-table th:last-child,
-        table.data-table td:last-child {
-            padding-right: 14px;
+        .info-label {
+            font-size: 8.5pt;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .info-value {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #222;
+            margin-top: 2px;
+        }
+
+        .info-highlight {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 3px;
+            padding: 5px 6px;
+        }
+
+        /* ================= TABLES ================= */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        .items-table {
+            margin-top: 6px;
+            border: 1px solid #ddd;
+            page-break-inside: auto;
+            page-break-before: avoid;
+            page-break-after: auto;
+        }
+
+        .items-table th {
+            background: #F0F0F0;
+            /* gris muy claro */
+            font-size: 8.6pt;
+            padding: 5px;
+            text-transform: uppercase;
+            letter-spacing: .25px;
+            border: 1px solid #ccc;
+        }
+
+        .items-table td {
+            padding: 4px 6px;
+            font-size: 9.2pt;
+            border: 1px solid #ddd;
+        }
+
+        .items-table tr:nth-child(even) {
+            background: #fbfbfb;
+        }
+
+        .text-right {
             text-align: right;
+        }
+
+        .no-break {
+            page-break-inside: avoid;
+        }
+
+        .pagenum:before {
+            content: counter(page);
+        }
+
+        .totalpages:before {
+            content: counter(pages);
+        }
+
+        .divider {
+            border-top: 1px dashed #ccc;
+            margin: 7px 0;
+        }
+
+        /* ================= FOOTER TABLE ================= */
+        .footer-table td {
+            vertical-align: top;
+            font-size: 8.3pt;
+            line-height: 1.3;
         }
     </style>
 </head>
 
 <body>
-    @php
-        $logoIzq = file_exists(public_path('img/wecollab.png'))
-            ? 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('img/wecollab.png')))
-            : null;
 
-        $logoDer = file_exists(public_path('img/seti.png'))
-            ? 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('img/seti.png')))
-            : null;
-    @endphp
-
-    <!-- HEADER -->
+    <!-- ================= HEADER ================= -->
     <div class="header-section">
-        <div class="header-line"></div>
         <table class="header-table">
             <tr>
-                <td width="15%">
-                    @if($logoIzq)
-                        <div class="logo-box"><img src="{{ $logoIzq }}"></div>
-                    @endif
+                <td class="logo-box">
+                    <img src="{{ public_path('img/wecollab.jpg') }}">
                 </td>
-                <td width="70%" class="header-center">
-                    <div class="header-company">NOMBRE DE LA EMPRESA S.A. DE C.V.</div>
-                    <div class="header-doc">Reporte de Estimación del Proyecto</div>
+
+                <td class="company-info">
+                    <div class="header-title">WE COLLAB</div>
+                    <div class="header-subtitle">SynergyFlow™ PlanCore</div>
                 </td>
-                <td width="15%" align="right">
-                    @if($logoDer)
-                        <div class="logo-box"><img src="{{ $logoDer }}"></div>
-                    @endif
+
+                <td class="logo-box" style="text-align:right">
+                    <img src="{{ public_path('img/seti.jpg') }}">
                 </td>
             </tr>
         </table>
     </div>
 
-    <!-- CONTENIDO -->
-    <div class="content-section">
-        <table class="summary-table">
-            <tr>
-                <td class="summary-label">Nombre del proyecto</td>
-                <td class="summary-value">{{ $estimacion->comentarios ?? '-' }}</td>
-                <td class="summary-period" rowspan="3">
-                    <div class="period-title">Periodo de la Estimación</div>
-                    <div class="period-dates">DD/MM/AAAA – DD/MM/AAAA</div>
-                </td>
-            </tr>
-            <tr>
-                <td class="summary-label">Responsable</td>
-                <td class="summary-value">{{ $estimacion->responsable ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="summary-label">Preparado por</td>
-                <td class="summary-value">{{ config('app.name') }}</td>
-            </tr>
-        </table>
-
-        @foreach($estimacion->fases as $fase)
-            @if($fase->tareas->count())
-                <div class="phase-section">
-                    <div class="phase-title">Fase: {{ $fase->fase->nombre }}</div>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Tarea</th>
-                                <th width="90">Minutos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($fase->tareas as $tarea)
-                                <tr>
-                                    <td>{{ $tarea->nombre_tarea }}</td>
-                                    <td>{{ $tarea->duracion_minuto }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-        @endforeach
-
-        @if($estimacion->integraciones->count())
-            <div class="integrations-section">
-                <div class="integrations-title">Integraciones</div>
-                @foreach($estimacion->integraciones as $integracion)
-                    @if($integracion->tareas->count())
-                        <div class="integration-group">
-                            <div class="integration-name">{{ $integracion->integracion->nombre ?? 'Integración' }}</div>
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Integración</th>
-                                        <th>Tarea</th>
-                                        <th width="100">Duración (min)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($integracion->tareas as $tarea)
-                                        <tr>
-                                            <td>{{ $integracion->integracion->nombre ?? '-' }}</td>
-                                            <td>{{ $tarea->nombre_tarea_integracion ?? '-' }}</td>
-                                            <td>{{ $tarea->duracion_estimada_minutos ?? '-' }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
-        @endif
-
-    </div>
-
-    <!-- FOOTER -->
+    <!-- ================= FOOTER ================= -->
     <div class="footer-section">
-        <div class="footer-line"></div>
-        <table class="footer-table">
+        <div class="divider"></div>
+
+        <table class="footer-table" width="100%">
             <tr>
-                <td width="60%">
-                    <div class="footer-title">Información Corporativa</div>
-                    Primo Feliciano Velazquez 3930, Guadalajara, Jalisco. México.<br>
+                <td width="70%">
+                    <strong>We Collab</strong><br>
+                    Primo Feliciano Velazquez 3930, Guadalajara, Jalisco, México<br>
                     Tel: +52 33 5121 3546 · contacto@we-collab.tech · https://we-collab.tech/
                 </td>
-                <td width="40%" class="footer-right">
-                    <div class="footer-title">Documento Institucional</div>
+
+                <td width="30%" style="text-align:right;">
+                    <strong>Documento Institucional</strong><br>
                     Uso interno · Estimación<br>
-                    Página <span class="pageNumber"></span> de <span class="totalPages"></span>
+                    Página <span class="pagenum"></span> de <span class="totalpages"></span>
                 </td>
             </tr>
         </table>
     </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="content-section">
+
+        <!-- Información General -->
+        <div class="section-title">Información General</div>
+
+        <table class="items-table" style="margin-top:8px;">
+            <tbody>
+                <tr>
+                    <th width="20%">ID</th>
+                    <td width="30%">#{{ $estimacion->id }}</td>
+
+                    <th width="20%">Fecha</th>
+                    <td width="30%">{{ $estimacion->created_at->format('d/m/Y') }}</td>
+                </tr>
+
+                <tr>
+                    <th>Responsable</th>
+                    <td>{{ $estimacion->usuario->name ?? $estimacion->responsable ?? 'No asignado' }}</td>
+
+                    <th>Tipo Implementación</th>
+                    <td>{{ $estimacion->nombre_tipo_implementacion ?? '-' }}</td>
+                </tr>
+
+                <tr>
+                    <th>Complejidad</th>
+                    <td>{{ $estimacion->complejidad->nombre ?? '-' }}</td>
+
+                    <th>Total Horas</th>
+                    <td>{{ number_format($estimacion->total_horas, 2) }} h</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ================= FASES ================= -->
+        @foreach($estimacion->fases as $faseRel)
+            <div class="section-title no-break">Fase: {{ $faseRel->fase->nombre ?? '-' }}</div>
+            <table class="items-table no-break">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th width="65%">Tarea</th>
+                        <th width="30%">Duración (min)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($faseRel->tareas as $i => $tarea)
+                        <tr class="no-break">
+                            <td>{{ $i + 1 }}</td>
+                            <td>{{ $tarea->nombre_tarea ?? $tarea->titulo ?? '-' }}</td>
+                            <td class="text-right">{{ $tarea->duracion_minuto ?? ($tarea->horas * 60 ?? '-') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endforeach
+
+        <!-- ================= INTEGRACIONES ================= -->
+        @if($estimacion->integraciones->count())
+            <div class="section-title no-break">Integraciones</div>
+            @foreach($estimacion->integraciones as $intRel)
+                <div class="sub-title no-break">{{ $intRel->integracion->nombre ?? '-' }}</div>
+                <table class="items-table no-break">
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="65%">Tarea</th>
+                            <th width="30%">Duración (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($intRel->tareas as $i => $tarea)
+                            <tr class="no-break">
+                                <td>{{ $i + 1 }}</td>
+                                <td>{{ $tarea->nombre_tarea_integracion ?? $tarea->titulo ?? '-' }}</td>
+                                <td class="text-right">{{ $tarea->duracion_estimada_minutos ?? ($tarea->horas * 60 ?? '-') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endforeach
+        @endif
+
+        <!-- Resumen Final -->
+        <div class="section-title no-break">Resumen Final</div>
+        <div class="info-card no-break">
+            <table class="info-grid">
+                <tr>
+                    <td width="35%">
+                        <div class="info-label">Total horas estimadas</div>
+                        <div class="info-value info-highlight">{{ number_format($estimacion->total_horas, 2) }} h</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+
+    </div>
+
 </body>
 
 </html>

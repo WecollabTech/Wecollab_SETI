@@ -45,4 +45,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+
+    //Relacion entre estimacion 
+    public function estimaciones()
+    {
+        return $this->hasMany(Estimacion::class);
+    }
+
 }

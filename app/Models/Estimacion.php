@@ -19,6 +19,7 @@ class Estimacion extends Model
         'nombre_empresa',
         'responsable',
         'id_negocio',
+        'user_id',
     ];
 
     //Tipos de Implementacio que estara relacionada a cada estimacion
@@ -50,6 +51,13 @@ class Estimacion extends Model
     public function integraciones()
     {
         return $this->hasMany(EstimacionIntegracion::class);
+    }
+
+
+    //Relacionar Usuario y Estimaciones 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
 }
