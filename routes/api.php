@@ -64,6 +64,8 @@ Route::get(
     '/tipoimplementacion/{tipo}/integraciones-tareas',
     [TipoImplementacionController::class, 'integracionesConTareas']
 );
+//Ruta para Obtener toda las fases 
+Route::get('/listafases', [FaseController::class, 'all']); // sin paginación
 
 
 

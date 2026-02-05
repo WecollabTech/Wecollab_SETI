@@ -19,9 +19,12 @@ class FaseController extends Controller
     }
 
 
-
-
-
+    public function all()
+    {
+        return response()->json(
+            Fase::orderBy('id', 'desc')->get()
+        );
+    }
 
 
 
