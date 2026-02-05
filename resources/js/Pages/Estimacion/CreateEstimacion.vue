@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { Head } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PageHeader from "@/Components/Layout/PageHeader.vue";
@@ -12,10 +12,23 @@ import { router } from "@inertiajs/vue3";
 const paso = ref(1);
 const isSaving = ref(false);
 
+const usuariosDisponibles = ref([]);
+
+onMounted(async () => {
+    try {
+        const res = await axios.get("/api/usuarios");
+        usuariosDisponibles.value = res.data ?? [];
+    } catch (error) {
+        console.error("Error al cargar usuarios:", error);
+    }
+});
+
 // Objeto principal de la estimación
 const estimacion = ref({
     tipoImplementacionId: null,
     nombreTipoImplementacion: "",
+
+    userId: null, // usuario seleccionado en PasoTipo
 
     nombreEmpresa: "", // ✅ nuevo
     responsable: "", // ✅ nuevo
@@ -89,6 +102,7 @@ const guardarEstimacion = async (estimacion) => {
         nombre_empresa: estimacion.nombreEmpresa,
         responsable: estimacion.responsable,
         id_negocio: estimacion.idNegocio,
+        user_id: estimacion.userId, // <-- NUEVO
         complejidad_id: estimacion.complejidad.id,
         comentarios: estimacion.comentarios,
         total_minutos: estimacion.totalMinutos,
@@ -171,6 +185,7 @@ const guardarEstimacion = async (estimacion) => {
             :bloquesIntegraciones="estimacion.bloquesIntegraciones"
             :totalMinutos="estimacion.totalMinutos"
             :totalHoras="estimacion.totalHoras"
+            :usuarios-disponibles="usuariosDisponibles"
             :isSaving="isSaving"
             @back="paso = 2"
             @finish="

@@ -21,7 +21,7 @@ return new class extends Migration {
             // Datos adicionales que agregaste
             $table->string('nombre_empresa');
             $table->string('responsable')->nullable();
-            $table->string('id_negocio');
+            $table->string('id_negocio')->nullable();
             $table->string('bitrix_group_id')->nullable();
             $table->foreignId('user_id')
                 ->constrained('users')

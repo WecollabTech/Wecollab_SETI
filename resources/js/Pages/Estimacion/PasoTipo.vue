@@ -15,12 +15,14 @@ const estimacion = ref({
     comentarios: "",
     nombreEmpresa: "", // <-- aquí
     responsable: "", // <-- aquí
+    userId: null, // <-- NUEVO
     idNegocio: "", // <-- aquí
 });
 
 const tiposImplementacion = ref([]);
 const integracionesDisponibles = ref([]);
 const nivelesComplejidad = ref([]);
+const usuariosDisponibles = ref([]);
 
 // Paleta de colores de respaldo para niveles desconocidos
 const coloresRespaldo = [
@@ -48,6 +50,13 @@ onMounted(async () => {
 
         const resComplejidad = await axios.get("/api/nivel-complejidad");
         nivelesComplejidad.value = resComplejidad.data.data ?? [];
+
+        // 🚀 Cargar usuarios
+        const resUsuarios = await axios.get("/api/usuarios");
+        // Asegurarse de obtener un array
+        usuariosDisponibles.value = Array.isArray(resUsuarios.data)
+            ? resUsuarios.data
+            : (resUsuarios.data?.data ?? []);
     } catch (error) {
         console.error(error);
     }
@@ -86,13 +95,22 @@ const continuar = () => {
             estimacion.value.integraciones.map(Number).includes(Number(i.id)),
     );
 
+    // Obtener el usuario seleccionado
+    const usuarioSeleccionado = (usuariosDisponibles.value || []).find(
+        (u) => u.id === estimacion.value.userId,
+    );
+
     emit("next", {
         tipoImplementacionId: Number(estimacion.value.tipoImplementacionId),
         nombreTipoImplementacion: tipoSeleccionado?.nombre || "",
         nombreEmpresa: estimacion.value.nombreEmpresa, // ✅ agregado
-        responsable: estimacion.value.responsable, // ✅ agregado
-        idNegocio: estimacion.value.idNegocio, // ✅ agregado
 
+        userId: usuarioSeleccionado?.id || null, // ID
+        responsable: usuarioSeleccionado?.name || "", // Nombre
+
+        // responsable: estimacion.value.responsable, // ✅ agregado
+        idNegocio: estimacion.value.idNegocio, // ✅ agregado
+        userId: estimacion.value.userId, // <-- NUEVO
         integraciones: integracionesSeleccionadas, // ✅ SOLO estas
         complejidad: estimacion.value.complejidad,
         comentarios: estimacion.value.comentarios,
@@ -242,8 +260,25 @@ const colorNivel = (nivel, index) => {
                     />
                 </div>
             </CardInput>
-            <!-- Responsable -->
+
             <CardInput>
+                <div class="bg-white rounded-xl shadow p-4 mb-4">
+                    <FormEstimacion
+                        label="Responsable"
+                        type="select"
+                        :options="
+                            usuariosDisponibles.map((u) => ({
+                                value: u.id,
+                                label: u.name,
+                            }))
+                        "
+                        v-model="estimacion.userId"
+                    />
+                </div>
+            </CardInput>
+
+            <!-- Responsable -->
+            <!-- <CardInput>
                 <div class="bg-white rounded-xl shadow p-4 mb-4">
                     <FormEstimacion
                         label="Responsable"
@@ -251,7 +286,7 @@ const colorNivel = (nivel, index) => {
                         v-model="estimacion.responsable"
                     />
                 </div>
-            </CardInput>
+            </CardInput> -->
             <!-- ID del negocio -->
             <CardInput>
                 <div class="bg-white rounded-xl shadow p-4 mb-4">

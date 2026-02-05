@@ -12,6 +12,7 @@ const props = defineProps({
     totalHoras: { type: Number, default: 0 },
     totalMinutos: { type: Number, default: 0 },
     isSaving: { type: Boolean, default: false },
+    usuariosDisponibles: { type: Array, default: () => [] },
 });
 
 const emit = defineEmits(["back", "finish"]);
@@ -32,6 +33,13 @@ const bloquesFasesValidos = computed(() =>
 
 const bloquesIntegracionesValidos = computed(() =>
     props.bloquesIntegraciones.filter((b) => b.tareas?.length),
+);
+
+// ✅ Computed para obtener el usuario seleccionado
+const usuarioSeleccionado = computed(() =>
+    props.usuariosDisponibles.find(
+        (u) => Number(u.id) === Number(props.estimacion.userId),
+    ),
 );
 
 /* ================= PDF ================= */
@@ -129,6 +137,12 @@ const generarPDF = () => {
                     Tipo de implementación:
                     <span class="font-semibold text-blue-600">
                         {{ nombreProyecto }}
+                    </span>
+                </div>
+                <div class="text-sm text-gray-700 mt-1">
+                    Responsable:
+                    <span class="font-semibold text-blue-600">
+                        {{ usuarioSeleccionado?.name || "No asignado" }}
                     </span>
                 </div>
             </div>

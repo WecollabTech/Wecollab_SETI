@@ -101,6 +101,9 @@ class EstimacionController extends Controller
                 'nombre_empresa' => $request->nombre_empresa,
                 'responsable' => $request->responsable,
                 'id_negocio' => $request->id_negocio,
+
+                // 🔹 Relación con usuario
+                'user_id' => $request->user_id,
             ]);
 
             // 2️⃣ Guardar fases + tareas

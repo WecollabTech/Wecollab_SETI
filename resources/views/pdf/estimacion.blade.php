@@ -281,7 +281,7 @@
 
                 <tr>
                     <th>Responsable</th>
-                    <td>{{ $estimacion->usuario->name ?? $estimacion->responsable ?? 'No asignado' }}</td>
+                    <td>{{ $estimacion->user->name ?? $estimacion->responsable ?? 'No asignado' }}</td>
 
                     <th>Tipo Implementación</th>
                     <td>{{ $estimacion->nombre_tipo_implementacion ?? '-' }}</td>
