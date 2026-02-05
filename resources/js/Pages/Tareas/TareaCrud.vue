@@ -49,15 +49,16 @@ const sending = ref(false);
 const fasesOptions = ref([]);
 const integracionesOptions = ref([]);
 
-// --- Cargar datos ---
+// --- Cargar fases desde API ---
 const cargarFases = async () => {
     try {
-        const res = await axios.get("/api/fases");
-        fasesOptions.value = res.data.data ?? [];
+        const res = await axios.get("/api/listafases");
+        fasesOptions.value = res.data; // 👈 sin .data.data
     } catch (err) {
         console.error("Error al cargar fases:", err);
     }
 };
+
 const cargarIntegraciones = async () => {
     try {
         const res = await axios.get("/api/integraciones");
