@@ -27,20 +27,80 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
+    // public function share(Request $request): array
+    // {
+    //     return [
+    //         ...parent::share($request),
+    //         'auth' => [
+    //             'user' => $request->user(),
+    //         ],
+
+    //         'flash' => [
+    //         'success' => fn () => $request->session()->get('success'),
+    //         'error' => fn () => $request->session()->get('error'),
+    //         'warning' => fn () => $request->session()->get('warning'),
+    //         'info' => fn () => $request->session()->get('info'),
+    //     ],
+    //     ];
+    // }
+
+
+    // public function share(Request $request): array
+    // {
+    //     return [
+    //         ...parent::share($request),
+
+    //         'auth' => [
+    //             'user' => $request->user() ? [
+    //                 // 'id' => $request->user()->id,
+    //                 'name' => $request->user()->name,
+    //                 // 'email' => $request->user()->email, // opcional
+    //                 'email' => $request->routeIs('profile.*')
+    //                     ? $request->user()->email
+    //                     : null,
+    //                 // 'role' => $request->user()->role, // si usas roles
+    //             ] : null,
+    //         ],
+
+    //         'flash' => [
+    //             'success' => fn() => $request->session()->get('success'),
+    //             'error' => fn() => $request->session()->get('error'),
+    //             'warning' => fn() => $request->session()->get('warning'),
+    //             'info' => fn() => $request->session()->get('info'),
+    //         ],
+    //     ];
+    // }
+
     public function share(Request $request): array
     {
+        // Usuario autenticado
+        $user = $request->user();
+
+        // Solo exponemos el email en rutas profile.*
+        $sharedUser = $user ? [
+            'name' => $user->name,
+            ...($request->routeIs('profile.*') ? ['email' => $user->email] : []),
+        ] : null;
+
         return [
             ...parent::share($request),
+
             'auth' => [
-                'user' => $request->user(),
+                'user' => $sharedUser,
             ],
 
             'flash' => [
-            'success' => fn () => $request->session()->get('success'),
-            'error' => fn () => $request->session()->get('error'),
-            'warning' => fn () => $request->session()->get('warning'),
-            'info' => fn () => $request->session()->get('info'),
-        ],
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
+                'warning' => fn() => $request->session()->get('warning'),
+                'info' => fn() => $request->session()->get('info'),
+            ],
         ];
     }
+
+
+
+
+
+
 }

@@ -22,7 +22,7 @@
                     class="relative flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-white/90 backdrop-blur border border-white/40 shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-[1.04]"
                 >
                     <span class="text-slate-700 font-semibold tracking-wide"
-                        >Menú</span
+                        >Hola, {{ userName }}</span
                     >
                     <span class="flex flex-col gap-[3px]">
                         <span class="w-4 h-[2px] bg-slate-700 rounded"></span>
@@ -77,6 +77,16 @@
                             </li>
                         </ul>
                     </li>
+                    <!-- MI PERFIL -->
+                    <li class="border-b">
+                        <Link
+                            href="/profile"
+                            class="flex items-center gap-3 px-6 py-3.5 text-[#341e68] font-semibold hover:bg-slate-100/80"
+                        >
+                            <i class="fa-solid fa-user-circle"></i>
+                            Mi perfil
+                        </Link>
+                    </li>
 
                     <li class="border-t">
                         <Link
@@ -117,17 +127,17 @@
         <div
             class="flex items-center justify-between h-[60px] md:h-[74px] px-5 bg-slate-100/85 backdrop-blur-xl shadow"
         >
-            <div class="flex items-center gap-3">
+            <Link href="/" class="flex items-center gap-3 group">
                 <img
                     src="/img/seti.png"
-                    class="w-[36px] md:w-[58px] h-[36px] md:h-[58px]"
+                    class="w-[36px] md:w-[58px] h-[36px] md:h-[58px] transition-transform duration-300 group-hover:scale-105"
                 />
                 <h1
-                    class="text-[18px] md:text-[30px] font-extrabold bg-gradient-to-r from-[#2e165f] via-[#4b2fa3] to-[#6c4cff] bg-clip-text text-transparent"
+                    class="text-[18px] md:text-[30px] font-extrabold bg-gradient-to-r from-[#2e165f] via-[#4b2fa3] to-[#6c4cff] bg-clip-text text-transparent transition-opacity duration-300 group-hover:opacity-90"
                 >
                     SynergyFlow™ PlanCore
                 </h1>
-            </div>
+            </Link>
 
             <!-- BOTÓN HAMBURGUESA SOLO MÓVIL -->
             <button
@@ -154,6 +164,16 @@
                 <ul class="space-y-2">
                     <!-- MENU SOLO SI HAY SESIÓN -->
                     <template v-if="isAuthenticated">
+                        <li>
+                            <button
+                                @click="navigate('/perfil')"
+                                class="flex gap-3 p-3 w-full text-left rounded-xl hover:bg-slate-100"
+                            >
+                                <i class="fa-solid fa-user-circle"></i>
+                                Mi perfil
+                            </button>
+                        </li>
+
                         <li v-for="(item, i) in menu" :key="item.text">
                             <button
                                 v-if="!item.children"
@@ -247,7 +267,7 @@ import { ref, computed, nextTick } from "vue";
 import { Link, router, usePage } from "@inertiajs/vue3";
 
 const page = usePage();
-
+const userName = computed(() => page.props.auth?.user?.name);
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const isLogin = computed(() => page.url.startsWith("/login"));
 const isRegister = computed(() => page.url.startsWith("/register"));
