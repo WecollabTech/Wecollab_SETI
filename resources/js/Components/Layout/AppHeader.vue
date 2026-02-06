@@ -127,7 +127,7 @@
         <div
             class="flex items-center justify-between h-[60px] md:h-[74px] px-5 bg-slate-100/85 backdrop-blur-xl shadow"
         >
-            <Link href="/" class="flex items-center gap-3 group">
+            <Link href="/dashboard" class="flex items-center gap-3 group">
                 <img
                     src="/img/seti.png"
                     class="w-[36px] md:w-[58px] h-[36px] md:h-[58px] transition-transform duration-300 group-hover:scale-105"
@@ -297,7 +297,7 @@ const navigate = (href) => {
 };
 
 const menu = [
-    { text: "Inicio", href: "/", icon: "fa-solid fa-house" },
+    { text: "Inicio", href: "/dashboard", icon: "fa-solid fa-house" },
     {
         text: "Implementación",
         icon: "fa-solid fa-layer-group",
