@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ListController;
 use App\Http\Controllers\EstimacionController;
 use App\Http\Controllers\FaseController;
 use App\Http\Controllers\IntegracionTareaController;
@@ -106,4 +107,16 @@ Route::get('/usuarios', function () {
     return response()->json(
         User::select('id', 'name', 'email')->orderBy('name')->get()
     );
+});
+
+
+
+Route::prefix('lists')->group(function () {
+    Route::get('/usuarios', [ListController::class, 'usuarios']);
+    Route::get('/fases', [ListController::class, 'fases']);
+    Route::get('/tipoimplementacion', [ListController::class, 'tipoImplementacion']);
+    Route::get('/integraciones', [ListController::class, 'integraciones']);
+    Route::get('/niveles', [ListController::class, 'niveles']);
+    Route::get('/tareas', [ListController::class, 'tareas']);
+    Route::get('/estimaciones', [ListController::class, 'estimaciones']);
 });
