@@ -825,8 +825,10 @@ onUnmounted(() => {
                                 Acciones Rápidas
                             </h4>
                             <div class="space-y-3">
-                                <button
-                                    class="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                <!-- Crear Proyecto - AJUSTA LA RUTA SEGÚN TU APLICACIÓN -->
+                                <Link
+                                    :href="route('dashboard')"
+                                    class="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                                 >
                                     <div
                                         class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg"
@@ -848,11 +850,15 @@ onUnmounted(() => {
                                     </div>
                                     <span
                                         class="text-gray-900 dark:text-white font-medium"
-                                        >Crear Proyecto</span
                                     >
-                                </button>
-                                <button
-                                    class="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                        Ir al Dashboard
+                                    </span>
+                                </Link>
+
+                                <!-- Configuración - AJUSTA LA RUTA SEGÚN TU APLICACIÓN -->
+                                <Link
+                                    :href="route('profile.edit')"
+                                    class="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                                 >
                                     <div
                                         class="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg"
@@ -860,32 +866,6 @@ onUnmounted(() => {
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             class="h-5 w-5 text-green-600 dark:text-green-400"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <span
-                                        class="text-gray-900 dark:text-white font-medium"
-                                        >Configuración de Pago</span
-                                    >
-                                </button>
-                                <button
-                                    class="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                    <div
-                                        class="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-5 w-5 text-purple-600 dark:text-purple-400"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -906,8 +886,69 @@ onUnmounted(() => {
                                     </div>
                                     <span
                                         class="text-gray-900 dark:text-white font-medium"
-                                        >Preferencias</span
                                     >
+                                        Editar Perfil
+                                    </span>
+                                </Link>
+
+                                <!-- Crear Estimación Proyecto -->
+                                <Link
+                                    :href="route('estimacion')"
+                                    class="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                                >
+                                    <div
+                                        class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-5 w-5 text-blue-600 dark:text-blue-400"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <span
+                                        class="text-gray-900 dark:text-white font-medium"
+                                    >
+                                        Crear Estimación Proyecto
+                                    </span>
+                                </Link>
+
+                                <!-- Preferencias - AJUSTA LA RUTA SEGÚN TU APLICACIÓN -->
+                                <button
+                                    @click="$inertia.reload()"
+                                    class="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                                >
+                                    <div
+                                        class="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-5 w-5 text-purple-600 dark:text-purple-400"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <span
+                                        class="text-gray-900 dark:text-white font-medium"
+                                    >
+                                        Recargar Página
+                                    </span>
                                 </button>
                             </div>
                         </div>

@@ -147,7 +147,7 @@ Route::get('/estimacion', function () {
 
 Route::get('/estimaciones', function () {
     return Inertia::render('Estimacion/Index');
-})->name('estimaciones');
+})->name('estimaciones.listas');
 
 Route::get('/estimaciones/{estimacion}', function ($estimacion) {
     return Inertia::render('Estimacion/Show', [
