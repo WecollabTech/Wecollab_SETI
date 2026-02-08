@@ -58,6 +58,8 @@ Route::post(
 Route::get('/fases', [FaseController::class, 'index']);
 Route::post('/fases', [FaseController::class, 'store']);
 Route::put('/fases/{fase}', [FaseController::class, 'update']);
+Route::delete('/fases/{fase}', [FaseController::class, 'destroy']);
+
 // Obtener una fase por ID
 Route::get('/fases/{fase}', [FaseController::class, 'show']);
 Route::get('/tipoimplementacion/{tipo}/fases', [TipoImplementacionController::class, 'fases']);

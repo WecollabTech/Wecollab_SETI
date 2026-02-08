@@ -1,17 +1,17 @@
 <script setup>
 import { Head, router } from "@inertiajs/vue3";
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PageHeader from "@/Components/Layout/PageHeader.vue";
 import TablaSeccion from "@/Components/Layout/TablaSeccion.vue";
 import ToolbarBase from "@/Components/Layout/ToolbarBase.vue";
+import ActionModal from "@/Components/Modal/ActionModal.vue";
 
-import ConfirmDeleteModal from "@/Components/Modal/ConfirmDeleteModal.vue";
-import SuccessModals from "@/Components/Modal/SuccessModal.vue";
-
-import { ref, onMounted } from "vue";
-import axios from "axios";
-
-// --- STATE ---
+// --------------------
+// STATE
+// --------------------
 const integraciones = ref({
     data: [],
     current_page: 1,
@@ -21,14 +21,19 @@ const integraciones = ref({
 const loading = ref(true);
 const search = ref("");
 
-// --- MODALES ---
-const showDeleteModal = ref(false);
-const showSuccessModal = ref(false);
-const deleting = ref(false);
+// --------------------
+// MODAL (ÚNICO)
+// --------------------
+const showModal = ref(false);
+const modalType = ref("success"); // success | danger
+const modalTitle = ref("");
+const modalMessage = ref("");
+const modalLoading = ref(false);
 const integracionIdToDelete = ref(null);
-const successMessage = ref(""); // mensaje dinámico del modal
 
-// --- FUNCIONES ---
+// --------------------
+// DATA
+// --------------------
 const cargarIntegraciones = async (page = 1) => {
     loading.value = true;
     try {
@@ -47,31 +52,66 @@ const buscarIntegraciones = () => {
     cargarIntegraciones(1);
 };
 
-// --- ELIMINAR ---
+// --------------------
+// ELIMINAR
+// --------------------
 const confirmarEliminar = (id) => {
     integracionIdToDelete.value = id;
-    showDeleteModal.value = true;
+
+    modalType.value = "danger";
+    modalTitle.value = "Eliminar integración";
+    modalMessage.value =
+        "¿Estás seguro de eliminar esta integración? Esta acción no se puede deshacer.";
+
+    showModal.value = true;
 };
 
 const eliminarIntegracion = async () => {
     if (!integracionIdToDelete.value) return;
 
-    deleting.value = true;
+    modalLoading.value = true;
+
     try {
         await axios.delete(`/api/integraciones/${integracionIdToDelete.value}`);
-        showDeleteModal.value = false;
-        successMessage.value = "La integración fue eliminada correctamente.";
-        showSuccessModal.value = true;
+
+        // Cerrar el modal de confirmación
+        showModal.value = false;
+
+        // Mostrar mensaje de éxito después de un breve delay
+        setTimeout(() => {
+            modalType.value = "success";
+            modalTitle.value = "¡Eliminado!";
+            modalMessage.value = "La integración fue eliminada correctamente.";
+            showModal.value = true;
+
+            // Auto-cerrar después de 2 segundos
+            setTimeout(() => {
+                showModal.value = false;
+            }, 2000);
+        }, 300);
+
         cargarIntegraciones(integraciones.value.current_page);
     } catch (err) {
         console.error("Error al eliminar integración:", err);
+
+        // Mostrar error en el modal
+        showModal.value = false;
+        setTimeout(() => {
+            modalType.value = "danger";
+            modalTitle.value = "Error";
+            modalMessage.value =
+                "No se pudo eliminar la integración. Por favor, intenta nuevamente.";
+            showModal.value = true;
+        }, 300);
     } finally {
-        deleting.value = false;
+        modalLoading.value = false;
         integracionIdToDelete.value = null;
     }
 };
 
-// --- ACCIONES ---
+// --------------------
+// ACCIONES
+// --------------------
 const verIntegracion = (id) => {
     router.get(route("integraciones.show", id));
 };
@@ -92,22 +132,30 @@ const cambiarEstado = async (item) => {
 };
 
 const duplicarIntegracion = async (id) => {
-    if (!confirm("¿Deseas duplicar esta integración junto con sus tareas?"))
-        return;
-
     try {
         const res = await axios.post(route("integraciones.duplicar", id));
-        successMessage.value =
+
+        modalType.value = "success";
+        modalTitle.value = "Integración duplicada";
+        modalMessage.value =
             res.data.message || "Integración duplicada correctamente.";
-        showSuccessModal.value = true;
+
+        showModal.value = true;
         cargarIntegraciones(integraciones.value.current_page);
     } catch (error) {
-        console.error(error.response?.data || error);
-        alert("Error al duplicar la integración");
+        console.error(error);
     }
 };
-
-// --- MOUNT ---
+// Para información
+const mostrarInfo = () => {
+    modalType.value = "info"; // ℹ️ Nuevo tipo
+    modalTitle.value = "Información";
+    modalMessage.value = "Esta acción no se puede deshacer.";
+    showModal.value = true;
+};
+// --------------------
+// MOUNT
+// --------------------
 onMounted(() => {
     cargarIntegraciones();
 });
@@ -143,8 +191,9 @@ onMounted(() => {
             <!-- HEAD -->
             <template #head>
                 <tr
-                    class="bg-blue-100 text-blue-900 uppercase text-sm font-semibold tracking-wide"
+                    class="bg-blue-100 text-blue-900 uppercase text-sm font-semibold"
                 >
+                    <th class="py-3 px-3 text-left">ID</th>
                     <th class="py-3 px-3 text-left">Nombre</th>
                     <th class="py-3 px-3 text-left">Descripción</th>
                     <th class="py-3 px-3 text-center">Acciones</th>
@@ -158,7 +207,13 @@ onMounted(() => {
                     :key="item.id"
                     class="border-b hover:bg-gray-50 transition"
                 >
-                    <td class="py-3 px-3 font-medium">{{ item.nombre }}</td>
+                    <td class="py-3 px-3 font-medium">
+                        {{ item.id }}
+                    </td>
+                    <td class="py-3 px-3 font-medium">
+                        {{ item.nombre }}
+                    </td>
+
                     <td
                         class="py-3 px-3 max-w-[250px] truncate"
                         :title="item.descripcion"
@@ -173,24 +228,28 @@ onMounted(() => {
                         >
                             Editar
                         </button>
+
                         <button
                             @click="confirmarEliminar(item.id)"
                             class="px-3 py-1 bg-red-700 text-white rounded hover:bg-red-600 text-sm"
                         >
                             Eliminar
                         </button>
+
                         <button
                             @click="duplicarIntegracion(item.id)"
                             class="px-3 py-1 bg-green-700 text-white rounded hover:bg-green-600 text-sm"
                         >
                             Duplicar
                         </button>
+
                         <button
                             @click="verIntegracion(item.id)"
                             class="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 text-sm"
                         >
                             Ver
                         </button>
+
                         <button
                             @click="
                                 router.get(
@@ -220,7 +279,7 @@ onMounted(() => {
             </template>
         </TablaSeccion>
 
-        <!-- PAGINACION -->
+        <!-- PAGINACIÓN -->
         <div class="flex justify-center items-center mt-4 gap-3">
             <button
                 class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
@@ -230,10 +289,10 @@ onMounted(() => {
                 Anterior
             </button>
 
-            <span
-                >Página {{ integraciones.current_page }} de
-                {{ integraciones.last_page }}</span
-            >
+            <span>
+                Página {{ integraciones.current_page }} de
+                {{ integraciones.last_page }}
+            </span>
 
             <button
                 class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
@@ -246,19 +305,31 @@ onMounted(() => {
             </button>
         </div>
 
-        <!-- MODALES -->
-        <ConfirmDeleteModal
-            v-model:show="showDeleteModal"
-            title="Eliminar integración"
-            message="¿Estás seguro de eliminar esta integración? Esta acción no se puede deshacer."
-            :loading="deleting"
-            @confirm="eliminarIntegracion"
-        />
-
-        <SuccessModals
-            v-model:show="showSuccessModal"
-            title="Operación exitosa"
-            :message="successMessage"
+        <!-- MODAL ÚNICO -->
+        <!-- MODAL ÚNICO -->
+        <ActionModal
+            v-model:show="showModal"
+            :type="modalType"
+            :title="modalTitle"
+            :message="modalMessage"
+            :loading="modalLoading"
+            :showCancel="modalType === 'danger'"
+            :confirmText="modalType === 'danger' ? 'Sí, eliminar' : 'Aceptar'"
+            :cancelText="'Cancelar'"
+            @confirm="
+                modalType === 'danger'
+                    ? eliminarIntegracion()
+                    : (showModal = false)
+            "
+            @update:show="
+                (value) => {
+                    if (!value && modalLoading) {
+                        // Si intentan cerrar mientras carga, prevenir
+                        return;
+                    }
+                    showModal = value;
+                }
+            "
         />
     </AppLayout>
 </template>

@@ -10,6 +10,7 @@ import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
 import FormInput from "@/Components/Formulario/FormInput.vue";
 import CardInput from "@/Components/Formulario/CardInput.vue";
 import SuccessModal from "@/Components/Modal/SuccessModal.vue";
+import ActionModal from "@/Components/Modal/ActionModal.vue";
 
 // --- FORM ---
 const form = reactive({
@@ -24,7 +25,7 @@ const errors = reactive({
 
 const showModal = ref(false);
 const modalMessage = ref("");
-const modalType = ref("success");
+const modalType = ref("success"); // success | danger | warning | info
 const sending = ref(false);
 
 // --- WATCHERS (LIMPIAN ERROR AL ESCRIBIR) ---
@@ -133,11 +134,14 @@ const cancel = () => router.get("/integraciones");
             </template>
         </FormWrapper>
 
-        <SuccessModal
-            :show.sync="showModal"
-            :message="modalMessage"
+        <ActionModal
+            v-model:show="showModal"
             :type="modalType"
-            :auto-close="4000"
+            title="¡Integración creada!"
+            :message="modalMessage"
+            confirmText="Aceptar"
+            :showCancel="false"
+            @confirm="showModal = false"
         />
     </AppLayout>
 </template>

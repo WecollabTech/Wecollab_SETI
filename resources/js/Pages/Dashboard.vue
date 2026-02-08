@@ -1,12 +1,12 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { Head, router } from "@inertiajs/vue3";
+import { ref, onMounted, computed, nextTick } from "vue";
 import { Link } from "@inertiajs/vue3";
 import axios from "axios";
+import { Head, router } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 
+// Estados reactivos
 const loading = ref(true);
-
 const stats = ref({
     estimaciones: 0,
     horas: 0,
@@ -20,44 +20,324 @@ const lists = ref({
     fases: [],
 });
 
+// Cache para mejorar rendimiento
+const cache = ref({
+    data: null,
+    timestamp: null,
+    TTL: 300000, // 5 minutos
+});
+
+// Virtual scrolling para estimaciones
+const visibleEstimacionesCount = ref(6);
+const visibleEstimaciones = computed(() => {
+    return lists.value.estimaciones.slice(0, visibleEstimacionesCount.value);
+});
+
+// Skeleton states
+const showSkeleton = ref(true);
+
+// Función optimizada con caching
 const fetchDashboard = async () => {
     try {
-        loading.value = true;
+        // Verificar cache primero
+        const now = Date.now();
+        if (
+            cache.value.data &&
+            cache.value.timestamp &&
+            now - cache.value.timestamp < cache.value.TTL
+        ) {
+            // Usar datos cacheados - carga instantánea
+            useCachedData();
+            // Actualizar en background sin bloquear UI
+            updateInBackground();
+            return;
+        }
+
+        // Mostrar skeleton inmediatamente
+        showSkeleton.value = true;
+
+        // Cargar datos en paralelo con timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
         const [estimacionesRes, tareasRes, integracionesRes, fasesRes] =
             await Promise.all([
-                axios.get("/api/lists/estimaciones"),
-                axios.get("/api/lists/tareas"),
-                axios.get("/api/lists/integraciones"),
-                axios.get("/api/lists/fases"),
+                axios.get("/api/lists/estimaciones", {
+                    signal: controller.signal,
+                    timeout: 10000,
+                }),
+                axios.get("/api/lists/tareas", {
+                    signal: controller.signal,
+                    timeout: 10000,
+                }),
+                axios.get("/api/lists/integraciones", {
+                    signal: controller.signal,
+                    timeout: 10000,
+                }),
+                axios.get("/api/lists/fases", {
+                    signal: controller.signal,
+                    timeout: 10000,
+                }),
             ]);
 
-        stats.value.estimaciones = estimacionesRes.data.length;
-        stats.value.horas = estimacionesRes.data.reduce(
-            (sum, e) => sum + Number(e.total_horas ?? 0),
-            0,
-        );
-        stats.value.tareas = tareasRes.data.length;
-        stats.value.integraciones = integracionesRes.data.length;
+        clearTimeout(timeoutId);
 
-        lists.value.estimaciones = estimacionesRes.data.slice(0, 6);
-        lists.value.tareas = tareasRes.data.slice(0, 6);
-        lists.value.fases = fasesRes.data;
-    } catch (e) {
-        console.error("Error dashboard", e);
+        // Procesar datos eficientemente
+        processDashboardData(
+            estimacionesRes.data,
+            tareasRes.data,
+            integracionesRes.data,
+            fasesRes.data,
+        );
+
+        // Guardar en cache
+        cache.value = {
+            data: {
+                estimaciones: estimacionesRes.data,
+                tareas: tareasRes.data,
+                integraciones: integracionesRes.data,
+                fases: fasesRes.data,
+            },
+            timestamp: Date.now(),
+            TTL: cache.value.TTL,
+        };
+    } catch (error) {
+        if (error.name === "AbortError" || error.code === "ECONNABORTED") {
+            console.warn("Request timeout, using cached data if available");
+        } else {
+            console.error("Error loading dashboard:", error);
+        }
+
+        // Fallback: usar cache si hay error
+        if (cache.value.data) {
+            useCachedData();
+        }
     } finally {
-        loading.value = false;
+        // Ocultar skeleton después de un pequeño delay para evitar flicker
+        setTimeout(() => {
+            showSkeleton.value = false;
+            loading.value = false;
+        }, 300);
     }
 };
 
-onMounted(fetchDashboard);
+// Procesar datos optimizados
+const processDashboardData = (estimaciones, tareas, integraciones, fases) => {
+    // Calcular stats de forma eficiente
+    stats.value = {
+        estimaciones: estimaciones.length,
+        horas: estimaciones.reduce(
+            (sum, e) => sum + Number(e.total_horas ?? 0),
+            0,
+        ),
+        tareas: tareas.length,
+        integraciones: integraciones.length,
+    };
+
+    // Limitar datos para mejor rendimiento
+    lists.value = {
+        estimaciones: estimaciones.slice(0, 50), // Máximo 50 registros
+        tareas: tareas.slice(0, 10), // Máximo 10 tareas
+        fases: fases.slice(0, 10), // Máximo 10 fases
+    };
+};
+
+// Usar datos cacheados
+const useCachedData = () => {
+    const cached = cache.value.data;
+    processDashboardData(
+        cached.estimaciones,
+        cached.tareas,
+        cached.integraciones,
+        cached.fases,
+    );
+};
+
+// Actualizar en background sin bloquear UI
+const updateInBackground = () => {
+    Promise.allSettled([
+        axios
+            .get("/api/lists/estimaciones", { timeout: 10000 })
+            .catch(() => null),
+        axios.get("/api/lists/tareas", { timeout: 10000 }).catch(() => null),
+        axios
+            .get("/api/lists/integraciones", { timeout: 10000 })
+            .catch(() => null),
+        axios.get("/api/lists/fases", { timeout: 10000 }).catch(() => null),
+    ]).then(([est, tar, int, fas]) => {
+        if (
+            est?.status === 200 &&
+            tar?.status === 200 &&
+            int?.status === 200 &&
+            fas?.status === 200
+        ) {
+            cache.value = {
+                data: {
+                    estimaciones: est.value.data,
+                    tareas: tar.value.data,
+                    integraciones: int.value.data,
+                    fases: fas.value.data,
+                },
+                timestamp: Date.now(),
+                TTL: cache.value.TTL,
+            };
+        }
+    });
+};
+
+// Cargar más estimaciones (lazy loading)
+const loadMoreEstimaciones = () => {
+    visibleEstimacionesCount.value = Math.min(
+        visibleEstimacionesCount.value + 6,
+        lists.value.estimaciones.length,
+    );
+};
+
+// Formatear fecha optimizada
+const formatDate = (date) => {
+    if (!date) return "-";
+    const d = new Date(date);
+    return d.toLocaleDateString("es-ES", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
+};
+
+// Montar componente con optimizaciones
+onMounted(() => {
+    // Cargar datos inmediatamente
+    fetchDashboard();
+
+    // Precargar datos en background después de 1 segundo
+    setTimeout(() => {
+        if (!loading.value && cache.value.data) {
+            updateInBackground();
+        }
+    }, 1000);
+
+    // Actualizar cada 5 minutos en background
+    const interval = setInterval(() => {
+        if (!loading.value) {
+            updateInBackground();
+        }
+    }, 300000);
+
+    // Precargar skeleton para percepción de velocidad
+    nextTick(() => {
+        showSkeleton.value = true;
+    });
+
+    // Limpiar interval al desmontar
+    return () => clearInterval(interval);
+});
 </script>
 
 <template>
     <Head title="Dashboard" />
     <AppLayout>
+        <!-- Skeleton Loader - Muestra inmediatamente para percepción de velocidad -->
         <div
-            class="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300"
+            v-if="showSkeleton && !loading"
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        >
+            <!-- Header Skeleton -->
+            <div class="mb-10 animate-pulse">
+                <div
+                    class="h-12 w-48 bg-gray-200 dark:bg-gray-700 rounded-lg mb-2"
+                ></div>
+                <div
+                    class="h-4 w-64 bg-gray-200 dark:bg-gray-700 rounded"
+                ></div>
+            </div>
+
+            <!-- Stats Cards Skeleton -->
+            <div
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            >
+                <div
+                    v-for="i in 4"
+                    :key="i"
+                    class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 animate-pulse"
+                >
+                    <div
+                        class="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-4"
+                    ></div>
+                    <div
+                        class="h-12 w-16 bg-gray-200 dark:bg-gray-700 rounded"
+                    ></div>
+                </div>
+            </div>
+
+            <!-- Acceso Rápido Skeleton -->
+            <div class="mb-8 animate-pulse">
+                <div
+                    class="h-8 w-40 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4"
+                ></div>
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                    <div
+                        v-for="i in 6"
+                        :key="i"
+                        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 h-48"
+                    ></div>
+                </div>
+            </div>
+
+            <!-- Tables Skeleton -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div
+                    class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 animate-pulse"
+                >
+                    <div
+                        class="h-6 w-48 bg-gray-200 dark:bg-gray-700 rounded mb-4"
+                    ></div>
+                    <div class="space-y-3">
+                        <div
+                            v-for="i in 6"
+                            :key="i"
+                            class="h-12 bg-gray-100 dark:bg-gray-700 rounded"
+                        ></div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 animate-pulse"
+                    >
+                        <div
+                            class="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-4"
+                        ></div>
+                        <div class="space-y-3">
+                            <div
+                                v-for="i in 6"
+                                :key="i"
+                                class="h-8 bg-gray-100 dark:bg-gray-700 rounded"
+                            ></div>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 animate-pulse"
+                    >
+                        <div
+                            class="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-4"
+                        ></div>
+                        <div class="space-y-3">
+                            <div
+                                v-for="i in 6"
+                                :key="i"
+                                class="h-8 bg-gray-100 dark:bg-gray-700 rounded"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Real - Solo se muestra cuando los datos están listos -->
+        <div
+            v-else
+            class="min-h-screen m-4 rounded-3xl bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 shadow-2xl transition-all duration-300"
         >
             <!-- Animated Background -->
             <div
@@ -120,38 +400,8 @@ onMounted(fetchDashboard);
                     </div>
                 </div>
 
-                <!-- Loading Mejorado -->
-                <div
-                    v-if="loading"
-                    class="flex flex-col items-center justify-center h-96 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 animate-pulse"
-                >
-                    <div class="relative">
-                        <div
-                            class="h-16 w-16 rounded-full border-4 border-indigo-200 border-t-indigo-600 animate-spin-slow"
-                        ></div>
-                        <div
-                            class="absolute inset-0 flex items-center justify-center text-indigo-600 font-bold text-xl"
-                        >
-                            ⏳
-                        </div>
-                    </div>
-                    <p
-                        class="mt-6 text-gray-600 dark:text-gray-300 text-lg font-medium animate-pulse-text"
-                    >
-                        Cargando información del sistema...
-                    </p>
-                    <div
-                        class="mt-4 w-64 h-2 bg-gray-200 rounded-full overflow-hidden"
-                    >
-                        <div
-                            class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 animate-shimmer"
-                        ></div>
-                    </div>
-                </div>
-
                 <!-- Stats Cards Mejoradas -->
                 <div
-                    v-else
                     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in-up"
                 >
                     <!-- Card Estimaciones -->
@@ -975,7 +1225,7 @@ onMounted(fetchDashboard);
                 >
                     <!-- Tabla estimaciones Mejorada -->
                     <div
-                        class="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 overflow-hidden"
+                        class="lg:col-span-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 overflow-hidden"
                     >
                         <div
                             class="px-6 py-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-indigo-500/5 to-transparent dark:from-indigo-900/20"
@@ -1029,7 +1279,9 @@ onMounted(fetchDashboard);
                                     class="divide-y divide-gray-100 dark:divide-gray-700"
                                 >
                                     <tr
-                                        v-for="(e, index) in lists.estimaciones"
+                                        v-for="(
+                                            e, index
+                                        ) in visibleEstimaciones"
                                         :key="e.id"
                                         class="hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-colors duration-200 cursor-pointer group"
                                         @mouseenter="currentHover = e.id"
@@ -1055,6 +1307,22 @@ onMounted(fetchDashboard);
                             </table>
                         </div>
 
+                        <!-- Load More Button -->
+                        <div
+                            v-if="
+                                lists.estimaciones.length >
+                                visibleEstimaciones.length
+                            "
+                            class="px-6 py-4 border-t border-gray-200/50 dark:border-gray-700/50"
+                        >
+                            <button
+                                @click="loadMoreEstimaciones"
+                                class="w-full px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+                            >
+                                Cargar más estimaciones →
+                            </button>
+                        </div>
+
                         <div
                             class="px-6 py-4 bg-gray-50/50 dark:bg-gray-700/30 border-t border-gray-200/50 dark:border-gray-700/50"
                         >
@@ -1064,115 +1332,6 @@ onMounted(fetchDashboard);
                             </p>
                         </div>
                     </div>
-
-                    <!-- Lateral Mejorado -->
-                    <div class="space-y-6">
-                        <!-- Tareas Mejorado -->
-                        <div
-                            class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 overflow-hidden"
-                        >
-                            <div
-                                class="px-6 py-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-blue-500/5 to-transparent dark:from-blue-900/20"
-                            >
-                                <h2
-                                    class="text-xl font-bold text-gray-800 dark:text-white flex items-center space-x-3"
-                                >
-                                    <svg
-                                        class="h-6 w-6 text-blue-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                                        />
-                                    </svg>
-                                    <span>Tareas</span>
-                                </h2>
-                            </div>
-
-                            <div class="p-6">
-                                <ul class="space-y-3">
-                                    <li
-                                        v-for="(t, index) in lists.tareas"
-                                        :key="t.id"
-                                        class="group flex items-start space-x-3 p-3 rounded-lg hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-200 cursor-pointer border-l-3 border-transparent group-hover:border-blue-500"
-                                    >
-                                        <div
-                                            class="flex-shrink-0 mt-0.5 h-2 w-2 rounded-full bg-blue-500 group-hover:animate-pulse"
-                                        ></div>
-                                        <span
-                                            class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200"
-                                        >
-                                            {{ t.titulo }}
-                                        </span>
-                                    </li>
-                                </ul>
-                                <div
-                                    v-if="lists.tareas.length === 0"
-                                    class="text-center py-8 text-gray-500 dark:text-gray-400"
-                                >
-                                    No hay tareas disponibles
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Fases Mejorado -->
-                        <div
-                            class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 overflow-hidden"
-                        >
-                            <div
-                                class="px-6 py-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-green-500/5 to-transparent dark:from-green-900/20"
-                            >
-                                <h2
-                                    class="text-xl font-bold text-gray-800 dark:text-white flex items-center space-x-3"
-                                >
-                                    <svg
-                                        class="h-6 w-6 text-green-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                        />
-                                    </svg>
-                                    <span>Fases</span>
-                                </h2>
-                            </div>
-
-                            <div class="p-6">
-                                <ul class="space-y-3">
-                                    <li
-                                        v-for="(f, index) in lists.fases"
-                                        :key="f.id"
-                                        class="group flex items-start space-x-3 p-3 rounded-lg hover:bg-green-50/50 dark:hover:bg-green-900/20 transition-all duration-200 cursor-pointer border-l-3 border-transparent group-hover:border-green-500"
-                                    >
-                                        <div
-                                            class="flex-shrink-0 mt-0.5 h-2 w-2 rounded-full bg-green-500 group-hover:animate-pulse"
-                                        ></div>
-                                        <span
-                                            class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-200"
-                                        >
-                                            {{ f.nombre }}
-                                        </span>
-                                    </li>
-                                </ul>
-                                <div
-                                    v-if="lists.fases.length === 0"
-                                    class="text-center py-8 text-gray-500 dark:text-gray-400"
-                                >
-                                    No hay fases disponibles
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1180,7 +1339,7 @@ onMounted(fetchDashboard);
 </template>
 
 <style scoped>
-/* Animaciones personalizadas */
+/* Animaciones optimizadas */
 @keyframes fade-in {
     from {
         opacity: 0;
@@ -1222,13 +1381,7 @@ onMounted(fetchDashboard);
     }
 }
 
-@keyframes spin-slow {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes pulse-text {
+@keyframes pulse {
     0%,
     100% {
         opacity: 1;
@@ -1274,12 +1427,8 @@ onMounted(fetchDashboard);
     background-size: 200% 200%;
 }
 
-.animate-spin-slow {
-    animation: spin-slow 2s linear infinite;
-}
-
-.animate-pulse-text {
-    animation: pulse-text 1.5s ease-in-out infinite;
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Custom scrollbar */
