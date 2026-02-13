@@ -272,11 +272,19 @@
         <table class="items-table" style="margin-top:8px;">
             <tbody>
                 <tr>
-                    <th width="20%">ID</th>
+                    <th width="20%">ID Estimación </th>
                     <td width="30%">#{{ $estimacion->id }}</td>
 
                     <th width="20%">Fecha</th>
                     <td width="30%">{{ $estimacion->created_at->format('d/m/Y') }}</td>
+                </tr>
+
+                <tr>
+                    <th width="20%">Compañia </th>
+                    <td width="30%">{{ $estimacion->nombre_empresa }}</td>
+
+                    <th width="20%">Id de Negociación</th>
+                    <td width="30%">{{ $estimacion->id_negocio }}</td>
                 </tr>
 
                 <tr>
@@ -286,6 +294,7 @@
                     <th>Tipo Implementación</th>
                     <td>{{ $estimacion->nombre_tipo_implementacion ?? '-' }}</td>
                 </tr>
+
 
                 <tr>
                     <th>Complejidad</th>
@@ -350,6 +359,12 @@
         <div class="section-title no-break">Resumen Final</div>
         <div class="info-card no-break">
             <table class="info-grid">
+                <tr>
+                    <td width="35%">
+                        <div class="info-label">Factor</div>
+                        <div class="info-value info-highlight">{{ $estimacion->complejidad->factor ?? '-' }}</div>
+                    </td>
+                </tr>
                 <tr>
                     <td width="35%">
                         <div class="info-label">Total horas estimadas</div>

@@ -13,13 +13,30 @@ class TareaController extends Controller
     //FUNCION PARA LISTAR TARAS CON FASE
     public function index(Request $request)
     {
-        return Tarea::with('fase')
-            ->when($request->search, function ($q) use ($request) {
-                $q->where('nombre', 'like', "%{$request->search}%");
-            })
-            ->paginate(5);
-    }
+        $query = Tarea::with('fase');
 
+        // 🔍 BÚSQUEDA
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nombre', 'like', "%{$request->search}%")
+                    ->orWhere('descripcion', 'like', "%{$request->search}%");
+            });
+        }
+
+        // 🔃 ORDENAMIENTO
+        $sortBy = $request->get('sort_by', 'id');
+        $sortDirection = $request->get('sort_direction', 'desc');
+
+        $allowedColumns = ['id', 'nombre', 'descripcion', 'created_at'];
+        if (!in_array($sortBy, $allowedColumns)) {
+            $sortBy = 'id';
+        }
+
+        $query->orderBy($sortBy, $sortDirection);
+
+        // 📄 PAGINACIÓN
+        return $query->paginate(5)->withQueryString();
+    }
 
     //FUNCION PARA CREAR Y GUARDAR TAREA EN LA BASE DE DATOS.
     // public function store(Request $request)
@@ -115,6 +132,7 @@ class TareaController extends Controller
             'duracion_minuto' => 'nullable|integer|min:0',
             'orden' => 'nullable|integer|min:1',
             'fase_id' => 'required|exists:fases,id',
+            'url_contenido' => 'nullable|url',
         ], $messages);
 
         // 🔐 Asegurar duración mínima

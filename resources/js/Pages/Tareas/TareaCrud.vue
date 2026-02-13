@@ -2,14 +2,20 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import { Head, router } from "@inertiajs/vue3";
 import axios from "axios";
+import { usePage } from "@inertiajs/vue3";
 
+import FormActions from "@/Components/Formulario/FormActions.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import PageHeader from "@/Components/Layout/PageHeader.vue";
+// import PageHeader from "@/Components/Layout/PageHeader.vue";
 import FormWrapper from "@/Components/Formulario/FormWrapper.vue";
 import FormInput from "@/Components/Formulario/FormInput.vue";
 import SuccessModal from "@/Components/Modal/SuccessModal.vue";
-import Multiselect from "vue-multiselect";
+// import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.min.css";
+
+const page = usePage();
+
+const showFases = ref(true);
 
 // --- Formulario reactivo ---
 const form = reactive({
@@ -21,9 +27,18 @@ const form = reactive({
     duracion_minuto: null,
     orden: 1,
     fase_id: "",
+    url_contenido: "",
     integraciones: [],
     fases: [],
 });
+
+const faseFromUrl =
+    page.props?.query?.fase_id ||
+    new URLSearchParams(window.location.search).get("fase_id");
+
+if (faseFromUrl) {
+    form.fase_id = Number(faseFromUrl);
+}
 
 // --- Errores ---
 const errors = reactive({
@@ -35,6 +50,7 @@ const errors = reactive({
     duracion_minuto: null,
     orden: null,
     fase_id: null,
+    url_contenido: null,
     integraciones: null,
     fases: null,
 });
@@ -53,7 +69,8 @@ const integracionesOptions = ref([]);
 const cargarFases = async () => {
     try {
         const res = await axios.get("/api/listafases");
-        fasesOptions.value = res.data; // 👈 sin .data.data
+        // console.log("Fases API:", res.data);
+        fasesOptions.value = res.data;
     } catch (err) {
         console.error("Error al cargar fases:", err);
     }
@@ -150,6 +167,7 @@ const submit = async () => {
             res.data.message || "Tarea creada correctamente ✅";
         modalType.value = "success";
         showModal.value = true;
+
         resetForm();
     } catch (err) {
         if (err.response?.status === 422) {
@@ -177,15 +195,16 @@ const onModalClose = () => router.get("/tareas");
 
 <template>
     <Head title="Nueva Tarea" />
-    <AppLayout>
-        <template #title>
-            <PageHeader title="Nueva Tarea" />
-        </template>
 
-        <FormWrapper title="Ingresa los datos de la Tarea">
-            <!-- GRID DE CARDS -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- CARD: Titulo -->
+    <AppLayout>
+        <!-- <template #title>
+            <PageHeader title="Nueva Tarea" />
+        </template> -->
+
+        <FormWrapper title="Datos de la Tarea">
+            <!-- GRID PRINCIPAL -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- TÍTULO -->
                 <div class="card">
                     <FormInput
                         label="Título"
@@ -195,7 +214,7 @@ const onModalClose = () => router.get("/tareas");
                     />
                 </div>
 
-                <!-- CARD: ID Proceso -->
+                <!-- ID PROCESO -->
                 <div class="card">
                     <FormInput
                         label="ID Proceso"
@@ -205,7 +224,7 @@ const onModalClose = () => router.get("/tareas");
                     />
                 </div>
 
-                <!-- CARD: Descripción -->
+                <!-- DESCRIPCIÓN -->
                 <div class="card">
                     <FormInput
                         label="Descripción"
@@ -214,70 +233,39 @@ const onModalClose = () => router.get("/tareas");
                         :error="errors.descripcion"
                         placeholder="Descripción breve"
                     />
-                    <p class="text-gray-400 text-sm mt-1">
+                    <p class="text-xs text-gray-400 mt-1">
                         {{ form.descripcion.length }}/1000 caracteres
                     </p>
                 </div>
 
-                <!-- CARD: Duración -->
+                <!-- DURACIÓN -->
                 <div class="card">
                     <FormInput
-                        label="Duración (minutos)"
+                        label="Duración (min)"
                         type="number"
                         v-model="form.duracion_minuto"
                         :error="errors.duracion_minuto"
-                        placeholder="Ej. 30"
+                        placeholder="30"
                     />
                 </div>
 
-                <!-- CARD: Orden -->
+                <!-- ORDEN -->
                 <div class="card">
                     <FormInput
                         label="Orden"
                         type="number"
                         v-model="form.orden"
                         :error="errors.orden"
-                        placeholder="Ej. 1"
+                        placeholder="1"
                     />
                 </div>
 
-                <!-- CARD: Estado -->
-                <!-- <div class="card">
-                    <FormInput
-                        label="Estado"
-                        type="select"
-                        v-model="form.estado"
-                        :error="errors.estado"
-                        :options="[
-                            { label: 'Pendiente', value: 'pendiente' },
-                            { label: 'En proceso', value: 'en_proceso' },
-                            { label: 'Completado', value: 'completado' },
-                            { label: 'Cancelado', value: 'cancelado' },
-                        ]"
-                    />
-                </div> -->
+                <!-- INTEGRACIONES -->
+                <!-- <div class="card md:col-span-2">
+                    <label class="block text-sm font-semibold mb-1">
+                        Integraciones
+                    </label>
 
-                <!-- CARD: Fase -->
-                <div class="card">
-                    <FormInput
-                        label="Fase"
-                        type="select"
-                        v-model="form.fase_id"
-                        :error="errors.fase_id"
-                        :options="
-                            fasesOptions.map((f) => ({
-                                label: f.nombre,
-                                value: f.id,
-                            }))
-                        "
-                    />
-                </div>
-
-                <!-- CARD: Integraciones -->
-                <div class="card">
-                    <label class="block font-semibold mb-1"
-                        >Integraciones</label
-                    >
                     <Multiselect
                         v-model="form.integraciones"
                         :options="integracionesOptions"
@@ -288,64 +276,134 @@ const onModalClose = () => router.get("/tareas");
                         :close-on-select="false"
                         :hide-selected="true"
                         taggable
-                        class="w-full"
+                        class="multiselect-compact w-full"
                     />
+
                     <p
                         v-if="errors.integraciones"
-                        class="text-red-600 text-sm mt-1"
+                        class="text-red-600 text-xs mt-1"
                     >
                         {{ errors.integraciones }}
                     </p>
-                </div>
+                </div> -->
 
-                <!-- CARD: Activo -->
-                <div class="card flex flex-col justify-center items-start">
-                    <span class="block font-semibold text-gray-700 mb-2"
-                        >Activo</span
-                    >
+                <!-- ACTIVO -->
+                <div class="card">
                     <div
-                        class="w-14 h-7 rounded-full p-0.5 flex items-center transition-colors duration-300 cursor-pointer"
-                        :class="form.activo ? 'bg-green-500' : 'bg-gray-300'"
-                        @click="form.activo = !form.activo"
+                        class="card flex items-center justify-between md:col-span-2"
                     >
+                        <span class="text-sm font-semibold text-gray-700">
+                            Activo
+                        </span>
+
                         <div
-                            class="bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300"
+                            class="w-12 h-6 rounded-full p-0.5 flex items-center transition cursor-pointer"
                             :class="
-                                form.activo ? 'translate-x-7' : 'translate-x-0'
+                                form.activo ? 'bg-green-500' : 'bg-gray-300'
                             "
-                        ></div>
+                            @click="form.activo = !form.activo"
+                        >
+                            <div
+                                class="bg-white w-5 h-5 rounded-full shadow transform transition"
+                                :class="
+                                    form.activo
+                                        ? 'translate-x-6'
+                                        : 'translate-x-0'
+                                "
+                            ></div>
+                        </div>
                     </div>
-                    <p v-if="errors.activo" class="text-red-600 text-sm mt-1">
-                        {{ errors.activo }}
-                    </p>
                 </div>
             </div>
 
-            <!-- BOTONES -->
-            <template #actions>
-                <div
-                    class="flex flex-col md:flex-row justify-center md:justify-end gap-4 mt-6"
+            <!-- FASE (COLLAPSE) -->
+            <div class="card mt-4">
+                <button
+                    type="button"
+                    class="w-full flex justify-between items-center text-sm font-semibold"
+                    @click="showFases = !showFases"
                 >
-                    <button
-                        type="button"
-                        @click="cancel"
-                        class="px-6 py-2.5 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+                    <span>
+                        Fase
+                        <span class="text-xs text-gray-400 ml-1">
+                            {{
+                                fasesOptions.find((f) => f.id === form.fase_id)
+                                    ?.nombre || "Sin seleccionar"
+                            }}
+                        </span>
+                    </span>
+
+                    <svg
+                        class="w-4 h-4 transition-transform"
+                        :class="{ 'rotate-180': showFases }"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                     >
-                        Cancelar
-                    </button>
-                    <button
-                        type="button"
-                        @click="submit"
-                        :disabled="sending"
-                        class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 9l-7 7-7-7"
+                        />
+                    </svg>
+                </button>
+
+                <transition name="fade">
+                    <div
+                        v-show="showFases"
+                        class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2"
                     >
-                        Guardar
-                    </button>
-                </div>
+                        <label
+                            v-for="fase in fasesOptions"
+                            :key="fase.id"
+                            class="flex items-center gap-2 px-2 py-1.5 text-sm rounded-md border cursor-pointer hover:bg-gray-50"
+                            :class="
+                                form.fase_id === fase.id
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-200'
+                            "
+                        >
+                            <input
+                                type="radio"
+                                :value="fase.id"
+                                v-model="form.fase_id"
+                                class="text-blue-600"
+                            />
+                            {{ fase.nombre }}
+                        </label>
+                    </div>
+                </transition>
+
+                <p v-if="errors.fase_id" class="text-red-600 text-xs mt-1">
+                    {{ errors.fase_id }}
+                </p>
+            </div>
+
+            <!-- URL de Contenido -->
+            <div class="card md:col-span-2">
+                <FormInput
+                    label="URL de Contenido"
+                    v-model="form.url_contenido"
+                    :error="errors.url_contenido"
+                    type="url"
+                    placeholder="https://..."
+                />
+                <p class="text-xs text-gray-400 mt-1">
+                    Puedes ingresar link de YouTube, Loom, Drive o archivo.
+                </p>
+            </div>
+
+            <!-- ACCIONES -->
+            <template #actions>
+                <FormActions
+                    :sending="sending"
+                    @cancel="cancel"
+                    @submit="submit"
+                />
             </template>
         </FormWrapper>
 
-        <!-- MODAL -->
         <SuccessModal
             :show.sync="showModal"
             :message="modalMessage"
@@ -353,7 +411,9 @@ const onModalClose = () => router.get("/tareas");
             :auto-close="4000"
             @update:show="
                 (val) => {
-                    if (!val) onModalClose();
+                    if (!val && modalType === 'success') {
+                        router.get('/tareas');
+                    }
                 }
             "
         />
@@ -371,5 +431,15 @@ const onModalClose = () => router.get("/tareas");
 }
 .card:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    max-height: 0;
 }
 </style>

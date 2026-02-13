@@ -1,6 +1,6 @@
 <script setup>
 import { Head, router } from "@inertiajs/vue3";
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 
 import AppLayout from "@/Layouts/AppLayout.vue";
@@ -9,6 +9,12 @@ import TablaSeccion from "@/Components/Layout/TablaSeccion.vue";
 import ToolbarBase from "@/Components/Layout/ToolbarBase.vue";
 import ActionModal from "@/Components/Modal/ActionModal.vue";
 
+// Componentes reutilizables
+import Pagination from "@/Components/Pagination/Pagination.vue";
+import SortableHeader from "@/Components/Table/SortableHeader.vue";
+import ActionButtons from "@/Components/Table/ActionButtons.vue";
+import SearchWithReset from "@/Components/Formulario/SearchWithReset.vue";
+
 // --------------------
 // STATE
 // --------------------
@@ -16,20 +22,51 @@ const integraciones = ref({
     data: [],
     current_page: 1,
     last_page: 1,
+    total: 0,
 });
 
 const loading = ref(true);
 const search = ref("");
+const sortBy = ref("id"); // Columna por defecto
+const sortDirection = ref("asc"); // Orden ascendente por defecto
 
 // --------------------
 // MODAL (ÚNICO)
 // --------------------
 const showModal = ref(false);
-const modalType = ref("success"); // success | danger
+const modalType = ref("success"); // success | danger | info
 const modalTitle = ref("");
 const modalMessage = ref("");
 const modalLoading = ref(false);
 const integracionIdToDelete = ref(null);
+
+// --------------------
+// DATOS ORDENADOS (Frontend)
+// --------------------
+const sortedData = computed(() => {
+    if (!integraciones.value?.data) return [];
+
+    return [...integraciones.value.data].sort((a, b) => {
+        const aValue = a[sortBy.value];
+        const bValue = b[sortBy.value];
+
+        // Manejar valores null/undefined
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+
+        // Comparar según tipo de dato
+        if (typeof aValue === "string" && typeof bValue === "string") {
+            return sortDirection.value === "asc"
+                ? aValue.localeCompare(bValue, "es", { sensitivity: "base" })
+                : bValue.localeCompare(aValue, "es", { sensitivity: "base" });
+        }
+
+        // Para números
+        return sortDirection.value === "asc"
+            ? aValue - bValue
+            : bValue - aValue;
+    });
+});
 
 // --------------------
 // DATA
@@ -38,7 +75,7 @@ const cargarIntegraciones = async (page = 1) => {
     loading.value = true;
     try {
         const res = await axios.get(
-            `/api/integraciones?page=${page}&search=${search.value}`,
+            `/api/integraciones?page=${page}&search=${search.value}&sort_by=${sortBy.value}&sort_direction=${sortDirection.value}`,
         );
         integraciones.value = res.data;
     } catch (error) {
@@ -50,6 +87,27 @@ const cargarIntegraciones = async (page = 1) => {
 
 const buscarIntegraciones = () => {
     cargarIntegraciones(1);
+};
+
+// --------------------
+// ORDENAMIENTO
+// --------------------
+const changeSort = (column) => {
+    if (sortBy.value === column) {
+        // Si ya está ordenado por esta columna, invertir dirección
+        sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+    } else {
+        // Nueva columna, orden ascendente por defecto
+        sortBy.value = column;
+        sortDirection.value = "asc";
+    }
+    cargarIntegraciones(integraciones.value.current_page);
+};
+
+const resetSort = () => {
+    sortBy.value = "id";
+    sortDirection.value = "asc";
+    cargarIntegraciones(integraciones.value.current_page);
 };
 
 // --------------------
@@ -146,13 +204,19 @@ const duplicarIntegracion = async (id) => {
         console.error(error);
     }
 };
+
+const crearTareas = (id) => {
+    router.get(route("integraciones_tarea.index", { integracion_id: id }));
+};
+
 // Para información
 const mostrarInfo = () => {
-    modalType.value = "info"; // ℹ️ Nuevo tipo
+    modalType.value = "info";
     modalTitle.value = "Información";
     modalMessage.value = "Esta acción no se puede deshacer.";
     showModal.value = true;
 };
+
 // --------------------
 // MOUNT
 // --------------------
@@ -169,7 +233,7 @@ onMounted(() => {
             <PageHeader title="Integraciones" />
         </template>
 
-        <TablaSeccion :data="integraciones.data" title="Lista de Integraciones">
+        <TablaSeccion :data="sortedData" title="Lista de Integraciones">
             <!-- TOOLBAR -->
             <template #toolbar>
                 <ToolbarBase
@@ -177,12 +241,13 @@ onMounted(() => {
                     :createHref="route('integraciones.create')"
                 >
                     <template #left>
-                        <input
+                        <SearchWithReset
                             v-model="search"
-                            @input="buscarIntegraciones"
-                            type="text"
                             placeholder="Buscar integración..."
-                            class="border rounded-md px-3 py-2 text-sm w-64"
+                            :sort-by="sortBy"
+                            :sort-direction="sortDirection"
+                            @search="buscarIntegraciones"
+                            @reset="resetSort"
                         />
                     </template>
                 </ToolbarBase>
@@ -190,122 +255,158 @@ onMounted(() => {
 
             <!-- HEAD -->
             <template #head>
-                <tr
-                    class="bg-blue-100 text-blue-900 uppercase text-sm font-semibold"
-                >
-                    <th class="py-3 px-3 text-left">ID</th>
-                    <th class="py-3 px-3 text-left">Nombre</th>
-                    <th class="py-3 px-3 text-left">Descripción</th>
-                    <th class="py-3 px-3 text-center">Acciones</th>
+                <tr class="bg-blue-50">
+                    <SortableHeader
+                        label="ID"
+                        column="id"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+
+                    <SortableHeader
+                        label="Nombre"
+                        column="nombre"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+
+                    <SortableHeader
+                        label="Descripción"
+                        column="descripcion"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+
+                    <th
+                        class="py-3 px-4 text-center border-b-2 border-blue-200"
+                    >
+                        <span
+                            class="font-semibold text-blue-900 text-sm uppercase tracking-wider"
+                            >Acciones</span
+                        >
+                    </th>
                 </tr>
             </template>
 
             <!-- BODY -->
             <template #body>
                 <tr
-                    v-for="item in integraciones.data"
+                    v-for="item in sortedData"
                     :key="item.id"
-                    class="border-b hover:bg-gray-50 transition"
+                    class="border-b hover:bg-blue-50/30 transition-colors"
                 >
-                    <td class="py-3 px-3 font-medium">
-                        {{ item.id }}
+                    <td class="py-3 px-4 font-mono font-semibold text-blue-700">
+                        #{{ item.id }}
                     </td>
-                    <td class="py-3 px-3 font-medium">
+
+                    <td class="py-3 px-4 font-medium text-gray-900">
                         {{ item.nombre }}
                     </td>
 
-                    <td
-                        class="py-3 px-3 max-w-[250px] truncate"
-                        :title="item.descripcion"
-                    >
-                        {{ item.descripcion ?? "-" }}
+                    <td class="py-3 px-4 text-gray-700">
+                        <div
+                            class="line-clamp-2 max-w-[300px]"
+                            :title="item.descripcion"
+                        >
+                            {{ item.descripcion ?? "Sin descripción" }}
+                        </div>
                     </td>
 
-                    <td class="py-3 px-3 flex justify-center gap-2 flex-wrap">
-                        <button
-                            @click="editarIntegracion(item.id)"
-                            class="px-3 py-1 bg-blue-900 text-white rounded hover:bg-blue-800 text-sm"
-                        >
-                            Editar
-                        </button>
+                    <td class="py-3 px-3">
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <!-- Botones estándar -->
+                            <ActionButtons
+                                :id="item.id"
+                                edit-label="Editar"
+                                delete-label="Eliminar"
+                                duplicate-label="Duplicar"
+                                view-label="Ver"
+                                @edit="editarIntegracion(item.id)"
+                                @delete="confirmarEliminar(item.id)"
+                                @duplicate="duplicarIntegracion(item.id)"
+                                @view="verIntegracion(item.id)"
+                            >
+                                <!-- Botón personalizado usando slot -->
+                                <button
+                                    @click="crearTareas(item.id)"
+                                    class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition text-xs font-medium shadow-sm hover:shadow"
+                                    title="Crear tareas"
+                                >
+                                    Crear tareas
+                                </button>
+                            </ActionButtons>
 
-                        <button
-                            @click="confirmarEliminar(item.id)"
-                            class="px-3 py-1 bg-red-700 text-white rounded hover:bg-red-600 text-sm"
-                        >
-                            Eliminar
-                        </button>
-
-                        <button
-                            @click="duplicarIntegracion(item.id)"
-                            class="px-3 py-1 bg-green-700 text-white rounded hover:bg-green-600 text-sm"
-                        >
-                            Duplicar
-                        </button>
-
-                        <button
-                            @click="verIntegracion(item.id)"
-                            class="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 text-sm"
-                        >
-                            Ver
-                        </button>
-
-                        <button
-                            @click="
-                                router.get(
-                                    route('integraciones_tarea.index', {
-                                        integracion_id: item.id,
-                                    }),
-                                )
-                            "
-                            class="px-3 py-1 bg-purple-700 text-white rounded hover:bg-purple-600 text-sm"
-                        >
-                            Crear tareas
-                        </button>
+                            <!-- Botón adicional específico de integraciones -->
+                            <!-- <button
+                                @click="crearTareas(item.id)"
+                                class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition text-xs font-medium shadow-sm hover:shadow"
+                                title="Crear tareas"
+                            >
+                                Crear tareas
+                            </button> -->
+                        </div>
                     </td>
                 </tr>
 
                 <!-- LOADING -->
                 <tr v-if="loading">
-                    <td colspan="3" class="text-center py-4">Cargando...</td>
+                    <td colspan="4" class="text-center py-8">
+                        <div
+                            class="flex flex-col items-center justify-center gap-3 text-gray-600"
+                        >
+                            <div class="relative">
+                                <div
+                                    class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+                                ></div>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700"
+                                >Cargando integraciones...</span
+                            >
+                        </div>
+                    </td>
                 </tr>
 
                 <!-- EMPTY -->
-                <tr v-if="!loading && integraciones.data.length === 0">
-                    <td colspan="3" class="text-center py-4">
-                        No se encontraron registros.
+                <tr v-if="!loading && sortedData.length === 0">
+                    <td colspan="4" class="text-center py-10">
+                        <div
+                            class="flex flex-col items-center gap-3 text-gray-500"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-10 w-10 opacity-75"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
+                                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                                />
+                            </svg>
+                            <div class="text-center">
+                                <span class="text-lg font-medium text-gray-900"
+                                    >No se encontraron integraciones</span
+                                >
+                                <p class="text-sm mt-1">
+                                    No hay registros que coincidan con tu
+                                    búsqueda
+                                </p>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             </template>
         </TablaSeccion>
 
-        <!-- PAGINACIÓN -->
-        <div class="flex justify-center items-center mt-4 gap-3">
-            <button
-                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-                :disabled="integraciones.current_page === 1"
-                @click="cargarIntegraciones(integraciones.current_page - 1)"
-            >
-                Anterior
-            </button>
+        <!-- PAGINACIÓN MEJORADA -->
+        <Pagination :meta="integraciones" @page-changed="cargarIntegraciones" />
 
-            <span>
-                Página {{ integraciones.current_page }} de
-                {{ integraciones.last_page }}
-            </span>
-
-            <button
-                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-                :disabled="
-                    integraciones.current_page === integraciones.last_page
-                "
-                @click="cargarIntegraciones(integraciones.current_page + 1)"
-            >
-                Siguiente
-            </button>
-        </div>
-
-        <!-- MODAL ÚNICO -->
         <!-- MODAL ÚNICO -->
         <ActionModal
             v-model:show="showModal"
@@ -313,9 +414,9 @@ onMounted(() => {
             :title="modalTitle"
             :message="modalMessage"
             :loading="modalLoading"
-            :showCancel="modalType === 'danger'"
-            :confirmText="modalType === 'danger' ? 'Sí, eliminar' : 'Aceptar'"
-            :cancelText="'Cancelar'"
+            :show-cancel="modalType === 'danger'"
+            :confirm-text="modalType === 'danger' ? 'Sí, eliminar' : 'Aceptar'"
+            :cancel-text="'Cancelar'"
             @confirm="
                 modalType === 'danger'
                     ? eliminarIntegracion()
@@ -333,3 +434,15 @@ onMounted(() => {
         />
     </AppLayout>
 </template>
+
+<style scoped>
+/* Efecto visual para columna activa */
+th:has(.text-indigo-600) {
+    @apply bg-indigo-50/50;
+}
+
+/* Transiciones suaves */
+tr:hover td {
+    @apply transition-colors duration-200;
+}
+</style>

@@ -50,86 +50,112 @@ const iniciarProyectoConfirmado = () => {
     estimacionIdToStart.value = null;
 };
 
+// const iniciarProyectoBitrix = async (estimacionId) => {
+//     if (creandoProyecto.value === estimacionId) return;
+
+//     creandoProyecto.value = estimacionId;
+
+//     try {
+//         // 1️⃣ Obtener estimación
+//         const { data: estimacion } = await axios.get(
+//             `/api/estimaciones/${estimacionId}`,
+//         );
+
+//         // 2️⃣ Crear grupo en Bitrix
+//         const grupoResponse = await fetch(
+//             "https://wecollab.bitrix24.mx/rest/281/s5qyzs1hdkmr09kz/sonet_group.create",
+//             {
+//                 method: "POST",
+//                 headers: { "Content-Type": "application/json" },
+//                 body: JSON.stringify({
+//                     NAME:
+//                         estimacion.nombre_empresa ??
+//                         `Proyecto Estimación #${estimacion.id}`,
+//                     DESCRIPTION: estimacion.comentarios ?? "",
+//                     VISIBLE: "Y",
+//                     OPENED: "Y",
+//                 }),
+//             },
+//         );
+
+//         const grupoData = await grupoResponse.json();
+
+//         if (!grupoResponse.ok || grupoData.error) {
+//             throw new Error(grupoData.error_description);
+//         }
+
+//         const groupId = grupoData.result;
+
+//         // 3️⃣ Unir tareas
+//         const tareas = [
+//             ...(estimacion.fases || []).flatMap((f) => f.tareas),
+//             ...(estimacion.integraciones || []).flatMap((i) => i.tareas),
+//         ];
+
+//         // 4️⃣ Crear tareas en Bitrix
+//         for (const tarea of tareas) {
+//             await fetch(
+//                 "https://wecollab.bitrix24.mx/rest/281/s5qyzs1hdkmr09kz/tasks.task.add",
+//                 {
+//                     method: "POST",
+//                     headers: { "Content-Type": "application/json" },
+//                     body: JSON.stringify({
+//                         fields: {
+//                             TITLE: tarea.nombre_tarea,
+//                             DESCRIPTION: `Duración: ${tarea.duracion_minuto} min`,
+//                             GROUP_ID: groupId,
+//                             RESPONSIBLE_ID: 1,
+//                         },
+//                     }),
+//                 },
+//             );
+//         }
+
+//         // ✅ MODAL ÉXITO
+//         successTitle.value = "Proyecto creado";
+//         successMessage.value =
+//             "El proyecto y sus tareas fueron creados correctamente en Bitrix24.";
+//         showSuccessModal.value = true;
+//     } catch (error) {
+//         console.error(error);
+
+//         // ❌ MODAL ERROR (reutilizamos el mismo)
+//         successTitle.value = "Error";
+//         successMessage.value =
+//             "Ocurrió un error al crear el proyecto en Bitrix.";
+//         showSuccessModal.value = true;
+//     } finally {
+//         creandoProyecto.value = null;
+//     }
+// };
+
+// --- PDF ---
+
 const iniciarProyectoBitrix = async (estimacionId) => {
     if (creandoProyecto.value === estimacionId) return;
 
     creandoProyecto.value = estimacionId;
 
     try {
-        // 1️⃣ Obtener estimación
-        const { data: estimacion } = await axios.get(
-            `/api/estimaciones/${estimacionId}`,
-        );
+        await axios.post(`/api/estimaciones/${estimacionId}/crear-proyecto`);
 
-        // 2️⃣ Crear grupo en Bitrix
-        const grupoResponse = await fetch(
-            "https://wecollab.bitrix24.mx/rest/281/s5qyzs1hdkmr09kz/sonet_group.create",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    NAME:
-                        estimacion.nombre_empresa ??
-                        `Proyecto Estimación #${estimacion.id}`,
-                    DESCRIPTION: estimacion.comentarios ?? "",
-                    VISIBLE: "Y",
-                    OPENED: "Y",
-                }),
-            },
-        );
-
-        const grupoData = await grupoResponse.json();
-
-        if (!grupoResponse.ok || grupoData.error) {
-            throw new Error(grupoData.error_description);
-        }
-
-        const groupId = grupoData.result;
-
-        // 3️⃣ Unir tareas
-        const tareas = [
-            ...(estimacion.fases || []).flatMap((f) => f.tareas),
-            ...(estimacion.integraciones || []).flatMap((i) => i.tareas),
-        ];
-
-        // 4️⃣ Crear tareas en Bitrix
-        for (const tarea of tareas) {
-            await fetch(
-                "https://wecollab.bitrix24.mx/rest/281/s5qyzs1hdkmr09kz/tasks.task.add",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        fields: {
-                            TITLE: tarea.nombre_tarea,
-                            DESCRIPTION: `Duración: ${tarea.duracion_minuto} min`,
-                            GROUP_ID: groupId,
-                            RESPONSIBLE_ID: 1,
-                        },
-                    }),
-                },
-            );
-        }
-
-        // ✅ MODAL ÉXITO
         successTitle.value = "Proyecto creado";
         successMessage.value =
             "El proyecto y sus tareas fueron creados correctamente en Bitrix24.";
         showSuccessModal.value = true;
-    } catch (error) {
-        console.error(error);
 
-        // ❌ MODAL ERROR (reutilizamos el mismo)
+        cargarEstimaciones();
+    } catch (error) {
         successTitle.value = "Error";
         successMessage.value =
-            "Ocurrió un error al crear el proyecto en Bitrix.";
+            error.response?.data?.message ??
+            "Ocurrió un error al crear el proyecto.";
         showSuccessModal.value = true;
     } finally {
         creandoProyecto.value = null;
     }
 };
 
-// --- PDF ---
 const abrirPdf = (id) => {
     window.open(route("estimaciones.pdf", id), "_blank");
 };
@@ -197,7 +223,11 @@ onMounted(() => {
         <TablaSeccion :data="estimaciones.data" title="Lista de Estimaciones">
             <!-- TOOLBAR -->
             <template #toolbar>
-                <ToolbarBase>
+                <ToolbarBase
+                    title="Estimaciones"
+                    createText="Crear Nueva Estimacion"
+                    createRoute="estimacion"
+                >
                     <template #left>
                         <input
                             v-model="search"
@@ -209,6 +239,19 @@ onMounted(() => {
                     </template>
                 </ToolbarBase>
             </template>
+            <template #head>
+                <tr class="bg-gray-200 text-gray-800 text-sm uppercase">
+                    <th class="py-3 px-3 text-left">ID</th>
+                    <th class="py-3 px-3 text-center">Id de la Negociación</th>
+                    <th class="py-3 px-3 text-left">Tipo Implementación</th>
+                    <th class="py-3 px-3 text-left">Empresa</th>
+
+                    <th class="py-3 px-3 text-left">Complejidad</th>
+                    <th class="py-3 px-3 text-left">Horas</th>
+                    <th class="py-3 px-3 text-center">Fecha</th>
+                    <th class="py-3 px-3 text-center">Acciones</th>
+                </tr>
+            </template>
 
             <!-- BODY -->
             <template #body>
@@ -218,17 +261,24 @@ onMounted(() => {
                     class="border-b hover:bg-indigo-50 transition"
                 >
                     <td class="py-3 px-3">{{ item.id }}</td>
+                    <td class="py-3 px-3 text-center">{{ item.id_negocio }}</td>
                     <td class="py-3 px-3">
                         {{ item.nombre_tipo_implementacion }}
                     </td>
                     <td class="py-3 px-3">{{ item.nombre_empresa }}</td>
+
                     <td class="py-3 px-3">
                         {{ item.complejidad?.nombre ?? "-" }}
                     </td>
                     <td class="py-3 px-3">{{ item.total_horas }} h</td>
-                    <td class="py-3 px-3">
-                        {{ new Date(item.created_at).toLocaleString("es-MX") }}
+                    <td class="py-3 px-3 text-center">
+                        {{
+                            new Date(item.created_at).toLocaleDateString(
+                                "es-MX",
+                            )
+                        }}
                     </td>
+
                     <td class="py-3 px-3 flex gap-2 justify-center">
                         <button
                             @click="

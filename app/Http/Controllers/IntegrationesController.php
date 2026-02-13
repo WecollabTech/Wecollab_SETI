@@ -12,17 +12,38 @@ class IntegrationesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Trae todas las integraciones activas (o todas)
-        $integraciones = Integrationes::select('id', 'nombre', 'descripcion')->get();
+        $query = Integrationes::select('id', 'nombre', 'descripcion');
 
-        return response()->json([
-            'success' => true,
-            'data' => $integraciones,
-        ]);
+        // 🔍 BÚSQUEDA
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                    ->orWhere('descripcion', 'like', "%{$search}%");
+            });
+        }
+
+        // 🔃 ORDENAMIENTO SEGURO
+        $allowedSorts = ['nombre', 'descripcion'];
+
+        $sort = in_array($request->get('sort'), $allowedSorts)
+            ? $request->get('sort')
+            : 'nombre';
+
+        $order = $request->get('order') === 'desc' ? 'desc' : 'asc';
+
+        // 📄 PAGINACIÓN
+        if (!in_array($sort, $allowedSorts)) {
+            $sortBy = 'id';
+        }
+
+        $fases = $query->paginate(5);
+
+        return response()->json($fases);
     }
-
 
 
 

@@ -15,7 +15,7 @@ import SuccessModal from "@/Components/Modal/SuccessModal.vue";
 const form = reactive({
     nombre: "",
     factor: 0,
-    descripcion: "",
+    // descripcion: "",
     estado: "activo",
     rubricas: "",
 });
@@ -24,7 +24,7 @@ const form = reactive({
 const errors = reactive({
     nombre: null,
     factor: null,
-    descripcion: null,
+    // descripcion: null,
     estado: null,
     rubricas: null,
 });
@@ -39,7 +39,7 @@ const sending = ref(false);
 const resetForm = () => {
     form.nombre = "";
     form.factor = 0;
-    form.descripcion = "";
+    // form.descripcion = "";
     form.estado = "activo";
     form.rubricas = "";
     Object.keys(errors).forEach((k) => (errors[k] = null));
@@ -64,10 +64,10 @@ watch(
     () => form.factor,
     () => (errors.factor = null),
 );
-watch(
-    () => form.descripcion,
-    () => (errors.descripcion = null),
-);
+// watch(
+//     () => form.descripcion,
+//     () => (errors.descripcion = null),
+// );
 watch(
     () => form.estado,
     () => (errors.estado = null),
@@ -142,7 +142,7 @@ const cancel = () => router.get("/niveles");
                 </CardInput>
 
                 <!-- DESCRIPCIÓN -->
-                <CardInput>
+                <!-- <CardInput>
                     <FormInput
                         label="Descripción"
                         v-model="form.descripcion"
@@ -150,7 +150,7 @@ const cancel = () => router.get("/niveles");
                         placeholder="Descripción del nivel"
                         type="textarea"
                     />
-                </CardInput>
+                </CardInput> -->
 
                 <!-- RÚBRICAS -->
                 <CardInput>

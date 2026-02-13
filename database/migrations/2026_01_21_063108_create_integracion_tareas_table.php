@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->text('descripcion')->nullable();
             $table->boolean('activo')->default(true);
             $table->integer('duracion_minuto')->nullable();
+            $table->text('url_contenido')->nullable()->after('descripcion');
             $table->integer('orden')->default(1);
             $table->timestamps();
         });

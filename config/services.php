@@ -14,6 +14,13 @@ return [
     |
     */
 
+    'bitrix' => [
+        'webhook' => env('BITRIX_WEBHOOK'),
+    ],
+
+
+
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

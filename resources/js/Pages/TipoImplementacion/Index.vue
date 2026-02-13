@@ -83,8 +83,9 @@ onMounted(() => cargarTipos());
             <!-- TOOLBAR -->
             <template #toolbar>
                 <ToolbarBase
+                    title="Tipo de Implementación"
                     createText="Nuevo Tipo de Implementación"
-                    :createHref="route('tipoimplementacion.create')"
+                    createRoute="tipoimplementacion.create"
                 >
                     <template #left>
                         <input
@@ -103,8 +104,9 @@ onMounted(() => cargarTipos());
                 <tr
                     class="bg-blue-100 text-blue-900 uppercase text-sm font-semibold tracking-wide"
                 >
+                    <th class="py-3 px-3 text-left">Id</th>
                     <th class="py-3 px-3 text-left">Nombre</th>
-                    <th class="py-3 px-3 text-left">Alcance</th>
+                    <th class="py-3 px-3 text-left">Descripción</th>
                     <th class="py-3 px-3 text-center">Estado</th>
                     <th class="py-3 px-3 text-center">Acciones</th>
                 </tr>
@@ -118,10 +120,13 @@ onMounted(() => cargarTipos());
                     class="border-b hover:bg-blue-50 transition-colors"
                 >
                     <td class="py-3 px-3 font-medium text-gray-800">
+                        {{ item.id }}
+                    </td>
+                    <td class="py-3 px-3 font-medium text-gray-800">
                         {{ item.nombre }}
                     </td>
                     <td class="py-3 px-3 text-gray-600">
-                        {{ item.alcance ?? "-" }}
+                        {{ item.descripcion ?? "-" }}
                     </td>
                     <td class="py-3 px-3 text-center">
                         <span

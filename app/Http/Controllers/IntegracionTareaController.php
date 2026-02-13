@@ -19,6 +19,7 @@ class IntegracionTareaController extends Controller
                 'duracion_minuto' => 'nullable|integer|min:0',
                 'orden' => 'nullable|integer|min:1',
                 'integracion_id' => 'required|exists:integraciones,id',
+                'url_contenido' => 'nullable|url'
             ],
             [
                 // TITULO

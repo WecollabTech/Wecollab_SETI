@@ -29,16 +29,22 @@ class EstimacionController extends Controller
             'complejidad:id,nombre'
         ])
             ->when($search, function ($query) use ($search) {
-                $query->where('nombre_tipo_implementacion', 'like', "%{$search}%")
-                    ->orWhereHas('tipoImplementacion', function ($q) use ($search) {
-                        $q->where('nombre', 'like', "%{$search}%");
-                    });
+                $query->where(function ($q) use ($search) {
+                    $q->where('nombre_empresa', 'like', "%{$search}%")
+                        ->orWhereHas('tipoImplementacion', function ($q2) use ($search) {
+                            $q2->where('nombre', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('complejidad', function ($q3) use ($search) {
+                            $q3->where('nombre', 'like', "%{$search}%");
+                        });
+                });
             })
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
         return response()->json($estimaciones);
     }
+
 
 
 
@@ -176,6 +182,68 @@ class EstimacionController extends Controller
     }
 
     //Crear estimacion en bitrix24
+    // public function crearProyecto(Estimacion $estimacion)
+    // {
+    //     if ($estimacion->bitrix_group_id) {
+    //         return response()->json([
+    //             'message' => 'Proyecto ya creado'
+    //         ], 409);
+    //     }
+
+    //     // Datos principales
+    //     $nombreEmpresa = $estimacion->nombre_empresa;
+    //     $responsable = $estimacion->responsable;
+    //     $idNegocio = $estimacion->id_negocio;
+
+    //     // Crear grupo
+    //     $response = Http::post(
+    //         config('services.bitrix.webhook') . '/sonet_group.create',
+    //         [
+    //             'NAME' => $nombreEmpresa,
+    //             'DESCRIPTION' =>
+    //                 "Responsable: {$responsable} | ID negocio: {$idNegocio}",
+    //             'VISIBLE' => 'Y',
+    //             'OPENED' => 'Y',
+    //         ]
+    //     );
+
+    //     $groupId = $response['result'];
+
+    //     // Obtener tareas (fases + integraciones)
+    //     $tareas = $estimacion->fases
+    //         ->flatMap(fn($f) => $f->tareas)
+    //         ->merge(
+    //             $estimacion->integraciones
+    //                 ->flatMap(fn($i) => $i->tareas)
+    //         );
+
+    //     // Crear tareas en Bitrix
+    //     foreach ($tareas as $tarea) {
+    //         Http::post(
+    //             config('services.bitrix.webhook') . '/tasks.task.add',
+    //             [
+    //                 'fields' => [
+    //                     'TITLE' => $tarea->titulo,
+    //                     'DESCRIPTION' =>
+    //                         "Duración: {$tarea->duracion_minuto} min",
+    //                     'GROUP_ID' => $groupId,
+    //                 ],
+    //             ]
+    //         );
+    //     }
+
+    //     // Guardar referencia
+    //     $estimacion->update([
+    //         'bitrix_group_id' => $groupId,
+    //     ]);
+
+    //     return response()->json([
+    //         'message' => 'Proyecto creado correctamente',
+    //         'group_id' => $groupId,
+    //     ]);
+    // }
+
+
     public function crearProyecto(Estimacion $estimacion)
     {
         if ($estimacion->bitrix_group_id) {
@@ -184,26 +252,30 @@ class EstimacionController extends Controller
             ], 409);
         }
 
-        // Datos principales
-        $nombreEmpresa = $estimacion->nombre_empresa;
-        $responsable = $estimacion->responsable;
-        $idNegocio = $estimacion->id_negocio;
+        $webhook = config('services.bitrix.webhook');
 
-        // Crear grupo
-        $response = Http::post(
-            config('services.bitrix.webhook') . '/sonet_group.create',
-            [
-                'NAME' => $nombreEmpresa,
-                'DESCRIPTION' =>
-                    "Responsable: {$responsable} | ID negocio: {$idNegocio}",
-                'VISIBLE' => 'Y',
-                'OPENED' => 'Y',
+        // Crear grupo en Bitrix
+        $response = Http::post($webhook . '/sonet_group.create', [
+            'NAME' => $estimacion->nombre_empresa,
+            'DESCRIPTION' =>
+                "Responsable: {$estimacion->responsable} | ID negocio: {$estimacion->id_negocio}",
+            'VISIBLE' => 'Y',
+            'OPENED' => 'Y',
+            "SCRUM_MASTER_ID" => 281,
+            "PROJECT_OPTIONS" => [
+                "scrum" => "Y"
             ]
-        );
+        ]);
+
+        if ($response->failed() || isset($response['error'])) {
+            return response()->json([
+                'message' => $response['error_description'] ?? 'Error al crear grupo en Bitrix'
+            ], 500);
+        }
 
         $groupId = $response['result'];
 
-        // Obtener tareas (fases + integraciones)
+        // Obtener tareas
         $tareas = $estimacion->fases
             ->flatMap(fn($f) => $f->tareas)
             ->merge(
@@ -211,22 +283,25 @@ class EstimacionController extends Controller
                     ->flatMap(fn($i) => $i->tareas)
             );
 
-        // Crear tareas en Bitrix
         foreach ($tareas as $tarea) {
-            Http::post(
-                config('services.bitrix.webhook') . '/tasks.task.add',
-                [
-                    'fields' => [
-                        'TITLE' => $tarea->titulo,
-                        'DESCRIPTION' =>
-                            "Duración: {$tarea->duracion_minuto} min",
-                        'GROUP_ID' => $groupId,
-                    ],
-                ]
-            );
+
+            $titulo = $tarea->nombre_tarea
+                ?? $tarea->nombre_tarea_integracion;
+
+            $duracion = $tarea->duracion_minuto
+                ?? $tarea->duracion_estimada_minutos;
+
+            Http::post($webhook . '/tasks.task.add', [
+                'fields' => [
+                    'TITLE' => $titulo,
+                    'DESCRIPTION' => "Duración: {$duracion} min",
+                    'GROUP_ID' => $groupId,
+                    'RESPONSIBLE_ID' => 1,
+                ],
+            ]);
         }
 
-        // Guardar referencia
+        // Guardar ID del grupo
         $estimacion->update([
             'bitrix_group_id' => $groupId,
         ]);

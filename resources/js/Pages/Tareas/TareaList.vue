@@ -1,39 +1,67 @@
 <script setup>
 import { Head, router } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import PageHeader from "@/Components/Layout/PageHeader.vue";
 import TablaSeccion from "@/Components/Layout/TablaSeccion.vue";
 import ToolbarBase from "@/Components/Layout/ToolbarBase.vue";
 
+import ContentModal from "@/Components/Modal/ContentModal.vue";
 import ConfirmDeleteModal from "@/Components/Modal/ConfirmDeleteModal.vue";
-import SuccessModal from "@/Components/Modal/SuccessModal.vue";
-
-import { ref, onMounted } from "vue";
-import axios from "axios";
 import SuccessModals from "@/Components/Modal/SuccessModals.vue";
 
-// --- STATE ---
-const tareas = ref({
-    data: [],
-    current_page: 1,
-    last_page: 1,
-});
+// Componentes reutilizables
+import Pagination from "@/Components/Pagination/Pagination.vue";
+import SortableHeader from "@/Components/Table/SortableHeader.vue";
+import ActionButtons from "@/Components/Table/ActionButtons.vue";
 
-const loading = ref(true);
-const search = ref("");
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
 
 // --- MODALES ---
+const showContentModal = ref(false);
+const contentTitle = ref("");
+const contentUrl = ref("");
+const contentType = ref("text");
+
+const showAvisoModal = ref(false);
+const avisoMessage = ref("");
+
+// --- STATE ---
+const tareas = ref({ data: [], current_page: 1, last_page: 1, total: 0 });
+const loading = ref(true);
+const search = ref("");
+const sortBy = ref("id");
+const sortDirection = ref("asc");
+
+// --- MODALES DE ELIMINAR ---
 const showDeleteModal = ref(false);
-const showSuccessModal = ref(false);
 const deleting = ref(false);
 const tareaIdToDelete = ref(null);
+const showSuccessModal = ref(false);
+
+// --- DATOS ORDENADOS ---
+const sortedData = computed(() => {
+    if (!tareas.value?.data) return [];
+    return [...tareas.value.data].sort((a, b) => {
+        const aValue = a[sortBy.value];
+        const bValue = b[sortBy.value];
+        if (aValue == null) return 1;
+        if (bValue == null) return -1;
+        if (typeof aValue === "string")
+            return sortDirection.value === "asc"
+                ? aValue.localeCompare(bValue, "es", { sensitivity: "base" })
+                : bValue.localeCompare(aValue, "es", { sensitivity: "base" });
+        return sortDirection.value === "asc"
+            ? aValue - bValue
+            : bValue - aValue;
+    });
+});
 
 // --- FUNCIONES ---
 const cargarTareas = async (page = 1) => {
     loading.value = true;
     try {
         const res = await axios.get(
-            `/api/tareas?page=${page}&search=${search.value}`,
+            `/api/tareas?page=${page}&search=${search.value}&sort_by=${sortBy.value}&sort_direction=${sortDirection.value}`,
         );
         tareas.value = res.data;
     } catch (error) {
@@ -43,11 +71,25 @@ const cargarTareas = async (page = 1) => {
     }
 };
 
-const buscarTareas = () => {
-    cargarTareas(1);
+const buscarTareas = () => cargarTareas(1);
+
+const changeSort = (column) => {
+    if (sortBy.value === column)
+        sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+    else {
+        sortBy.value = column;
+        sortDirection.value = "asc";
+    }
+    cargarTareas(tareas.value.current_page);
 };
 
-// --- ELIMINAR (MODAL) ---
+const resetSort = () => {
+    sortBy.value = "id";
+    sortDirection.value = "asc";
+    cargarTareas(tareas.value.current_page);
+};
+
+// --- ELIMINAR ---
 const confirmarEliminar = (id) => {
     tareaIdToDelete.value = id;
     showDeleteModal.value = true;
@@ -55,7 +97,6 @@ const confirmarEliminar = (id) => {
 
 const eliminarTarea = async () => {
     if (!tareaIdToDelete.value) return;
-
     deleting.value = true;
     try {
         await axios.delete(`/api/tareas/${tareaIdToDelete.value}`);
@@ -64,6 +105,7 @@ const eliminarTarea = async () => {
         cargarTareas(tareas.value.current_page);
     } catch (err) {
         console.error("Error al eliminar tarea:", err);
+        alert("Error al eliminar la tarea.");
     } finally {
         deleting.value = false;
         tareaIdToDelete.value = null;
@@ -72,14 +114,46 @@ const eliminarTarea = async () => {
 
 // --- DUPLICAR ---
 const duplicarTarea = async (id) => {
+    loading.value = true;
     try {
         await axios.post(`/api/tareas/${id}/duplicate`);
         cargarTareas(tareas.value.current_page);
         showSuccessModal.value = true;
     } catch (err) {
         console.error("Error al duplicar tarea:", err);
+        alert("Error al duplicar la tarea.");
+    } finally {
+        loading.value = false;
     }
 };
+
+// --- ABRIR CONTENIDO ---
+const openContenidoModal = (item) => {
+    if (!item.url_contenido) {
+        avisoMessage.value = "Esta tarea no tiene contenido disponible.";
+        showAvisoModal.value = true;
+        return;
+    }
+
+    contentTitle.value = item.titulo;
+    contentUrl.value = item.url_contenido;
+
+    if (item.url_contenido.endsWith(".mp4")) contentType.value = "video";
+    else if (item.url_contenido.endsWith(".pdf")) contentType.value = "pdf";
+    else if (
+        item.url_contenido.includes("youtube.com") ||
+        item.url_contenido.includes("youtu.be")
+    )
+        contentType.value = "youtube";
+    else contentType.value = "image"; // Por defecto imagen
+
+    showContentModal.value = true;
+};
+
+// --- NAVEGACIÓN ---
+const irACrear = () => router.get(route("tareas.create"));
+const irAEditar = (id) => router.get(route("tareas.edit", id));
+const irAVer = (id) => router.get(route("tareas.show", id));
 
 // --- MOUNT ---
 onMounted(() => {
@@ -91,16 +165,12 @@ onMounted(() => {
     <Head title="Tareas" />
 
     <AppLayout>
-        <!-- <template #title>
-            <PageHeader title="Tareas" />
-        </template> -->
-
-        <TablaSeccion :data="tareas.data" title="Lista de Tareas">
-            <!-- TOOLBAR -->
+        <TablaSeccion :data="sortedData" title="Lista de Tareas">
             <template #toolbar>
                 <ToolbarBase
-                    createText="Nueva Tarea"
-                    :createHref="route('tareas.create')"
+                    title="Tarea"
+                    createText="Crear Nueva Tarea"
+                    createRoute="tareas.create"
                 >
                     <template #left>
                         <input
@@ -114,133 +184,126 @@ onMounted(() => {
                 </ToolbarBase>
             </template>
 
-            <!-- HEADER MEJORADO -->
             <template #head>
-                <tr
-                    class="bg-blue-100 text-blue-900 uppercase text-sm font-semibold tracking-wide"
-                >
-                    <th class="py-3 px-3 text-left">Título</th>
-                    <th class="py-3 px-3 text-left">Descripción</th>
-                    <!-- <th class="py-3 px-3 text-left">Estado</th> -->
-                    <th class="py-3 px-3 text-left">Duración</th>
-                    <th class="py-3 px-3 text-left">Activo</th>
-                    <th class="py-3 px-3 text-left">Fase</th>
-                    <th class="py-3 px-3 text-center">Acciones</th>
+                <tr class="bg-blue-50">
+                    <SortableHeader
+                        label="Id"
+                        column="id"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+                    <SortableHeader
+                        label="Título"
+                        column="titulo"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+                    <SortableHeader
+                        label="Descripción"
+                        column="descripcion"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+                    <SortableHeader
+                        label="Duración"
+                        column="duracion_minuto"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+                    <SortableHeader
+                        label="Activo"
+                        column="activo"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+                    <SortableHeader
+                        label="Fase"
+                        column="fase.nombre"
+                        :sort-by="sortBy"
+                        :sort-direction="sortDirection"
+                        @click="changeSort"
+                    />
+                    <th
+                        class="py-3 px-4 text-center border-b-2 border-blue-200"
+                    >
+                        <span
+                            class="font-semibold text-blue-900 text-sm uppercase tracking-wider"
+                            >Acciones</span
+                        >
+                    </th>
                 </tr>
             </template>
 
-            <!-- MEJORADO: Tabla de Tareas -->
             <template #body>
                 <tr
-                    v-for="item in tareas.data"
+                    v-for="item in sortedData"
                     :key="item.id"
-                    class="border-b hover:bg-blue-50 transition-colors"
+                    class="border-b hover:bg-blue-50/30 transition-colors"
                 >
-                    <td class="py-3 px-3 font-medium text-gray-800">
+                    <td class="py-3 px-4 font-medium text-gray-800">
+                        {{ item.id }}
+                    </td>
+                    <td class="py-3 px-4 font-medium text-gray-800">
                         {{ item.titulo }}
                     </td>
-                    <td class="py-3 px-3 text-gray-600">
-                        {{ item.descripcion ?? "-" }}
+                    <td class="py-3 px-4 text-gray-600">
+                        <div class="line-clamp-2">
+                            {{ item.descripcion ?? "Sin descripción" }}
+                        </div>
                     </td>
-                    <!-- <td class="py-3 px-3">
-                        <span
-                            :class="[
-                                item.estado === 'Activo'
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-red-100 text-red-800',
-                                'px-2 py-1 rounded-full text-sm font-semibold',
-                            ]"
-                        >
-                            {{ item.estado }}
-                        </span>
-                    </td> -->
-                    <td class="py-3 px-3 text-gray-700">
+                    <td class="py-3 px-4 text-gray-700 font-medium">
                         {{ item.duracion_minuto ?? "-" }} min
                     </td>
-                    <td class="py-3 px-3">
+                    <td class="py-3 px-4">
                         <span
                             :class="[
                                 item.activo == 1
                                     ? 'bg-green-100 text-green-800'
                                     : 'bg-red-100 text-red-800',
-                                'px-2 py-1 rounded-full text-sm font-semibold',
+                                'px-3 py-1 rounded-full text-xs font-semibold',
                             ]"
                         >
                             {{ item.activo == 1 ? "Sí" : "No" }}
                         </span>
                     </td>
-
-                    <td class="py-3 px-3 text-gray-700">
+                    <td class="py-3 px-4 text-gray-700">
                         {{ item.fase?.nombre ?? "-" }}
                     </td>
-                    <td class="py-3 px-3 flex justify-center gap-2">
-                        <button
-                            @click="router.get(route('tareas.edit', item.id))"
-                            class="px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded hover:from-blue-700 hover:to-blue-800 text-sm transition"
-                        >
-                            Editar
-                        </button>
-                        <button
-                            @click="confirmarEliminar(item.id)"
-                            class="px-3 py-1 bg-gradient-to-r from-red-600 to-red-700 text-white rounded hover:from-red-700 hover:to-red-800 text-sm transition"
-                        >
-                            Eliminar
-                        </button>
-                        <button
-                            @click="duplicarTarea(item.id)"
-                            class="px-3 py-1 bg-gradient-to-r from-green-600 to-green-700 text-white rounded hover:from-green-700 hover:to-green-800 text-sm transition"
-                        >
-                            Duplicar
-                        </button>
-                        <button
-                            @click="router.get(route('tareas.show', item.id))"
-                            class="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-800 text-sm transition"
-                        >
-                            Ver
-                        </button>
-                    </td>
+
+                    <ActionButtons
+                        :id="item.id"
+                        :show-duplicate="false"
+                        :show-view-content="true"
+                        edit-label="Editar"
+                        delete-label="Eliminar"
+                        view-label="Ver detalle"
+                        view-content-label="Ver contenido"
+                        @edit="irAEditar(item.id)"
+                        @delete="confirmarEliminar(item.id)"
+                        @viewDetail="irAVer(item.id)"
+                        @viewContent="() => openContenidoModal(item)"
+                    />
                 </tr>
 
                 <tr v-if="loading">
-                    <td
-                        colspan="6"
-                        class="text-center py-4 text-gray-500 font-medium"
-                    >
-                        Cargando...
+                    <td colspan="6" class="text-center py-8">
+                        Cargando tareas...
                     </td>
                 </tr>
-                <tr v-if="!loading && tareas.data.length === 0">
-                    <td
-                        colspan="6"
-                        class="text-center py-4 text-gray-500 font-medium"
-                    >
-                        No se encontraron registros.
+                <tr v-if="!loading && sortedData.length === 0">
+                    <td colspan="6" class="text-center py-10">
+                        No se encontraron tareas
                     </td>
                 </tr>
             </template>
         </TablaSeccion>
 
-        <!-- PAGINACIÓN -->
-        <div class="flex justify-center items-center mt-4 gap-3">
-            <button
-                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-                :disabled="tareas.current_page === 1"
-                @click="cargarTareas(tareas.current_page - 1)"
-            >
-                Anterior
-            </button>
-            <span
-                >Página {{ tareas.current_page }} de
-                {{ tareas.last_page }}</span
-            >
-            <button
-                class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-                :disabled="tareas.current_page === tareas.last_page"
-                @click="cargarTareas(tareas.current_page + 1)"
-            >
-                Siguiente
-            </button>
-        </div>
+        <Pagination :meta="tareas" @page-changed="cargarTareas" />
 
         <!-- MODALES -->
         <ConfirmDeleteModal
@@ -250,10 +313,26 @@ onMounted(() => {
             :loading="deleting"
             @confirm="eliminarTarea"
         />
+
         <SuccessModals
             v-model:show="showSuccessModal"
             title="Operación exitosa"
             message="La acción se realizó correctamente."
+        />
+
+        <!-- Aviso solo cuando NO hay contenido -->
+        <SuccessModals
+            v-model:show="showAvisoModal"
+            title="Aviso"
+            :message="avisoMessage"
+        />
+
+        <!-- Modal de contenido solo si hay contenido -->
+        <ContentModal
+            v-model:show="showContentModal"
+            :title="contentTitle"
+            :content="contentUrl"
+            :type="contentType"
         />
     </AppLayout>
 </template>

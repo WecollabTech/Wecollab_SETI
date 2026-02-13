@@ -69,7 +69,7 @@ const cargarTarea = async () => {
 
 const cargarFases = async () => {
     try {
-        const res = await axios.get("/api/fases");
+        const res = await axios.get("/api/listafases");
         fases.value = res.data.data ?? res.data;
     } catch (err) {
         console.error("Error al cargar fases:", err);
@@ -216,18 +216,6 @@ onMounted(() => {
                 </CardInput>
 
                 <CardInput>
-                    <FormInput
-                        label="Fase"
-                        type="select"
-                        v-model="form.fase_id"
-                        :options="
-                            fases.map((f) => ({ label: f.nombre, value: f.id }))
-                        "
-                        :error="errors.fase_id"
-                    />
-                </CardInput>
-
-                <CardInput>
                     <div class="mt-4">
                         <span
                             class="block text-sm font-medium text-gray-700 mb-1"
@@ -259,6 +247,38 @@ onMounted(() => {
                     </div>
                 </CardInput>
             </div>
+            <CardInput>
+                <label class="block font-semibold mb-2">Fase</label>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <label
+                        v-for="fase in fases"
+                        :key="fase.id"
+                        class="flex items-center gap-3 p-2 rounded-lg border cursor-pointer hover:bg-gray-50 transition"
+                        :class="
+                            form.fase_id === fase.id
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-200'
+                        "
+                    >
+                        <input
+                            type="radio"
+                            name="fase"
+                            :value="fase.id"
+                            v-model="form.fase_id"
+                            class="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span class="text-sm font-medium">
+                            {{ fase.nombre }}
+                        </span>
+                    </label>
+                </div>
+
+                <p v-if="errors.fase_id" class="text-red-600 text-sm mt-1">
+                    {{ errors.fase_id }}
+                </p>
+            </CardInput>
+
             <template #actions>
                 <div
                     class="flex flex-col md:flex-row justify-center md:justify-end gap-4"

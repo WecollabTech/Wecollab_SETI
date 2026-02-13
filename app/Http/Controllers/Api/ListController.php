@@ -42,6 +42,7 @@ class ListController extends Controller
         return Estimacion::select(
             'id',
             'nombre_empresa',
+            'estado',
             'total_horas',
             'created_at'
         )->latest()->get();

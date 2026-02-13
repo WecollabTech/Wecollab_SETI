@@ -7,7 +7,7 @@ use App\Http\Controllers\IntegracionTareaController;
 use App\Http\Controllers\IntegrationesController;
 use App\Http\Controllers\NivelComplejidadController;
 use App\Http\Controllers\TareaController;
-
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TipoImplementacionController;
@@ -30,8 +30,7 @@ Route::delete('/tipoimplementacion/{id}', [TipoImplementacionController::class, 
 
 
 
-//rutas de taras integraciones 
-Route::post('/integraciones_tareas', [IntegracionTareaController::class, 'store']);
+
 
 //Rutas de Integraciones
 
@@ -55,14 +54,23 @@ Route::post(
 
 //rutas Fases
 
-Route::get('/fases', [FaseController::class, 'index']);
+// routes/api.php
+Route::middleware('auth:sanctum')->get('/fases', [FaseController::class, 'index']);
+
 Route::post('/fases', [FaseController::class, 'store']);
 Route::put('/fases/{fase}', [FaseController::class, 'update']);
 Route::delete('/fases/{fase}', [FaseController::class, 'destroy']);
 
 // Obtener una fase por ID
 Route::get('/fases/{fase}', [FaseController::class, 'show']);
+Route::post('/fases/{id}/duplicate', [FaseController::class, 'duplicate']);
+
+
 Route::get('/tipoimplementacion/{tipo}/fases', [TipoImplementacionController::class, 'fases']);
+
+
+
+
 Route::get(
     '/tipoimplementacion/{tipo}/integraciones-tareas',
     [TipoImplementacionController::class, 'integracionesConTareas']
@@ -79,6 +87,8 @@ Route::post('/tareas', [TareaController::class, 'store']);
 Route::get('/tareas/{tarea}', [TareaController::class, 'show']);
 Route::put('/tareas/{tarea}', [TareaController::class, 'update']);
 Route::delete('/tareas/{tarea}', [TareaController::class, 'destroy']);
+//rutas de taras integraciones 
+Route::post('/integraciones_tareas', [IntegracionTareaController::class, 'store']);
 
 
 
@@ -98,10 +108,16 @@ Route::get('/estimaciones', [EstimacionController::class, 'index']);
 Route::get('/estimaciones/{estimacion}', [EstimacionController::class, 'show']);
 Route::delete('/estimaciones/{estimacion}', [EstimacionController::class, 'destroy']);
 
+// Route::post(
+//     '/estimaciones/{estimacion}/crear-proyecto-bitrix',
+//     [EstimacionController::class, 'crearProyecto']
+// );
+
 Route::post(
-    '/estimaciones/{estimacion}/crear-proyecto-bitrix',
+    '/estimaciones/{estimacion}/crear-proyecto',
     [EstimacionController::class, 'crearProyecto']
 );
+
 
 
 //Ruta para cargar usuarios 

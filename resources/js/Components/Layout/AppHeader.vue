@@ -297,7 +297,7 @@ const navigate = (href) => {
 };
 
 const menu = [
-    { text: "Inicio", href: "/dashboard", icon: "fa-solid fa-house" },
+    { text: "Dashboard", href: "/dashboard", icon: "fa-solid fa-gauge-high" },
     {
         text: "Implementación",
         icon: "fa-solid fa-layer-group",

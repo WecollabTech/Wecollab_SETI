@@ -12,17 +12,37 @@ class FaseController extends Controller
      * Display a listing of the resource.
      */
     // Listar todas las fases
-    public function index()
+    public function index(Request $request)
     {
-        $tipos = Fase::orderBy('id', 'desc')->paginate(5);
-        return response()->json($tipos);
-    }
+        $query = Fase::query();
 
+        // Búsqueda
+        if ($request->has('search') && $request->search) {
+            $query->where('nombre', 'like', '%' . $request->search . '%')
+                ->orWhere('descripcion', 'like', '%' . $request->search . '%');
+        }
+
+        // Ordenamiento
+        $sortBy = $request->get('sort_by', 'id');
+        $sortDirection = $request->get('sort_direction', 'desc');
+
+        // Validar columnas permitidas
+        $allowedColumns = ['id', 'nombre', 'descripcion'];
+        if (!in_array($sortBy, $allowedColumns)) {
+            $sortBy = 'id';
+        }
+
+        $query->orderBy($sortBy, $sortDirection);
+
+        $fases = $query->paginate(5);
+
+        return response()->json($fases);
+    }
 
     public function all()
     {
         return response()->json(
-            Fase::orderBy('id', 'desc')->get()
+            Fase::orderBy('id', 'asc')->get()
         );
     }
 
@@ -154,4 +174,56 @@ class FaseController extends Controller
         $fase->delete();
         return response()->json(['message' => 'Fase eliminada']);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function duplicate($id)
+    {
+        try {
+            // Cargar fase con sus relaciones (si existen)
+            $fase = Fase::findOrFail($id);
+
+            // Duplicar fase
+            $nueva = $fase->replicate();
+            $nueva->nombre = $fase->nombre . ' (Copia)';
+            $nueva->save();
+
+            // Si la fase tiene relaciones, duplicarlas aquí
+            // Ejemplo si tuviera tareas:
+            // foreach ($fase->tareas as $tarea) {
+            //     $nuevaTarea = $tarea->replicate();
+            //     $nuevaTarea->fase_id = $nueva->id;
+            //     $nuevaTarea->save();
+            // }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Fase duplicada correctamente',
+                'data' => $nueva
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Fase no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al duplicar la fase'
+            ], 500);
+        }
+    }
+
+
 }

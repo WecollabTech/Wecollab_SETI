@@ -16,6 +16,7 @@ class IntegracionTarea extends Model
         'descripcion',
         'activo',
         'duracion_minuto',
+        'url_contenido',
         'orden',
     ];
 

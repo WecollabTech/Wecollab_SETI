@@ -16,7 +16,7 @@ const props = defineProps({
 const form = reactive({
     nombre: "",
     factor: 0,
-    descripcion: "",
+    // descripcion: "",
     estado: 1,
     rubricas: "",
 });
@@ -94,7 +94,7 @@ const cancel = () => router.get(route("niveles.index"));
                 </CardInput>
 
                 <!-- DESCRIPCIÓN (2 columnas) -->
-                <CardInput>
+                <!-- <CardInput>
                     <FormInput
                         label="Descripción"
                         type="textarea"
@@ -102,7 +102,7 @@ const cancel = () => router.get(route("niveles.index"));
                         :error="errors.descripcion"
                         placeholder="Descripción"
                     />
-                </CardInput>
+                </CardInput> -->
 
                 <!-- RÚBRICAS (2 columnas) -->
                 <CardInput>

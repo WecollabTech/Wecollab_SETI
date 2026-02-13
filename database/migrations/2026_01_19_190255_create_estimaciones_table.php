@@ -18,6 +18,10 @@ return new class extends Migration {
             $table->integer('total_minutos');
             $table->decimal('total_horas', 8, 2);
             $table->text('comentarios')->nullable();
+            $table->enum('estado', ['pendiente', 'aprobado', 'rechazado'])
+                ->default('pendiente')
+                ->after('id');
+
             // Datos adicionales que agregaste
             $table->string('nombre_empresa');
             $table->string('responsable')->nullable();

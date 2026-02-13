@@ -1,5 +1,5 @@
 <script setup>
-import { Head, router } from "@inertiajs/vue3";
+import { Head, router, usePage } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PageHeader from "@/Components/Layout/PageHeader.vue";
 import FormInput from "@/Components/Formulario/FormInput.vue";
@@ -9,6 +9,13 @@ import SuccessModal from "@/Components/Modal/SuccessModal.vue";
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 
+const page = usePage();
+
+// ===== LEER INTEGRACIÓN DESDE URL =====
+const integracionFromUrl =
+    page.props?.query?.integracion_id ||
+    new URLSearchParams(window.location.search).get("integracion_id");
+
 // --- FORMULARIO ---
 const form = ref({
     titulo: "",
@@ -17,11 +24,14 @@ const form = ref({
     activo: true,
     duracion_minuto: null,
     orden: 1,
-    integracion_id: "",
+    url_contenido: "",
+    integracion_id: integracionFromUrl ? Number(integracionFromUrl) : "",
 });
 
 // --- ERRORES ---
-const errors = ref({});
+const errors = ref({
+    url_contenido: null,
+});
 
 const integraciones = ref([]);
 const sending = ref(false);
@@ -148,6 +158,7 @@ const cancel = () => {
                             label="Integración"
                             type="select"
                             v-model="form.integracion_id"
+                            :disabled="integracionFromUrl"
                             :options="
                                 integraciones.map((i) => ({
                                     label: i.nombre,
@@ -185,13 +196,46 @@ const cancel = () => {
                         />
                     </CardInput>
 
-                    <CardInput class="md:col-span-2">
+                    <div class="card">
+                        <div
+                            class="card flex items-center justify-between md:col-span-2"
+                        >
+                            <span class="text-sm font-semibold text-gray-700">
+                                Activo
+                            </span>
+
+                            <div
+                                class="w-12 h-6 rounded-full p-0.5 flex items-center transition cursor-pointer"
+                                :class="
+                                    form.activo ? 'bg-green-500' : 'bg-gray-300'
+                                "
+                                @click="form.activo = !form.activo"
+                            >
+                                <div
+                                    class="bg-white w-5 h-5 rounded-full shadow transform transition"
+                                    :class="
+                                        form.activo
+                                            ? 'translate-x-6'
+                                            : 'translate-x-0'
+                                    "
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- URL de Contenido -->
+                    <div class="card md:col-span-2">
                         <FormInput
-                            label="Activa"
-                            type="checkbox"
-                            v-model="form.activo"
+                            label="URL de Contenido"
+                            v-model="form.url_contenido"
+                            :error="errors.url_contenido"
+                            type="url"
+                            placeholder="https://youtube.com/... / https://drive.google.com/... / https://loom.com/..."
                         />
-                    </CardInput>
+                        <p class="text-xs text-gray-400 mt-1">
+                            Puedes ingresar link de YouTube, Loom, Drive o
+                            archivo.
+                        </p>
+                    </div>
                 </div>
             </div>
 

@@ -16,7 +16,7 @@ const form = reactive({
     nombre: "",
     descripcion: "",
     rubrica: "",
-    alcance: "", // 👈 NUEVO
+    // alcance: "", // 👈 NUEVO
     activo: true,
     integraciones: [], // Array de integraciones seleccionadas
     fases: [],
@@ -27,7 +27,7 @@ const errors = reactive({
     nombre: null,
     descripcion: null,
     rubrica: null,
-    alcance: null, // 👈 NUEVO
+    // alcance: null, // 👈 NUEVO
     activo: null,
     integraciones: null,
     fases: null,
@@ -67,7 +67,7 @@ const resetForm = () => {
     form.nombre = "";
     form.descripcion = "";
     form.rubrica = "";
-    form.alcance = ""; // 👈 NUEVO
+    // form.alcance = ""; // 👈 NUEVO
     form.activo = true;
     form.integraciones = [];
     Object.keys(errors).forEach((k) => (errors[k] = null));
@@ -86,10 +86,10 @@ watch(
     () => form.nombre,
     () => (errors.nombre = null),
 );
-watch(
-    () => form.alcance,
-    () => (errors.alcance = null),
-);
+// watch(
+//     () => form.alcance,
+//     () => (errors.alcance = null),
+// );
 
 watch(
     () => form.descripcion,
@@ -132,10 +132,10 @@ const validateFront = () => {
         valid = false;
     }
 
-    if (!form.alcance || form.alcance.length < 10) {
-        errors.alcance = "El alcance debe tener al menos 10 caracteres.";
-        valid = false;
-    }
+    // if (!form.alcance || form.alcance.length < 10) {
+    //     errors.alcance = "El alcance debe tener al menos 10 caracteres.";
+    //     valid = false;
+    // }
 
     return valid;
 };
@@ -155,7 +155,7 @@ const submit = async () => {
             nombre: form.nombre,
             descripcion: form.descripcion,
             rubrica: form.rubrica,
-            alcance: form.alcance, // 👈 NUEVO
+            // alcance: form.alcance, // 👈 NUEVO
             activo: form.activo,
             integraciones: form.integraciones.map((i) => i.id),
             fases: form.fases.map((f) => f.id),
@@ -341,7 +341,7 @@ onMounted(() => cargarFases());
             </div>
 
             <!-- CARD: Alcance -->
-            <div
+            <!-- <div
                 class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
             >
                 <FormInput
@@ -354,7 +354,7 @@ onMounted(() => cargarFases());
                 <p class="text-gray-400 text-sm mt-1">
                     {{ form.alcance.length }}/1000 caracteres
                 </p>
-            </div>
+            </div> -->
 
             <!-- BOTONES DE ACCIÓN -->
             <template #actions>

@@ -14,12 +14,45 @@ class Tarea extends Model
         'titulo',
         'id_proceso',
         'descripcion',
+        'url_contenido',
         'estado',
         'activo',
         'duracion_minuto',
         'orden',
         'fase_id',
     ];
+
+
+    // Detecta el tipo de contenido automáticamente
+    public function getTipoContenidoAttribute()
+    {
+        if (!$this->url_contenido)
+            return null;
+
+        if (str_contains($this->url_contenido, 'youtube') || str_contains($this->url_contenido, 'youtu.be')) {
+            return 'youtube';
+        }
+
+        if (str_contains($this->url_contenido, 'loom')) {
+            return 'loom';
+        }
+
+        if (str_contains($this->url_contenido, 'drive.google')) {
+            return 'drive';
+        }
+
+        return 'archivo';
+    }
+
+
+
+
+
+
+
+
+
+
 
 
     //RELACION DE LA TABLA FASES CON TAREAS DE MUCHOS A MUCHOS

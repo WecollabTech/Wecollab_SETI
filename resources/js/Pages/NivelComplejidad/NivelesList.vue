@@ -32,7 +32,7 @@ const cargarNiveles = async (page = 1) => {
     loading.value = true;
     try {
         const res = await axios.get(
-            `/api/niveles?page=${page}&search=${search.value}`
+            `/api/niveles?page=${page}&search=${search.value}`,
         );
         niveles.value = {
             data: res.data.data ?? [],
@@ -95,8 +95,9 @@ onMounted(() => {
             <!-- TOOLBAR -->
             <template #toolbar>
                 <ToolbarBase
-                    createText="Nuevo Nivel"
-                    :createHref="route('niveles.create')"
+                    title="Nuevo Nivel"
+                    createText="Crear Nuevo Nivel"
+                    createRoute="niveles.create"
                 >
                     <template #left>
                         <input
