@@ -20,7 +20,7 @@ return new class extends Migration {
                 ['pendiente', 'en_proceso', 'completado', 'cancelado']
             )->nullable()->default('pendiente');
 
-            $table->text('url_contenido')->nullable()->after('descripcion');
+            $table->text('url_contenido')->nullable();
             $table->boolean('activo')->default(true);
             $table->integer('duracion_minuto')->nullable();
             $table->integer('orden')->default('1');

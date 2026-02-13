@@ -18,9 +18,13 @@ return new class extends Migration {
             $table->integer('total_minutos');
             $table->decimal('total_horas', 8, 2);
             $table->text('comentarios')->nullable();
-            $table->enum('estado', ['pendiente', 'aprobado', 'rechazado'])
-                ->default('pendiente')
-                ->after('id');
+            $table->enum('estado', [
+                'pendiente',
+                'en_proceso',
+                'completado',
+                'no_aprobados',
+                'aprobado'
+            ])->default('en_proceso');
 
             // Datos adicionales que agregaste
             $table->string('nombre_empresa');
