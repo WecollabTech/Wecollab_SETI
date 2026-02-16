@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import TaskForm from "@/Components/Tareas/TaskForm.vue";
+
 import { usePage } from "@inertiajs/vue3";
 
 const page = usePage();
