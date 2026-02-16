@@ -25,9 +25,9 @@ class EstimacionFase extends Model
 
 
     // Tareas calculadas dentro de esta fase
+    // Relación con las tareas de esta fase
     public function tareas()
     {
-        return $this->hasMany(EstimacionTarea::class);
+        return $this->hasMany(EstimacionTarea::class, 'estimacion_fase_id');
     }
-
 }

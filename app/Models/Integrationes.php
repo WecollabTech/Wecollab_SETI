@@ -44,9 +44,11 @@ class Integrationes extends Model
 
 
     //Relacion de estimacion con integraciones 
+    // Relación con las estimaciones a través de la tabla pivote
     public function estimaciones()
     {
-        return $this->hasMany(EstimacionIntegracion::class);
+        return $this->belongsToMany(Estimacion::class, 'estimacion_integraciones')
+            ->withTimestamps();
     }
 
 }

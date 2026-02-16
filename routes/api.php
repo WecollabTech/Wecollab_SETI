@@ -108,6 +108,8 @@ Route::get('/estimaciones', [EstimacionController::class, 'index']);
 Route::get('/estimaciones/{estimacion}', [EstimacionController::class, 'show']);
 Route::delete('/estimaciones/{estimacion}', [EstimacionController::class, 'destroy']);
 
+
+
 // Route::post(
 //     '/estimaciones/{estimacion}/crear-proyecto-bitrix',
 //     [EstimacionController::class, 'crearProyecto']
@@ -134,6 +136,8 @@ Route::prefix('lists')->group(function () {
     Route::get('/fases', [ListController::class, 'fases']);
     Route::get('/tipoimplementacion', [ListController::class, 'tipoImplementacion']);
     Route::get('/integraciones', [ListController::class, 'integraciones']);
+    Route::get('/tareas-estimaciones', [ListController::class, 'tareasEstimaciones']);
+
     Route::get('/niveles', [ListController::class, 'niveles']);
     Route::get('/tareas', [ListController::class, 'tareas']);
     Route::get('/estimaciones', [ListController::class, 'estimaciones']);

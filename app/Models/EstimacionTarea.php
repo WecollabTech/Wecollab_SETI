@@ -29,9 +29,9 @@ class EstimacionTarea extends Model
 
 
     //Estimacion de fase relacionado con faseestimacion
+    // Relación con la fase de la estimación
     public function estimacionFase()
     {
-        return $this->belongsTo(EstimacionFase::class);
+        return $this->belongsTo(EstimacionFase::class, 'estimacion_fase_id');
     }
-
 }

@@ -4,15 +4,15 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import PageHeader from "@/Components/Layout/PageHeader.vue";
 import TablaSeccion from "@/Components/Layout/TablaSeccion.vue";
 import ToolbarBase from "@/Components/Layout/ToolbarBase.vue";
-
 import ConfirmDeleteModal from "@/Components/Modal/ConfirmDeleteModal.vue";
 import SuccessModals from "@/Components/Modal/SuccessModals.vue";
 
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import ConfirmaciondeBitrix from "@/Components/Modal/ConfirmaciondeBitrix.vue";
 
-// --- STATE ---
+// =========================
+// STATE
+// =========================
 const estimaciones = ref({
     data: [],
     current_page: 1,
@@ -22,145 +22,33 @@ const estimaciones = ref({
 const loading = ref(true);
 const search = ref("");
 
-// --- CONFIRMAR INICIO DE PROYECTO ---
-const showConfirmProjectModal = ref(false);
-const estimacionIdToStart = ref(null);
-
-// --- MODALES ---
+// =========================
+// MODALES
+// =========================
 const showDeleteModal = ref(false);
 const showSuccessModal = ref(false);
+const showProjectTypeModal = ref(false);
+
 const deleting = ref(false);
 const estimacionIdToDelete = ref(null);
+const estimacionIdToStart = ref(null);
 
-// 🔥 MENSAJES DINÁMICOS
 const successTitle = ref("");
 const successMessage = ref("");
 
-// --- BITRIX ---
+// =========================
+// TIPO PROYECTO
+// =========================
+const tipoProyecto = ref("normal"); // normal | scrum
 const creandoProyecto = ref(null);
 
-//funcion de confirmar inico de proyecto
-const confirmarIniciarProyecto = (id) => {
-    estimacionIdToStart.value = id;
-    showConfirmProjectModal.value = true;
+const isCreatingProject = (id) => {
+    return creandoProyecto.value === id;
 };
 
-const iniciarProyectoConfirmado = () => {
-    iniciarProyectoBitrix(estimacionIdToStart.value);
-    estimacionIdToStart.value = null;
-};
-
-// const iniciarProyectoBitrix = async (estimacionId) => {
-//     if (creandoProyecto.value === estimacionId) return;
-
-//     creandoProyecto.value = estimacionId;
-
-//     try {
-//         // 1️⃣ Obtener estimación
-//         const { data: estimacion } = await axios.get(
-//             `/api/estimaciones/${estimacionId}`,
-//         );
-
-//         // 2️⃣ Crear grupo en Bitrix
-//         const grupoResponse = await fetch(
-//             "https://wecollab.bitrix24.mx/rest/281/s5qyzs1hdkmr09kz/sonet_group.create",
-//             {
-//                 method: "POST",
-//                 headers: { "Content-Type": "application/json" },
-//                 body: JSON.stringify({
-//                     NAME:
-//                         estimacion.nombre_empresa ??
-//                         `Proyecto Estimación #${estimacion.id}`,
-//                     DESCRIPTION: estimacion.comentarios ?? "",
-//                     VISIBLE: "Y",
-//                     OPENED: "Y",
-//                 }),
-//             },
-//         );
-
-//         const grupoData = await grupoResponse.json();
-
-//         if (!grupoResponse.ok || grupoData.error) {
-//             throw new Error(grupoData.error_description);
-//         }
-
-//         const groupId = grupoData.result;
-
-//         // 3️⃣ Unir tareas
-//         const tareas = [
-//             ...(estimacion.fases || []).flatMap((f) => f.tareas),
-//             ...(estimacion.integraciones || []).flatMap((i) => i.tareas),
-//         ];
-
-//         // 4️⃣ Crear tareas en Bitrix
-//         for (const tarea of tareas) {
-//             await fetch(
-//                 "https://wecollab.bitrix24.mx/rest/281/s5qyzs1hdkmr09kz/tasks.task.add",
-//                 {
-//                     method: "POST",
-//                     headers: { "Content-Type": "application/json" },
-//                     body: JSON.stringify({
-//                         fields: {
-//                             TITLE: tarea.nombre_tarea,
-//                             DESCRIPTION: `Duración: ${tarea.duracion_minuto} min`,
-//                             GROUP_ID: groupId,
-//                             RESPONSIBLE_ID: 1,
-//                         },
-//                     }),
-//                 },
-//             );
-//         }
-
-//         // ✅ MODAL ÉXITO
-//         successTitle.value = "Proyecto creado";
-//         successMessage.value =
-//             "El proyecto y sus tareas fueron creados correctamente en Bitrix24.";
-//         showSuccessModal.value = true;
-//     } catch (error) {
-//         console.error(error);
-
-//         // ❌ MODAL ERROR (reutilizamos el mismo)
-//         successTitle.value = "Error";
-//         successMessage.value =
-//             "Ocurrió un error al crear el proyecto en Bitrix.";
-//         showSuccessModal.value = true;
-//     } finally {
-//         creandoProyecto.value = null;
-//     }
-// };
-
-// --- PDF ---
-
-const iniciarProyectoBitrix = async (estimacionId) => {
-    if (creandoProyecto.value === estimacionId) return;
-
-    creandoProyecto.value = estimacionId;
-
-    try {
-        await axios.post(`/api/estimaciones/${estimacionId}/crear-proyecto`);
-
-        successTitle.value = "Proyecto creado";
-        successMessage.value =
-            "El proyecto y sus tareas fueron creados correctamente en Bitrix24.";
-        showSuccessModal.value = true;
-
-        cargarEstimaciones();
-    } catch (error) {
-        successTitle.value = "Error";
-        successMessage.value =
-            error.response?.data?.message ??
-            "Ocurrió un error al crear el proyecto.";
-        showSuccessModal.value = true;
-    } finally {
-        creandoProyecto.value = null;
-    }
-};
-
-const abrirPdf = (id) => {
-    window.open(route("estimaciones.pdf", id), "_blank");
-};
-
-// --- LISTADO ---
+// =========================
+// LISTAR
+// =========================
 const cargarEstimaciones = async (page = 1) => {
     loading.value = true;
     try {
@@ -169,44 +57,88 @@ const cargarEstimaciones = async (page = 1) => {
         );
         estimaciones.value = res.data;
     } catch (error) {
-        console.error("Error al cargar estimaciones:", error);
+        console.error(error);
     } finally {
         loading.value = false;
     }
 };
 
+let searchTimeout = null;
 const buscarEstimaciones = () => {
-    cargarEstimaciones(1);
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        cargarEstimaciones(1);
+    }, 400);
 };
 
-// --- ELIMINAR ---
+// =========================
+// CREAR PROYECTO
+// =========================
+const confirmarIniciarProyecto = (id) => {
+    estimacionIdToStart.value = id;
+    tipoProyecto.value = "normal";
+    showProjectTypeModal.value = true;
+};
+
+const iniciarProyectoConfirmado = async () => {
+    if (!estimacionIdToStart.value) return;
+
+    const id = estimacionIdToStart.value;
+
+    creandoProyecto.value = id;
+    showProjectTypeModal.value = false;
+
+    try {
+        await axios.post(`/api/estimaciones/${id}/crear-proyecto`, {
+            tipo_proyecto: tipoProyecto.value,
+        });
+
+        successTitle.value = "Proyecto creado";
+        successMessage.value =
+            tipoProyecto.value === "scrum"
+                ? "Proyecto Scrum creado correctamente."
+                : "Proyecto normal creado correctamente.";
+
+        showSuccessModal.value = true;
+
+        cargarEstimaciones();
+    } catch (error) {
+        successTitle.value = "Error";
+        successMessage.value =
+            error.response?.data?.message ?? "Error al crear proyecto.";
+        showSuccessModal.value = true;
+    } finally {
+        creandoProyecto.value = null;
+        estimacionIdToStart.value = null;
+    }
+};
+
+// =========================
+// ELIMINAR
+// =========================
 const confirmarEliminar = (id) => {
     estimacionIdToDelete.value = id;
     showDeleteModal.value = true;
 };
 
 const eliminarEstimacion = async () => {
-    if (!estimacionIdToDelete.value) return;
-
     deleting.value = true;
+
     try {
         await axios.delete(`/api/estimaciones/${estimacionIdToDelete.value}`);
         showDeleteModal.value = false;
 
-        successTitle.value = "Estimación eliminada";
-        successMessage.value = "La estimación se eliminó correctamente.";
+        successTitle.value = "Eliminado";
+        successMessage.value = "Estimación eliminada correctamente.";
         showSuccessModal.value = true;
 
         cargarEstimaciones(estimaciones.value.current_page);
-    } catch (err) {
-        console.error("Error al eliminar estimación:", err);
     } finally {
         deleting.value = false;
         estimacionIdToDelete.value = null;
     }
 };
 
-// --- MOUNT ---
 onMounted(() => {
     cargarEstimaciones();
 });
@@ -387,5 +319,59 @@ onMounted(() => {
             message="¿Estás seguro de iniciar este proyecto? Se crearán el grupo y todas las tareas en Bitrix24."
             @confirm="iniciarProyectoConfirmado"
         />
+
+        <!-- MODAL SELECCION TIPO PROYECTO -->
+        <div
+            v-if="showProjectTypeModal"
+            class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+            <div class="bg-white rounded-xl shadow-xl p-6 w-96">
+                <h2 class="text-lg font-semibold mb-4">
+                    Seleccionar tipo de proyecto
+                </h2>
+
+                <div class="flex gap-4 mb-6">
+                    <button
+                        @click="tipoProyecto = 'normal'"
+                        :class="
+                            tipoProyecto === 'normal'
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-gray-200'
+                        "
+                        class="flex-1 py-2 rounded transition"
+                    >
+                        Proyecto Normal
+                    </button>
+
+                    <button
+                        @click="tipoProyecto = 'scrum'"
+                        :class="
+                            tipoProyecto === 'scrum'
+                                ? 'bg-green-600 text-white'
+                                : 'bg-gray-200'
+                        "
+                        class="flex-1 py-2 rounded transition"
+                    >
+                        Proyecto Scrum
+                    </button>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button
+                        @click="showProjectTypeModal = false"
+                        class="px-4 py-2 bg-gray-300 rounded"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        @click="iniciarProyectoConfirmado"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded"
+                    >
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
     </AppLayout>
 </template>

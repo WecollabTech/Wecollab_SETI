@@ -17,9 +17,10 @@ const estadosConfig = {
         iconBg: "bg-blue-100 dark:bg-blue-900/40",
         progressBg: "bg-gradient-to-r from-blue-500 to-cyan-600",
         badge: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-        icon: '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+        icon: '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
         labelCount: "pendientes",
         emptyMessage: "No hay estimaciones pendientes",
+        iconPath: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
     },
     en_proceso: {
         title: "Estimaciones en Proceso",
@@ -31,9 +32,10 @@ const estadosConfig = {
         iconBg: "bg-amber-100 dark:bg-amber-900/40",
         progressBg: "bg-gradient-to-r from-amber-500 to-orange-600",
         badge: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-        icon: '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+        icon: '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
         labelCount: "en proceso",
         emptyMessage: "No hay estimaciones en proceso",
+        iconPath: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
     },
     completado: {
         title: "Estimaciones Completadas",
@@ -45,9 +47,10 @@ const estadosConfig = {
         iconBg: "bg-green-100 dark:bg-green-900/40",
         progressBg: "bg-gradient-to-r from-green-500 to-emerald-600",
         badge: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-        icon: '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+        icon: '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
         labelCount: "completadas",
         emptyMessage: "No hay estimaciones completadas",
+        iconPath: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     },
     no_aprobados: {
         title: "Estimaciones No Aprobadas",
@@ -59,9 +62,10 @@ const estadosConfig = {
         iconBg: "bg-red-100 dark:bg-red-900/40",
         progressBg: "bg-gradient-to-r from-red-500 to-rose-600",
         badge: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-        icon: '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>',
+        icon: '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>',
         labelCount: "no aprobadas",
         emptyMessage: "No hay estimaciones rechazadas",
+        iconPath: "M6 18L18 6M6 6l12 12",
     },
     aprobado: {
         title: "Estimaciones Aprobadas",
@@ -73,9 +77,10 @@ const estadosConfig = {
         iconBg: "bg-emerald-100 dark:bg-emerald-900/40",
         progressBg: "bg-gradient-to-r from-emerald-500 to-green-600",
         badge: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-        icon: '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+        icon: '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
         labelCount: "aprobadas",
         emptyMessage: "No hay estimaciones aprobadas",
+        iconPath: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     },
 };
 
@@ -88,26 +93,25 @@ const stats = ref({
     integraciones: 0,
 });
 
+// IMPORTANTE: Incluir integraciones en el estado inicial
 const lists = ref({
     estimaciones: [],
     tareas: [],
+    integraciones: [],
     fases: [],
 });
 
 // Estado para almacenar estadísticas por estado
 const estadoStats = ref({});
 
+// Estado para expandir/colapsar estimaciones
+const expandedEstimaciones = ref([]);
+
 // ==================== CACHE PARA RENDIMIENTO ====================
 const cache = ref({
     data: null,
     timestamp: null,
     TTL: 300000, // 5 minutos
-});
-
-// ==================== VIRTUAL SCROLLING ====================
-const visibleEstimacionesCount = ref(6);
-const visibleEstimaciones = computed(() => {
-    return lists.value.estimaciones.slice(0, visibleEstimacionesCount.value);
 });
 
 // ==================== SKELETON STATES ====================
@@ -142,7 +146,7 @@ const fetchDashboard = async () => {
                     signal: controller.signal,
                     timeout: 10000,
                 }),
-                axios.get("/api/lists/tareas", {
+                axios.get("/api/lists/tareas-estimaciones", {
                     signal: controller.signal,
                     timeout: 10000,
                 }),
@@ -192,55 +196,90 @@ const fetchDashboard = async () => {
 
 // ==================== PROCESAMIENTO DE DATOS ====================
 const processDashboardData = (estimaciones, tareas, integraciones, fases) => {
-    // Calcular stats principales
+    // Asegurar que sean arrays
+    const estimacionesArray = Array.isArray(estimaciones) ? estimaciones : [];
+    const tareasArray = Array.isArray(tareas) ? tareas : [];
+    const integracionesArray = Array.isArray(integraciones)
+        ? integraciones
+        : [];
+    const fasesArray = Array.isArray(fases) ? fases : [];
+
+    // Calcular stats principales (totales)
     stats.value = {
-        estimaciones: estimaciones.length,
-        horas: estimaciones.reduce(
+        estimaciones: estimacionesArray.length,
+        horas: estimacionesArray.reduce(
             (sum, e) => sum + Number(e.total_horas ?? 0),
             0,
         ),
-        tareas: tareas.length,
-        integraciones: integraciones.length,
+        tareas: tareasArray.length,
+        integraciones: integracionesArray.length,
     };
 
     // Calcular estadísticas por estado
     const newEstadoStats = {};
+
     Object.keys(estadosConfig).forEach((estadoKey) => {
-        // Normalizar el estado de la API
-        const filtered = estimaciones.filter((e) => {
+        // Filtrar estimaciones por estado
+        const filteredEstimaciones = estimacionesArray.filter((e) => {
             const estadoNormalizado = (e.estado || "")
                 .toLowerCase()
                 .replace(/\s+/g, "_");
             return estadoNormalizado === estadoKey;
         });
 
+        // Filtrar tareas asociadas solo a las estimaciones filtradas
+        const estimacionIds = filteredEstimaciones.map((e) => e.id);
+        const filteredTareas = tareasArray.filter((t) =>
+            estimacionIds.includes(t.estimacion_id),
+        );
+
+        // Filtrar integraciones asociadas a estas estimaciones
+        const filteredIntegraciones = integracionesArray.filter((i) =>
+            estimacionIds.includes(i.estimacion_id),
+        );
+
         newEstadoStats[estadoKey] = {
-            count: filtered.length,
-            horas: filtered.reduce(
+            count: filteredEstimaciones.length,
+            horas: filteredEstimaciones.reduce(
                 (sum, e) => sum + Number(e.total_horas || 0),
                 0,
             ),
+            tareas: filteredTareas.length,
+            integraciones: filteredIntegraciones.length,
         };
     });
+
     estadoStats.value = newEstadoStats;
 
-    // Limitar datos para rendimiento
+    // Enriquecer estimaciones con sus tareas e integraciones
+    const estimacionesEnriquecidas = estimacionesArray.map((estimacion) => ({
+        ...estimacion,
+        tareas: tareasArray.filter((t) => t.estimacion_id === estimacion.id),
+        integraciones: integracionesArray.filter(
+            (i) => i.estimacion_id === estimacion.id,
+        ),
+    }));
+
+    // Limitar listas para rendimiento
     lists.value = {
-        estimaciones: estimaciones.slice(0, 50),
-        tareas: tareas.slice(0, 10),
-        fases: fases.slice(0, 10),
+        estimaciones: estimacionesEnriquecidas.slice(0, 50),
+        tareas: tareasArray.slice(0, 50),
+        integraciones: integracionesArray.slice(0, 50),
+        fases: fasesArray.slice(0, 10),
     };
 };
 
 // ==================== USAR DATOS CACHEADOS ====================
 const useCachedData = () => {
     const cached = cache.value.data;
-    processDashboardData(
-        cached.estimaciones,
-        cached.tareas,
-        cached.integraciones,
-        cached.fases,
-    );
+    if (cached) {
+        processDashboardData(
+            cached.estimaciones,
+            cached.tareas,
+            cached.integraciones,
+            cached.fases,
+        );
+    }
 };
 
 // ==================== ACTUALIZACIÓN EN BACKGROUND ====================
@@ -249,17 +288,19 @@ const updateInBackground = () => {
         axios
             .get("/api/lists/estimaciones", { timeout: 10000 })
             .catch(() => null),
-        axios.get("/api/lists/tareas", { timeout: 10000 }).catch(() => null),
+        axios
+            .get("/api/lists/tareas-estimaciones", { timeout: 10000 })
+            .catch(() => null),
         axios
             .get("/api/lists/integraciones", { timeout: 10000 })
             .catch(() => null),
         axios.get("/api/lists/fases", { timeout: 10000 }).catch(() => null),
     ]).then(([est, tar, int, fas]) => {
         if (
-            est?.status === 200 &&
-            tar?.status === 200 &&
-            int?.status === 200 &&
-            fas?.status === 200
+            est?.value?.status === 200 &&
+            tar?.value?.status === 200 &&
+            int?.value?.status === 200 &&
+            fas?.value?.status === 200
         ) {
             cache.value = {
                 data: {
@@ -281,12 +322,15 @@ const updateInBackground = () => {
     });
 };
 
-// ==================== CARGAR MÁS ESTIMACIONES ====================
-const loadMoreEstimaciones = () => {
-    visibleEstimacionesCount.value = Math.min(
-        visibleEstimacionesCount.value + 6,
-        lists.value.estimaciones.length,
-    );
+// ==================== TOGGLE PARA EXPANDIR ESTIMACIÓN ====================
+const toggleEstimacion = (id) => {
+    if (expandedEstimaciones.value.includes(id)) {
+        expandedEstimaciones.value = expandedEstimaciones.value.filter(
+            (estId) => estId !== id,
+        );
+    } else {
+        expandedEstimaciones.value.push(id);
+    }
 };
 
 // ==================== FORMATEAR FECHA ====================
@@ -325,18 +369,29 @@ const getEstadoBadgeClass = (estado) => {
     return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
 };
 
+// ==================== FILTRAR ESTIMACIONES POR ESTADO ====================
+const estimacionesPorEstado = computed(() => {
+    const resultado = {};
+    Object.keys(estadosConfig).forEach((estadoKey) => {
+        resultado[estadoKey] = lists.value.estimaciones.filter((e) => {
+            const estadoNormalizado = (e.estado || "")
+                .toLowerCase()
+                .replace(/\s+/g, "_");
+            return estadoNormalizado === estadoKey;
+        });
+    });
+    return resultado;
+});
+
 // ==================== MONTAR COMPONENTE ====================
 onMounted(() => {
     fetchDashboard();
-
     const interval = setInterval(() => {
         if (!loading.value) updateInBackground();
     }, 300000);
-
     nextTick(() => {
         showSkeleton.value = true;
     });
-
     return () => clearInterval(interval);
 });
 </script>
@@ -457,272 +512,284 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <!-- ==================== SUB-SECCIÓN 2.2: STATS CARDS (4 TARJETAS) ==================== -->
+                <!-- ==================== SUB-SECCIÓN 2.2: ESTADÍSTICAS GENERALES ==================== -->
                 <div
-                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in-up"
+                    v-if="stats.estimaciones > 0"
+                    class="mt-12 animate-fade-in-up delay-200"
                 >
-                    <!-- Card 1: Estimaciones Totales -->
+                    <!-- Header de la sección -->
                     <div
-                        class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:to-blue-900/30 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                        class="mb-6 relative animate-fade-in before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-yellow-400 before:to-amber-600 before:opacity-0 before:blur-md hover:before:opacity-20 transition-all duration-300"
                     >
-                        <div class="relative p-7">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p
-                                        class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center space-x-2"
-                                    >
-                                        <svg
-                                            class="h-4 w-4 text-indigo-500"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                                            />
-                                        </svg>
-                                        <span>Estimaciones</span>
-                                    </p>
-                                    <p
-                                        class="text-5xl font-extrabold text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-300"
-                                    >
-                                        {{ stats.estimaciones }}
-                                    </p>
-                                </div>
-                                <div
-                                    class="p-3 rounded-xl bg-indigo-100 dark:bg-indigo-900/30"
-                                >
-                                    <svg
-                                        class="h-7 w-7 text-indigo-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                                        />
-                                    </svg>
-                                </div>
-                            </div>
+                        <div
+                            class="relative bg-white/90 dark:bg-gray-800/80 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-gray-200/40 dark:border-gray-700/40"
+                        >
                             <div
-                                class="mt-5 h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
+                                class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
                             >
-                                <div
-                                    class="h-full bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full transition-all duration-700"
-                                    :style="{
-                                        width: `${Math.min(stats.estimaciones * 2, 100)}%`,
-                                    }"
-                                ></div>
+                                <div class="flex flex-col gap-2">
+                                    <h2
+                                        class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 animate-gradient-shift"
+                                    >
+                                        Estadísticas Generales
+                                    </h2>
+                                    <p
+                                        class="text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm md:text-base"
+                                    >
+                                        <span
+                                            class="h-2 w-2 rounded-full bg-yellow-500 animate-pulse"
+                                        ></span>
+                                        <span
+                                            >Resumen completo del sistema</span
+                                        >
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Card 2: Horas Totales -->
-                    <div
-                        class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                    >
-                        <div class="relative p-7">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p
-                                        class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center space-x-2"
-                                    >
-                                        <svg
-                                            class="h-4 w-4 text-green-500"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                        </svg>
-                                        <span>Horas totales</span>
-                                    </p>
-                                    <p
-                                        class="text-5xl font-extrabold text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform duration-300"
-                                    >
-                                        {{ stats.horas }}
-                                    </p>
-                                </div>
-                                <div
-                                    class="p-3 rounded-xl bg-green-100 dark:bg-green-900/30"
-                                >
-                                    <svg
-                                        class="h-7 w-7 text-green-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
-                                </div>
-                            </div>
+                            <!-- ==================== Cards ==================== -->
                             <div
-                                class="mt-5 h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
+                                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8"
                             >
+                                <!-- Card 1: Estimaciones Totales -->
                                 <div
-                                    class="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all duration-700"
-                                    :style="{
-                                        width: `${Math.min(stats.horas / 10, 100)}%`,
-                                    }"
-                                ></div>
-                            </div>
-                        </div>
-                    </div>
+                                    class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-100 via-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:via-indigo-800/30 dark:to-blue-900/30 border border-gray-200/40 dark:border-gray-700/40 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div class="relative p-7">
+                                        <div
+                                            class="flex items-start justify-between"
+                                        >
+                                            <div>
+                                                <p
+                                                    class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-2"
+                                                >
+                                                    <svg
+                                                        class="h-5 w-5 text-indigo-500"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                                        />
+                                                    </svg>
+                                                    <span>Estimaciones</span>
+                                                </p>
+                                                <p
+                                                    class="text-5xl md:text-6xl font-extrabold text-indigo-700 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-300"
+                                                >
+                                                    {{ stats.estimaciones }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="p-3 rounded-xl bg-indigo-200 dark:bg-indigo-900/20 group-hover:bg-indigo-300 transition-colors duration-300"
+                                            >
+                                                <svg
+                                                    class="h-7 w-7 text-indigo-600"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <!-- Card 3: Tareas -->
-                    <div
-                        class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                    >
-                        <div class="relative p-7">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p
-                                        class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center space-x-2"
-                                    >
-                                        <svg
-                                            class="h-4 w-4 text-blue-500"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                                            />
-                                        </svg>
-                                        <span>Tareas</span>
-                                    </p>
-                                    <p
-                                        class="text-5xl font-extrabold text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300"
-                                    >
-                                        {{ stats.tareas }}
-                                    </p>
-                                </div>
+                                <!-- Card 2: Horas Totales -->
                                 <div
-                                    class="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30"
+                                    class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-50 via-green-100 to-emerald-50 dark:from-green-900/30 dark:via-green-800/30 dark:to-emerald-900/30 border border-gray-200/40 dark:border-gray-700/40 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
                                 >
-                                    <svg
-                                        class="h-7 w-7 text-blue-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                                        />
-                                    </svg>
+                                    <div class="relative p-7">
+                                        <div
+                                            class="flex items-start justify-between"
+                                        >
+                                            <div>
+                                                <p
+                                                    class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-2"
+                                                >
+                                                    <svg
+                                                        class="h-5 w-5 text-green-500"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                        />
+                                                    </svg>
+                                                    <span>Horas totales</span>
+                                                </p>
+                                                <p
+                                                    class="text-5xl md:text-6xl font-extrabold text-green-700 dark:text-green-400 group-hover:scale-110 transition-transform duration-300"
+                                                >
+                                                    {{ stats.horas }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="p-3 rounded-xl bg-green-200 dark:bg-green-900/20 group-hover:bg-green-300 transition-colors duration-300"
+                                            >
+                                                <svg
+                                                    class="h-7 w-7 text-green-600"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div
-                                class="mt-5 h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
-                            >
-                                <div
-                                    class="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-700"
-                                    :style="{
-                                        width: `${Math.min(stats.tareas * 3, 100)}%`,
-                                    }"
-                                ></div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Card 4: Integraciones -->
-                    <div
-                        class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                    >
-                        <div class="relative p-7">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <p
-                                        class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center space-x-2"
-                                    >
-                                        <svg
-                                            class="h-4 w-4 text-purple-500"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                                            />
-                                        </svg>
-                                        <span>Integraciones</span>
-                                    </p>
-                                    <p
-                                        class="text-5xl font-extrabold text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform duration-300"
-                                    >
-                                        {{ stats.integraciones }}
-                                    </p>
-                                </div>
+                                <!-- Card 3: Tareas de Estimaciones -->
                                 <div
-                                    class="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30"
+                                    class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 via-blue-100 to-cyan-50 dark:from-blue-900/30 dark:via-blue-800/30 dark:to-cyan-900/30 border border-gray-200/40 dark:border-gray-700/40 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
                                 >
-                                    <svg
-                                        class="h-7 w-7 text-purple-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                                        />
-                                    </svg>
+                                    <div class="relative p-7">
+                                        <div
+                                            class="flex items-start justify-between"
+                                        >
+                                            <div>
+                                                <p
+                                                    class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-2"
+                                                >
+                                                    <svg
+                                                        class="h-5 w-5 text-blue-500"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                                                        />
+                                                    </svg>
+                                                    <span
+                                                        >Tareas de
+                                                        Estimaciones</span
+                                                    >
+                                                </p>
+                                                <p
+                                                    class="text-5xl md:text-6xl font-extrabold text-blue-700 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300"
+                                                >
+                                                    {{ stats.tareas }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="p-3 rounded-xl bg-blue-200 dark:bg-blue-900/20 group-hover:bg-blue-300 transition-colors duration-300"
+                                            >
+                                                <svg
+                                                    class="h-7 w-7 text-blue-600"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div
-                                class="mt-5 h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
-                            >
+
+                                <!-- Card 4: Integraciones de Estimaciones -->
                                 <div
-                                    class="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-700"
-                                    :style="{
-                                        width: `${Math.min(stats.integraciones * 5, 100)}%`,
-                                    }"
-                                ></div>
+                                    class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-50 via-pink-50 to-pink-100 dark:from-purple-900/30 dark:via-purple-800/30 dark:to-pink-900/30 border border-gray-200/40 dark:border-gray-700/40 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div class="relative p-7">
+                                        <div
+                                            class="flex items-start justify-between"
+                                        >
+                                            <div>
+                                                <p
+                                                    class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-2"
+                                                >
+                                                    <svg
+                                                        class="h-5 w-5 text-purple-500"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                                                        />
+                                                    </svg>
+                                                    <span>Integraciones</span>
+                                                </p>
+                                                <p
+                                                    class="text-5xl md:text-6xl font-extrabold text-purple-700 dark:text-purple-400 group-hover:scale-110 transition-transform duration-300"
+                                                >
+                                                    {{ stats.integraciones }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="p-3 rounded-xl bg-purple-200 dark:bg-purple-900/20 group-hover:bg-purple-300 transition-colors duration-300"
+                                            >
+                                                <svg
+                                                    class="h-7 w-7 text-purple-600"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ==================== SUB-SECCIÓN 2.3: ESTADO PENDIENTE ==================== -->
+                <!-- ==================== SECCIÓN DE ESTADOS CON ESTIMACIONES DETALLADAS ==================== -->
+
+                <!-- ESTADO PENDIENTE -->
                 <div
-                    v-if="estadoStats.pendiente?.count > 0"
+                    v-if="estimacionesPorEstado.pendiente?.length > 0"
                     class="mt-12 animate-fade-in-up delay-100"
                 >
                     <div
-                        class="mb-6 animate-fade-in before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-blue-500 before:to-cyan-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300 relative"
+                        class="mb-6 relative before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-blue-500 before:to-cyan-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300"
                     >
                         <div
                             class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50"
                         >
-                            <div class="flex items-center justify-between">
-                                <div>
+                            <div
+                                class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                            >
+                                <div class="flex flex-col gap-2">
                                     <h2
                                         class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-500 animate-gradient-shift"
                                     >
@@ -730,10 +797,10 @@ onMounted(() => {
                                         {{ getEstadoConfig("pendiente").title }}
                                     </h2>
                                     <p
-                                        class="text-gray-600 dark:text-gray-300 mt-2 flex items-center space-x-2"
+                                        class="text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm md:text-base"
                                     >
                                         <span
-                                            class="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"
+                                            class="h-2 w-2 rounded-full bg-blue-500 animate-pulse"
                                         ></span>
                                         <span>{{
                                             getEstadoConfig("pendiente")
@@ -741,14 +808,12 @@ onMounted(() => {
                                         }}</span>
                                     </p>
                                 </div>
-                                <div
-                                    class="hidden md:flex items-center space-x-4"
-                                >
+                                <div class="hidden md:flex items-center gap-4">
                                     <div
                                         class="flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-medium shadow-lg"
                                     >
                                         <span class="font-bold">{{
-                                            estadoStats.pendiente.count
+                                            estadoStats.pendiente?.count || 0
                                         }}</span>
                                         <span class="ml-1">{{
                                             getEstadoConfig("pendiente")
@@ -757,98 +822,178 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
-                    >
-                        <div
-                            class="px-6 py-5 border-b border-gray-200 dark:border-gray-700"
-                        >
-                            <h3
-                                class="text-xl font-bold text-gray-800 dark:text-white flex items-center space-x-2"
+                            <!-- Cards de métricas -->
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6"
                             >
-                                <span>Lista de Estimaciones Pendientes</span>
-                                <span class="text-sm font-normal text-gray-500"
-                                    >({{ estadoStats.pendiente.count }})</span
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
                                 >
-                            </h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead
-                                    class="text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50"
-                                >
-                                    <tr
-                                        class="border-b border-gray-200 dark:border-gray-700"
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
                                     >
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Empresa
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Horas
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Fecha
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody
-                                    class="divide-y divide-gray-100 dark:divide-gray-700"
-                                >
-                                    <tr
-                                        v-for="e in lists.estimaciones.filter(
-                                            (est) =>
-                                                (est.estado || '')
-                                                    .toLowerCase()
-                                                    .replace(/\s+/g, '_') ===
-                                                'pendiente',
-                                        )"
-                                        :key="e.id"
-                                        class="hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
+                                        Estimaciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
                                     >
-                                        <td
-                                            class="py-3 px-4 font-medium text-gray-800 dark:text-white"
-                                        >
-                                            {{ e.nombre_empresa }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 font-bold text-blue-600 dark:text-blue-400"
-                                        >
-                                            {{ e.total_horas ?? 0 }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 text-gray-500 dark:text-gray-400 text-sm"
-                                        >
-                                            {{ formatDate(e.created_at) }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        {{ estadoStats.pendiente?.count || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.estimaciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.pendiente
+                                                          ?.count /
+                                                          stats.estimaciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-blue-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.estimaciones > 0 ? Math.min((estadoStats.pendiente?.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Horas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
+                                    >
+                                        {{ estadoStats.pendiente?.horas || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.horas > 0
+                                                ? Math.round(
+                                                      (estadoStats.pendiente
+                                                          ?.horas /
+                                                          stats.horas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-green-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.horas > 0 ? Math.min((estadoStats.pendiente?.horas / stats.horas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Tareas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-blue-600 dark:text-blue-400"
+                                    >
+                                        {{ estadoStats.pendiente?.tareas || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.tareas > 0
+                                                ? Math.round(
+                                                      (estadoStats.pendiente
+                                                          ?.tareas /
+                                                          stats.tareas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-blue-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.tareas > 0 ? Math.min((estadoStats.pendiente?.tareas / stats.tareas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Integraciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-purple-600 dark:text-purple-400"
+                                    >
+                                        {{
+                                            estadoStats.pendiente
+                                                ?.integraciones || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.integraciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.pendiente
+                                                          ?.integraciones /
+                                                          stats.integraciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-purple-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.integraciones > 0 ? Math.min((estadoStats.pendiente?.integraciones / stats.integraciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ==================== SUB-SECCIÓN 2.4: ESTADO EN PROCESO ==================== -->
+                <!-- ESTADO EN PROCESO -->
                 <div
-                    v-if="estadoStats.en_proceso?.count > 0"
+                    v-if="estimacionesPorEstado.en_proceso?.length > 0"
                     class="mt-12 animate-fade-in-up delay-200"
                 >
                     <div
-                        class="mb-6 animate-fade-in before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-amber-500 before:to-orange-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300 relative"
+                        class="mb-6 relative before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-amber-500 before:to-orange-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300"
                     >
                         <div
                             class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50"
                         >
-                            <div class="flex items-center justify-between">
-                                <div>
+                            <div
+                                class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                            >
+                                <div class="flex flex-col gap-2">
                                     <h2
                                         class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-500 animate-gradient-shift"
                                     >
@@ -858,10 +1003,10 @@ onMounted(() => {
                                         }}
                                     </h2>
                                     <p
-                                        class="text-gray-600 dark:text-gray-300 mt-2 flex items-center space-x-2"
+                                        class="text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm md:text-base"
                                     >
                                         <span
-                                            class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"
+                                            class="h-2 w-2 rounded-full bg-amber-500 animate-pulse"
                                         ></span>
                                         <span>{{
                                             getEstadoConfig("en_proceso")
@@ -869,14 +1014,12 @@ onMounted(() => {
                                         }}</span>
                                     </p>
                                 </div>
-                                <div
-                                    class="hidden md:flex items-center space-x-4"
-                                >
+                                <div class="hidden md:flex items-center gap-4">
                                     <div
                                         class="flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white font-medium shadow-lg"
                                     >
                                         <span class="font-bold">{{
-                                            estadoStats.en_proceso.count
+                                            estadoStats.en_proceso?.count || 0
                                         }}</span>
                                         <span class="ml-1">{{
                                             getEstadoConfig("en_proceso")
@@ -885,100 +1028,182 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
-                    >
-                        <div
-                            class="px-6 py-5 border-b border-gray-200 dark:border-gray-700"
-                        >
-                            <h3
-                                class="text-xl font-bold text-gray-800 dark:text-white flex items-center space-x-2"
+                            <!-- Cards de métricas -->
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6"
                             >
-                                <span>Lista de Estimaciones en Proceso</span>
-                                <span class="text-sm font-normal text-gray-500"
-                                    >({{ estadoStats.en_proceso.count }})</span
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
                                 >
-                            </h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead
-                                    class="text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50"
-                                >
-                                    <tr
-                                        class="border-b border-gray-200 dark:border-gray-700"
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
                                     >
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Empresa
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Horas
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Fecha
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody
-                                    class="divide-y divide-gray-100 dark:divide-gray-700"
-                                >
-                                    <tr
-                                        v-for="e in lists.estimaciones.filter(
-                                            (est) =>
-                                                (est.estado || '')
-                                                    .toLowerCase()
-                                                    .replace(/\s+/g, '_') ===
-                                                'en_proceso',
-                                        )"
-                                        :key="e.id"
-                                        class="hover:bg-amber-50/50 dark:hover:bg-amber-900/20 transition-colors"
+                                        Estimaciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
                                     >
-                                        <td
-                                            class="py-3 px-4 font-medium text-gray-800 dark:text-white"
-                                        >
-                                            {{ e.nombre_empresa }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 font-bold text-amber-600 dark:text-amber-400"
-                                        >
-                                            {{ e.total_horas ?? 0 }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 text-gray-500 dark:text-gray-400 text-sm"
-                                        >
-                                            {{ formatDate(e.created_at) }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        {{ estadoStats.en_proceso?.count || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.estimaciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.en_proceso
+                                                          ?.count /
+                                                          stats.estimaciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-amber-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.estimaciones > 0 ? Math.min((estadoStats.en_proceso?.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Horas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
+                                    >
+                                        {{ estadoStats.en_proceso?.horas || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.horas > 0
+                                                ? Math.round(
+                                                      (estadoStats.en_proceso
+                                                          ?.horas /
+                                                          stats.horas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-green-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.horas > 0 ? Math.min((estadoStats.en_proceso?.horas / stats.horas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Tareas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-blue-600 dark:text-blue-400"
+                                    >
+                                        {{
+                                            estadoStats.en_proceso?.tareas || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.tareas > 0
+                                                ? Math.round(
+                                                      (estadoStats.en_proceso
+                                                          ?.tareas /
+                                                          stats.tareas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-blue-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.tareas > 0 ? Math.min((estadoStats.en_proceso?.tareas / stats.tareas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Integraciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-purple-600 dark:text-purple-400"
+                                    >
+                                        {{
+                                            estadoStats.en_proceso
+                                                ?.integraciones || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.integraciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.en_proceso
+                                                          ?.integraciones /
+                                                          stats.integraciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-purple-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.integraciones > 0 ? Math.min((estadoStats.en_proceso?.integraciones / stats.integraciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ==================== SUB-SECCIÓN 2.5: ESTADO COMPLETADO ==================== -->
+                <!-- ESTADO COMPLETADO -->
                 <div
-                    v-if="estadoStats.completado?.count > 0"
+                    v-if="estimacionesPorEstado.completado?.length > 0"
                     class="mt-12 animate-fade-in-up delay-300"
                 >
                     <div
-                        class="mb-6 animate-fade-in before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-green-500 before:to-emerald-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300 relative"
+                        class="mb-6 relative before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-green-500 before:to-emerald-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300"
                     >
                         <div
                             class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50"
                         >
-                            <div class="flex items-center justify-between">
-                                <div>
+                            <div
+                                class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                            >
+                                <div class="flex flex-col gap-2">
                                     <h2
-                                        class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-600 via-emerald-600 to-teal-500 animate-gradient-shift"
+                                        class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-green-600 via-lime-500 to-emerald-500 animate-gradient-shift"
                                     >
                                         ✅
                                         {{
@@ -986,10 +1211,10 @@ onMounted(() => {
                                         }}
                                     </h2>
                                     <p
-                                        class="text-gray-600 dark:text-gray-300 mt-2 flex items-center space-x-2"
+                                        class="text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm md:text-base"
                                     >
                                         <span
-                                            class="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"
+                                            class="h-2 w-2 rounded-full bg-green-500 animate-pulse"
                                         ></span>
                                         <span>{{
                                             getEstadoConfig("completado")
@@ -997,14 +1222,12 @@ onMounted(() => {
                                         }}</span>
                                     </p>
                                 </div>
-                                <div
-                                    class="hidden md:flex items-center space-x-4"
-                                >
+                                <div class="hidden md:flex items-center gap-4">
                                     <div
                                         class="flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium shadow-lg"
                                     >
                                         <span class="font-bold">{{
-                                            estadoStats.completado.count
+                                            estadoStats.completado?.count || 0
                                         }}</span>
                                         <span class="ml-1">{{
                                             getEstadoConfig("completado")
@@ -1013,100 +1236,182 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
-                    >
-                        <div
-                            class="px-6 py-5 border-b border-gray-200 dark:border-gray-700"
-                        >
-                            <h3
-                                class="text-xl font-bold text-gray-800 dark:text-white flex items-center space-x-2"
+                            <!-- Cards de métricas -->
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6"
                             >
-                                <span>Lista de Estimaciones Completadas</span>
-                                <span class="text-sm font-normal text-gray-500"
-                                    >({{ estadoStats.completado.count }})</span
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
                                 >
-                            </h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead
-                                    class="text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50"
-                                >
-                                    <tr
-                                        class="border-b border-gray-200 dark:border-gray-700"
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
                                     >
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Empresa
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Horas
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Fecha
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody
-                                    class="divide-y divide-gray-100 dark:divide-gray-700"
-                                >
-                                    <tr
-                                        v-for="e in lists.estimaciones.filter(
-                                            (est) =>
-                                                (est.estado || '')
-                                                    .toLowerCase()
-                                                    .replace(/\s+/g, '_') ===
-                                                'completado',
-                                        )"
-                                        :key="e.id"
-                                        class="hover:bg-green-50/50 dark:hover:bg-green-900/20 transition-colors"
+                                        Estimaciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
                                     >
-                                        <td
-                                            class="py-3 px-4 font-medium text-gray-800 dark:text-white"
-                                        >
-                                            {{ e.nombre_empresa }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 font-bold text-green-600 dark:text-green-400"
-                                        >
-                                            {{ e.total_horas ?? 0 }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 text-gray-500 dark:text-gray-400 text-sm"
-                                        >
-                                            {{ formatDate(e.created_at) }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        {{ estadoStats.completado?.count || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.estimaciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.completado
+                                                          ?.count /
+                                                          stats.estimaciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-green-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.estimaciones > 0 ? Math.min((estadoStats.completado?.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Horas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
+                                    >
+                                        {{ estadoStats.completado?.horas || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.horas > 0
+                                                ? Math.round(
+                                                      (estadoStats.completado
+                                                          ?.horas /
+                                                          stats.horas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-lime-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.horas > 0 ? Math.min((estadoStats.completado?.horas / stats.horas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Tareas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-green-600 dark:text-green-400"
+                                    >
+                                        {{
+                                            estadoStats.completado?.tareas || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.tareas > 0
+                                                ? Math.round(
+                                                      (estadoStats.completado
+                                                          ?.tareas /
+                                                          stats.tareas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-green-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.tareas > 0 ? Math.min((estadoStats.completado?.tareas / stats.tareas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Integraciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-purple-600 dark:text-purple-400"
+                                    >
+                                        {{
+                                            estadoStats.completado
+                                                ?.integraciones || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.integraciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.completado
+                                                          ?.integraciones /
+                                                          stats.integraciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-purple-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.integraciones > 0 ? Math.min((estadoStats.completado?.integraciones / stats.integraciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ==================== SUB-SECCIÓN 2.6: ESTADO NO APROBADOS ==================== -->
+                <!-- ESTADO NO APROBADOS -->
                 <div
-                    v-if="estadoStats.no_aprobados?.count > 0"
+                    v-if="estimacionesPorEstado.no_aprobados?.length > 0"
                     class="mt-12 animate-fade-in-up delay-400"
                 >
                     <div
-                        class="mb-6 animate-fade-in before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-red-500 before:to-rose-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300 relative"
+                        class="mb-6 relative before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-red-500 before:to-rose-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300"
                     >
                         <div
                             class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50"
                         >
-                            <div class="flex items-center justify-between">
-                                <div>
+                            <div
+                                class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                            >
+                                <div class="flex flex-col gap-2">
                                     <h2
-                                        class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-rose-600 to-pink-500 animate-gradient-shift"
+                                        class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-orange-600 to-rose-500 animate-gradient-shift"
                                     >
                                         ❌
                                         {{
@@ -1115,10 +1420,10 @@ onMounted(() => {
                                         }}
                                     </h2>
                                     <p
-                                        class="text-gray-600 dark:text-gray-300 mt-2 flex items-center space-x-2"
+                                        class="text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm md:text-base"
                                     >
                                         <span
-                                            class="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"
+                                            class="h-2 w-2 rounded-full bg-red-500 animate-pulse"
                                         ></span>
                                         <span>{{
                                             getEstadoConfig("no_aprobados")
@@ -1126,14 +1431,12 @@ onMounted(() => {
                                         }}</span>
                                     </p>
                                 </div>
-                                <div
-                                    class="hidden md:flex items-center space-x-4"
-                                >
+                                <div class="hidden md:flex items-center gap-4">
                                     <div
                                         class="flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium shadow-lg"
                                     >
                                         <span class="font-bold">{{
-                                            estadoStats.no_aprobados.count
+                                            estadoStats.no_aprobados?.count || 0
                                         }}</span>
                                         <span class="ml-1">{{
                                             getEstadoConfig("no_aprobados")
@@ -1142,111 +1445,196 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
-                    >
-                        <div
-                            class="px-6 py-5 border-b border-gray-200 dark:border-gray-700"
-                        >
-                            <h3
-                                class="text-xl font-bold text-gray-800 dark:text-white flex items-center space-x-2"
+                            <!-- Cards de métricas -->
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6"
                             >
-                                <span>Lista de Estimaciones No Aprobadas</span>
-                                <span class="text-sm font-normal text-gray-500"
-                                    >({{
-                                        estadoStats.no_aprobados.count
-                                    }})</span
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
                                 >
-                            </h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead
-                                    class="text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50"
-                                >
-                                    <tr
-                                        class="border-b border-gray-200 dark:border-gray-700"
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
                                     >
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Empresa
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Horas
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Fecha
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody
-                                    class="divide-y divide-gray-100 dark:divide-gray-700"
-                                >
-                                    <tr
-                                        v-for="e in lists.estimaciones.filter(
-                                            (est) =>
-                                                (est.estado || '')
-                                                    .toLowerCase()
-                                                    .replace(/\s+/g, '_') ===
-                                                'no_aprobados',
-                                        )"
-                                        :key="e.id"
-                                        class="hover:bg-red-50/50 dark:hover:bg-red-900/20 transition-colors"
+                                        Estimaciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
                                     >
-                                        <td
-                                            class="py-3 px-4 font-medium text-gray-800 dark:text-white"
-                                        >
-                                            {{ e.nombre_empresa }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 font-bold text-red-600 dark:text-red-400"
-                                        >
-                                            {{ e.total_horas ?? 0 }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 text-gray-500 dark:text-gray-400 text-sm"
-                                        >
-                                            {{ formatDate(e.created_at) }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        {{
+                                            estadoStats.no_aprobados?.count || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.estimaciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.no_aprobados
+                                                          ?.count /
+                                                          stats.estimaciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-red-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.estimaciones > 0 ? Math.min((estadoStats.no_aprobados?.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Horas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
+                                    >
+                                        {{
+                                            estadoStats.no_aprobados?.horas || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.horas > 0
+                                                ? Math.round(
+                                                      (estadoStats.no_aprobados
+                                                          ?.horas /
+                                                          stats.horas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-orange-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.horas > 0 ? Math.min((estadoStats.no_aprobados?.horas / stats.horas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Tareas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-red-600 dark:text-red-400"
+                                    >
+                                        {{
+                                            estadoStats.no_aprobados?.tareas ||
+                                            0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.tareas > 0
+                                                ? Math.round(
+                                                      (estadoStats.no_aprobados
+                                                          ?.tareas /
+                                                          stats.tareas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-red-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.tareas > 0 ? Math.min((estadoStats.no_aprobados?.tareas / stats.tareas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Integraciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-purple-600 dark:text-purple-400"
+                                    >
+                                        {{
+                                            estadoStats.no_aprobados
+                                                ?.integraciones || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.integraciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.no_aprobados
+                                                          ?.integraciones /
+                                                          stats.integraciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-purple-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.integraciones > 0 ? Math.min((estadoStats.no_aprobados?.integraciones / stats.integraciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ==================== SUB-SECCIÓN 2.7: ESTADO APROBADO ==================== -->
+                <!-- ESTADO APROBADO -->
                 <div
-                    v-if="estadoStats.aprobado?.count > 0"
+                    v-if="estimacionesPorEstado.aprobado?.length > 0"
                     class="mt-12 animate-fade-in-up delay-500"
                 >
                     <div
-                        class="mb-6 animate-fade-in before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-emerald-500 before:to-green-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300 relative"
+                        class="mb-6 relative before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-emerald-500 before:to-green-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300"
                     >
                         <div
                             class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50"
                         >
-                            <div class="flex items-center justify-between">
-                                <div>
+                            <div
+                                class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                            >
+                                <div class="flex flex-col gap-2">
                                     <h2
                                         class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 via-green-600 to-teal-500 animate-gradient-shift"
                                     >
-                                        🎯
+                                        ✔️
                                         {{ getEstadoConfig("aprobado").title }}
                                     </h2>
                                     <p
-                                        class="text-gray-600 dark:text-gray-300 mt-2 flex items-center space-x-2"
+                                        class="text-gray-600 dark:text-gray-300 flex items-center gap-2 text-sm md:text-base"
                                     >
                                         <span
-                                            class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"
+                                            class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"
                                         ></span>
                                         <span>{{
                                             getEstadoConfig("aprobado")
@@ -1254,14 +1642,12 @@ onMounted(() => {
                                         }}</span>
                                     </p>
                                 </div>
-                                <div
-                                    class="hidden md:flex items-center space-x-4"
-                                >
+                                <div class="hidden md:flex items-center gap-4">
                                     <div
                                         class="flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 text-white font-medium shadow-lg"
                                     >
                                         <span class="font-bold">{{
-                                            estadoStats.aprobado.count
+                                            estadoStats.aprobado?.count || 0
                                         }}</span>
                                         <span class="ml-1">{{
                                             getEstadoConfig("aprobado")
@@ -1270,81 +1656,159 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
-                    >
-                        <div
-                            class="px-6 py-5 border-b border-gray-200 dark:border-gray-700"
-                        >
-                            <h3
-                                class="text-xl font-bold text-gray-800 dark:text-white flex items-center space-x-2"
+                            <!-- Cards de métricas -->
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6"
                             >
-                                <span>Lista de Estimaciones Aprobadas</span>
-                                <span class="text-sm font-normal text-gray-500"
-                                    >({{ estadoStats.aprobado.count }})</span
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
                                 >
-                            </h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead
-                                    class="text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50"
-                                >
-                                    <tr
-                                        class="border-b border-gray-200 dark:border-gray-700"
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
                                     >
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Empresa
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Horas
-                                        </th>
-                                        <th
-                                            class="text-left py-3 px-4 font-medium"
-                                        >
-                                            Fecha
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody
-                                    class="divide-y divide-gray-100 dark:divide-gray-700"
-                                >
-                                    <tr
-                                        v-for="e in lists.estimaciones.filter(
-                                            (est) =>
-                                                (est.estado || '')
-                                                    .toLowerCase()
-                                                    .replace(/\s+/g, '_') ===
-                                                'aprobado',
-                                        )"
-                                        :key="e.id"
-                                        class="hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20 transition-colors"
+                                        Estimaciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
                                     >
-                                        <td
-                                            class="py-3 px-4 font-medium text-gray-800 dark:text-white"
-                                        >
-                                            {{ e.nombre_empresa }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400"
-                                        >
-                                            {{ e.total_horas ?? 0 }}
-                                        </td>
-                                        <td
-                                            class="py-3 px-4 text-gray-500 dark:text-gray-400 text-sm"
-                                        >
-                                            {{ formatDate(e.created_at) }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        {{ estadoStats.aprobado?.count || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.estimaciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.aprobado
+                                                          ?.count /
+                                                          stats.estimaciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-emerald-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.estimaciones > 0 ? Math.min((estadoStats.aprobado?.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Horas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-gray-800 dark:text-white"
+                                    >
+                                        {{ estadoStats.aprobado?.horas || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.horas > 0
+                                                ? Math.round(
+                                                      (estadoStats.aprobado
+                                                          ?.horas /
+                                                          stats.horas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-green-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.horas > 0 ? Math.min((estadoStats.aprobado?.horas / stats.horas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Tareas
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-blue-600 dark:text-blue-400"
+                                    >
+                                        {{ estadoStats.aprobado?.tareas || 0 }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.tareas > 0
+                                                ? Math.round(
+                                                      (estadoStats.aprobado
+                                                          ?.tareas /
+                                                          stats.tareas) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-blue-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.tareas > 0 ? Math.min((estadoStats.aprobado?.tareas / stats.tareas) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col gap-2"
+                                >
+                                    <p
+                                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                        Integraciones
+                                    </p>
+                                    <p
+                                        class="text-4xl font-extrabold text-purple-600 dark:text-purple-400"
+                                    >
+                                        {{
+                                            estadoStats.aprobado
+                                                ?.integraciones || 0
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{
+                                            stats.integraciones > 0
+                                                ? Math.round(
+                                                      (estadoStats.aprobado
+                                                          ?.integraciones /
+                                                          stats.integraciones) *
+                                                          100,
+                                                  )
+                                                : 0
+                                        }}% del total
+                                    </p>
+                                    <div
+                                        class="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-2"
+                                    >
+                                        <div
+                                            class="h-full bg-purple-500 rounded-full transition-all duration-700"
+                                            :style="{
+                                                width: `${stats.integraciones > 0 ? Math.min((estadoStats.aprobado?.integraciones / stats.integraciones) * 100, 100) : 0}%`,
+                                            }"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1387,9 +1851,7 @@ onMounted(() => {
                                 >
                                     <span class="font-bold text-white"
                                         >Total:
-                                        {{
-                                            stats.estimaciones
-                                        }}
+                                        {{ stats.estimaciones }}
                                         estimaciones</span
                                     >
                                     <span
@@ -1440,34 +1902,24 @@ onMounted(() => {
                             </div>
                         </div>
 
-                        <!-- Tasas por Estado -->
+                        <!-- Tasas por Estado - Versión estática sin errores -->
                         <div
                             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3"
                         >
+                            <!-- Pendiente -->
                             <div
-                                v-for="(estadoKey, index) in Object.keys(
-                                    estadosConfig,
-                                )"
-                                :key="index"
-                                v-if="estadoStats[estadoKey]?.count > 0"
+                                v-if="estadoStats.pendiente?.count > 0"
                                 class="group relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all duration-300 overflow-hidden"
                             >
-                                <!-- Decorative background element -->
                                 <div
-                                    class="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300"
-                                    :class="getEstadoConfig(estadoKey).gradient"
+                                    class="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-r from-blue-500 to-cyan-600"
                                 ></div>
-
                                 <div
                                     class="relative flex items-start space-x-3"
                                 >
                                     <div class="flex-shrink-0 mt-1">
                                         <div
-                                            class="w-3 h-3 rounded-full"
-                                            :class="
-                                                getEstadoConfig(estadoKey)
-                                                    .textColor
-                                            "
+                                            class="w-3 h-3 rounded-full bg-blue-600 dark:bg-blue-400"
                                         ></div>
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -1479,33 +1931,25 @@ onMounted(() => {
                                                     class="text-white font-bold text-lg"
                                                 >
                                                     {{
-                                                        estadoStats[estadoKey]
+                                                        estadoStats.pendiente
                                                             .count
                                                     }}
                                                 </p>
                                                 <p
                                                     class="text-white/80 text-xs mt-0.5"
                                                 >
-                                                    {{
-                                                        getEstadoConfig(
-                                                            estadoKey,
-                                                        ).labelCount
-                                                    }}
+                                                    pendientes
                                                 </p>
                                             </div>
                                             <div
-                                                class="px-2.5 py-1 rounded-full text-xs font-bold"
-                                                :class="
-                                                    getEstadoConfig(estadoKey)
-                                                        .badge
-                                                "
+                                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
                                             >
                                                 {{
                                                     stats.estimaciones > 0
                                                         ? Math.round(
-                                                              (estadoStats[
-                                                                  estadoKey
-                                                              ].count /
+                                                              (estadoStats
+                                                                  .pendiente
+                                                                  .count /
                                                                   stats.estimaciones) *
                                                                   100,
                                                           )
@@ -1513,7 +1957,6 @@ onMounted(() => {
                                                 }}%
                                             </div>
                                         </div>
-
                                         <div class="mt-3">
                                             <div
                                                 class="flex justify-between text-xs text-white/70 mb-1"
@@ -1523,9 +1966,9 @@ onMounted(() => {
                                                     >{{
                                                         stats.estimaciones > 0
                                                             ? Math.round(
-                                                                  (estadoStats[
-                                                                      estadoKey
-                                                                  ].count /
+                                                                  (estadoStats
+                                                                      .pendiente
+                                                                      .count /
                                                                       stats.estimaciones) *
                                                                       100,
                                                               )
@@ -1537,19 +1980,13 @@ onMounted(() => {
                                                 class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden"
                                             >
                                                 <div
-                                                    class="h-full rounded-full transition-all duration-700"
-                                                    :class="
-                                                        getEstadoConfig(
-                                                            estadoKey,
-                                                        ).progressBg
-                                                    "
+                                                    class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-blue-500 to-cyan-600"
                                                     :style="{
-                                                        width: `${stats.estimaciones > 0 ? Math.min((estadoStats[estadoKey].count / stats.estimaciones) * 100, 100) : 0}%`,
+                                                        width: `${stats.estimaciones > 0 ? Math.min((estadoStats.pendiente.count / stats.estimaciones) * 100, 100) : 0}%`,
                                                     }"
                                                 ></div>
                                             </div>
                                         </div>
-
                                         <div
                                             class="mt-2 pt-2 border-t border-white/10"
                                         >
@@ -1562,7 +1999,7 @@ onMounted(() => {
                                                 <span
                                                     class="font-bold text-white"
                                                     >{{
-                                                        estadoStats[estadoKey]
+                                                        estadoStats.pendiente
                                                             .horas
                                                     }}</span
                                                 >
@@ -1570,15 +2007,432 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Decorative corner element -->
                                 <div
-                                    class="absolute -top-2 -right-2 h-8 w-8 rounded-full opacity-10"
-                                    :class="
-                                        getEstadoConfig(
-                                            estadoKey,
-                                        ).textColor.replace('text-', 'bg-')
-                                    "
+                                    class="absolute -top-2 -right-2 h-8 w-8 rounded-full opacity-10 bg-blue-600"
+                                ></div>
+                            </div>
+
+                            <!-- En Proceso -->
+                            <div
+                                v-if="estadoStats.en_proceso?.count > 0"
+                                class="group relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all duration-300 overflow-hidden"
+                            >
+                                <div
+                                    class="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-r from-amber-500 to-orange-600"
+                                ></div>
+                                <div
+                                    class="relative flex items-start space-x-3"
+                                >
+                                    <div class="flex-shrink-0 mt-1">
+                                        <div
+                                            class="w-3 h-3 rounded-full bg-amber-600 dark:bg-amber-400"
+                                        ></div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div
+                                            class="flex items-start justify-between"
+                                        >
+                                            <div>
+                                                <p
+                                                    class="text-white font-bold text-lg"
+                                                >
+                                                    {{
+                                                        estadoStats.en_proceso
+                                                            .count
+                                                    }}
+                                                </p>
+                                                <p
+                                                    class="text-white/80 text-xs mt-0.5"
+                                                >
+                                                    en proceso
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+                                            >
+                                                {{
+                                                    stats.estimaciones > 0
+                                                        ? Math.round(
+                                                              (estadoStats
+                                                                  .en_proceso
+                                                                  .count /
+                                                                  stats.estimaciones) *
+                                                                  100,
+                                                          )
+                                                        : 0
+                                                }}%
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div
+                                                class="flex justify-between text-xs text-white/70 mb-1"
+                                            >
+                                                <span>Tasa</span>
+                                                <span
+                                                    >{{
+                                                        stats.estimaciones > 0
+                                                            ? Math.round(
+                                                                  (estadoStats
+                                                                      .en_proceso
+                                                                      .count /
+                                                                      stats.estimaciones) *
+                                                                      100,
+                                                              )
+                                                            : 0
+                                                    }}%</span
+                                                >
+                                            </div>
+                                            <div
+                                                class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden"
+                                            >
+                                                <div
+                                                    class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-amber-500 to-orange-600"
+                                                    :style="{
+                                                        width: `${stats.estimaciones > 0 ? Math.min((estadoStats.en_proceso.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                                    }"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="mt-2 pt-2 border-t border-white/10"
+                                        >
+                                            <div
+                                                class="flex justify-between text-xs"
+                                            >
+                                                <span class="text-white/70"
+                                                    >Horas totales</span
+                                                >
+                                                <span
+                                                    class="font-bold text-white"
+                                                    >{{
+                                                        estadoStats.en_proceso
+                                                            .horas
+                                                    }}</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="absolute -top-2 -right-2 h-8 w-8 rounded-full opacity-10 bg-amber-600"
+                                ></div>
+                            </div>
+
+                            <!-- Completado -->
+                            <div
+                                v-if="estadoStats.completado?.count > 0"
+                                class="group relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all duration-300 overflow-hidden"
+                            >
+                                <div
+                                    class="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-r from-green-500 to-emerald-600"
+                                ></div>
+                                <div
+                                    class="relative flex items-start space-x-3"
+                                >
+                                    <div class="flex-shrink-0 mt-1">
+                                        <div
+                                            class="w-3 h-3 rounded-full bg-green-600 dark:bg-green-400"
+                                        ></div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div
+                                            class="flex items-start justify-between"
+                                        >
+                                            <div>
+                                                <p
+                                                    class="text-white font-bold text-lg"
+                                                >
+                                                    {{
+                                                        estadoStats.completado
+                                                            .count
+                                                    }}
+                                                </p>
+                                                <p
+                                                    class="text-white/80 text-xs mt-0.5"
+                                                >
+                                                    completadas
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                                            >
+                                                {{
+                                                    stats.estimaciones > 0
+                                                        ? Math.round(
+                                                              (estadoStats
+                                                                  .completado
+                                                                  .count /
+                                                                  stats.estimaciones) *
+                                                                  100,
+                                                          )
+                                                        : 0
+                                                }}%
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div
+                                                class="flex justify-between text-xs text-white/70 mb-1"
+                                            >
+                                                <span>Tasa</span>
+                                                <span
+                                                    >{{
+                                                        stats.estimaciones > 0
+                                                            ? Math.round(
+                                                                  (estadoStats
+                                                                      .completado
+                                                                      .count /
+                                                                      stats.estimaciones) *
+                                                                      100,
+                                                              )
+                                                            : 0
+                                                    }}%</span
+                                                >
+                                            </div>
+                                            <div
+                                                class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden"
+                                            >
+                                                <div
+                                                    class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-green-500 to-emerald-600"
+                                                    :style="{
+                                                        width: `${stats.estimaciones > 0 ? Math.min((estadoStats.completado.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                                    }"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="mt-2 pt-2 border-t border-white/10"
+                                        >
+                                            <div
+                                                class="flex justify-between text-xs"
+                                            >
+                                                <span class="text-white/70"
+                                                    >Horas totales</span
+                                                >
+                                                <span
+                                                    class="font-bold text-white"
+                                                    >{{
+                                                        estadoStats.completado
+                                                            .horas
+                                                    }}</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="absolute -top-2 -right-2 h-8 w-8 rounded-full opacity-10 bg-green-600"
+                                ></div>
+                            </div>
+
+                            <!-- No Aprobados -->
+                            <div
+                                v-if="estadoStats.no_aprobados?.count > 0"
+                                class="group relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all duration-300 overflow-hidden"
+                            >
+                                <div
+                                    class="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-r from-red-500 to-rose-600"
+                                ></div>
+                                <div
+                                    class="relative flex items-start space-x-3"
+                                >
+                                    <div class="flex-shrink-0 mt-1">
+                                        <div
+                                            class="w-3 h-3 rounded-full bg-red-600 dark:bg-red-400"
+                                        ></div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div
+                                            class="flex items-start justify-between"
+                                        >
+                                            <div>
+                                                <p
+                                                    class="text-white font-bold text-lg"
+                                                >
+                                                    {{
+                                                        estadoStats.no_aprobados
+                                                            .count
+                                                    }}
+                                                </p>
+                                                <p
+                                                    class="text-white/80 text-xs mt-0.5"
+                                                >
+                                                    no aprobadas
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                                            >
+                                                {{
+                                                    stats.estimaciones > 0
+                                                        ? Math.round(
+                                                              (estadoStats
+                                                                  .no_aprobados
+                                                                  .count /
+                                                                  stats.estimaciones) *
+                                                                  100,
+                                                          )
+                                                        : 0
+                                                }}%
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div
+                                                class="flex justify-between text-xs text-white/70 mb-1"
+                                            >
+                                                <span>Tasa</span>
+                                                <span
+                                                    >{{
+                                                        stats.estimaciones > 0
+                                                            ? Math.round(
+                                                                  (estadoStats
+                                                                      .no_aprobados
+                                                                      .count /
+                                                                      stats.estimaciones) *
+                                                                      100,
+                                                              )
+                                                            : 0
+                                                    }}%</span
+                                                >
+                                            </div>
+                                            <div
+                                                class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden"
+                                            >
+                                                <div
+                                                    class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-red-500 to-rose-600"
+                                                    :style="{
+                                                        width: `${stats.estimaciones > 0 ? Math.min((estadoStats.no_aprobados.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                                    }"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="mt-2 pt-2 border-t border-white/10"
+                                        >
+                                            <div
+                                                class="flex justify-between text-xs"
+                                            >
+                                                <span class="text-white/70"
+                                                    >Horas totales</span
+                                                >
+                                                <span
+                                                    class="font-bold text-white"
+                                                    >{{
+                                                        estadoStats.no_aprobados
+                                                            .horas
+                                                    }}</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="absolute -top-2 -right-2 h-8 w-8 rounded-full opacity-10 bg-red-600"
+                                ></div>
+                            </div>
+
+                            <!-- Aprobado -->
+                            <div
+                                v-if="estadoStats.aprobado?.count > 0"
+                                class="group relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all duration-300 overflow-hidden"
+                            >
+                                <div
+                                    class="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-r from-emerald-500 to-green-600"
+                                ></div>
+                                <div
+                                    class="relative flex items-start space-x-3"
+                                >
+                                    <div class="flex-shrink-0 mt-1">
+                                        <div
+                                            class="w-3 h-3 rounded-full bg-emerald-600 dark:bg-emerald-400"
+                                        ></div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div
+                                            class="flex items-start justify-between"
+                                        >
+                                            <div>
+                                                <p
+                                                    class="text-white font-bold text-lg"
+                                                >
+                                                    {{
+                                                        estadoStats.aprobado
+                                                            .count
+                                                    }}
+                                                </p>
+                                                <p
+                                                    class="text-white/80 text-xs mt-0.5"
+                                                >
+                                                    aprobadas
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                                            >
+                                                {{
+                                                    stats.estimaciones > 0
+                                                        ? Math.round(
+                                                              (estadoStats
+                                                                  .aprobado
+                                                                  .count /
+                                                                  stats.estimaciones) *
+                                                                  100,
+                                                          )
+                                                        : 0
+                                                }}%
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div
+                                                class="flex justify-between text-xs text-white/70 mb-1"
+                                            >
+                                                <span>Tasa</span>
+                                                <span
+                                                    >{{
+                                                        stats.estimaciones > 0
+                                                            ? Math.round(
+                                                                  (estadoStats
+                                                                      .aprobado
+                                                                      .count /
+                                                                      stats.estimaciones) *
+                                                                      100,
+                                                              )
+                                                            : 0
+                                                    }}%</span
+                                                >
+                                            </div>
+                                            <div
+                                                class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden"
+                                            >
+                                                <div
+                                                    class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-emerald-500 to-green-600"
+                                                    :style="{
+                                                        width: `${stats.estimaciones > 0 ? Math.min((estadoStats.aprobado.count / stats.estimaciones) * 100, 100) : 0}%`,
+                                                    }"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="mt-2 pt-2 border-t border-white/10"
+                                        >
+                                            <div
+                                                class="flex justify-between text-xs"
+                                            >
+                                                <span class="text-white/70"
+                                                    >Horas totales</span
+                                                >
+                                                <span
+                                                    class="font-bold text-white"
+                                                    >{{
+                                                        estadoStats.aprobado
+                                                            .horas
+                                                    }}</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="absolute -top-2 -right-2 h-8 w-8 rounded-full opacity-10 bg-emerald-600"
                                 ></div>
                             </div>
                         </div>
@@ -1683,8 +2537,8 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <!-- ==================== SUB-SECCIÓN 2.3: ACCESO RÁPIDO ==================== -->
-                <div class="mt-8 animate-fade-in-up delay-100">
+                <!-- ==================== SUB-SECCIÓN 2.9: ACCESO RÁPIDO ==================== -->
+                <div class="mt-8 animate-fade-in-up delay-700">
                     <div
                         class="mb-6 flex items-center justify-between before:absolute before:-inset-1 before:rounded-2xl before:bg-gradient-to-r before:from-purple-500 before:to-pink-600 before:opacity-0 before:blur-sm hover:before:opacity-10 transition-all duration-300 relative"
                     >
@@ -1716,9 +2570,8 @@ onMounted(() => {
                             </p>
                         </div>
                     </div>
-
                     <div
-                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up delay-200"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up delay-800"
                     >
                         <!-- Card: Crear Estimación -->
                         <Link
@@ -2254,7 +3107,6 @@ onMounted(() => {
         transform: translateY(0);
     }
 }
-
 @keyframes fade-in-up {
     from {
         opacity: 0;
@@ -2265,7 +3117,6 @@ onMounted(() => {
         transform: translateY(0);
     }
 }
-
 @keyframes gradient-shift {
     0%,
     100% {
@@ -2275,7 +3126,6 @@ onMounted(() => {
         background-position: 100% 50%;
     }
 }
-
 @keyframes pulse {
     0%,
     100% {
@@ -2285,7 +3135,6 @@ onMounted(() => {
         opacity: 0.5;
     }
 }
-
 .animate-fade-in {
     animation: fade-in 0.4s ease-out forwards;
 }
@@ -2313,6 +3162,9 @@ onMounted(() => {
 .animate-fade-in-up.delay-700 {
     animation-delay: 0.7s;
 }
+.animate-fade-in-up.delay-800 {
+    animation-delay: 0.8s;
+}
 .animate-gradient-shift {
     animation: gradient-shift 3s ease infinite;
     background-size: 200% 200%;
@@ -2326,24 +3178,19 @@ onMounted(() => {
     width: 8px;
     height: 8px;
 }
-
 ::-webkit-scrollbar-track {
     background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
     background: rgba(156, 163, 175, 0.3);
     border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(107, 114, 128, 0.5);
 }
-
 .dark ::-webkit-scrollbar-thumb {
     background: rgba(75, 85, 99, 0.5);
 }
-
 .dark ::-webkit-scrollbar-thumb:hover {
     background: rgba(55, 65, 81, 0.7);
 }

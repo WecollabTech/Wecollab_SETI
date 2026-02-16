@@ -32,4 +32,9 @@ class EstimacionIntegracion extends Model
     }
 
 
+    public function tareasIntegracion()
+    {
+        return $this->hasMany(EstimacionIntegracionTarea::class, 'estimacion_integracion_id');
+    }
+
 }

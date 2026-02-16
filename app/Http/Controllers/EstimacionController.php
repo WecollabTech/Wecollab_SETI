@@ -244,7 +244,77 @@ class EstimacionController extends Controller
     // }
 
 
-    public function crearProyecto(Estimacion $estimacion)
+    // public function crearProyecto(Estimacion $estimacion)
+    // {
+    //     if ($estimacion->bitrix_group_id) {
+    //         return response()->json([
+    //             'message' => 'Proyecto ya creado'
+    //         ], 409);
+    //     }
+
+    //     $webhook = config('services.bitrix.webhook');
+
+    //     // Crear grupo en Bitrix
+    //     $response = Http::post($webhook . '/sonet_group.create', [
+    //         'NAME' => $estimacion->nombre_empresa,
+    //         'DESCRIPTION' =>
+    //             "Responsable: {$estimacion->responsable} | ID negocio: {$estimacion->id_negocio}",
+    //         'VISIBLE' => 'Y',
+    //         'OPENED' => 'Y',
+    //         "SCRUM_MASTER_ID" => 281,
+    //         "PROJECT_OPTIONS" => [
+    //             "scrum" => "Y"
+    //         ]
+    //     ]);
+
+    //     if ($response->failed() || isset($response['error'])) {
+    //         return response()->json([
+    //             'message' => $response['error_description'] ?? 'Error al crear grupo en Bitrix'
+    //         ], 500);
+    //     }
+
+    //     $groupId = $response['result'];
+
+    //     // Obtener tareas
+    //     $tareas = $estimacion->fases
+    //         ->flatMap(fn($f) => $f->tareas)
+    //         ->merge(
+    //             $estimacion->integraciones
+    //                 ->flatMap(fn($i) => $i->tareas)
+    //         );
+
+    //     foreach ($tareas as $tarea) {
+
+    //         $titulo = $tarea->nombre_tarea
+    //             ?? $tarea->nombre_tarea_integracion;
+
+    //         $duracion = $tarea->duracion_minuto
+    //             ?? $tarea->duracion_estimada_minutos;
+
+    //         Http::post($webhook . '/tasks.task.add', [
+    //             'fields' => [
+    //                 'TITLE' => $titulo,
+    //                 'DESCRIPTION' => "Duración: {$duracion} min",
+    //                 'GROUP_ID' => $groupId,
+    //                 'RESPONSIBLE_ID' => 1,
+    //             ],
+    //         ]);
+    //     }
+
+    //     // Guardar ID del grupo
+    //     $estimacion->update([
+    //         'bitrix_group_id' => $groupId,
+    //     ]);
+
+    //     return response()->json([
+    //         'message' => 'Proyecto creado correctamente',
+    //         'group_id' => $groupId,
+    //     ]);
+    // }
+
+
+
+    public function crearProyecto(Request $request, Estimacion $estimacion)
     {
         if ($estimacion->bitrix_group_id) {
             return response()->json([
@@ -252,24 +322,35 @@ class EstimacionController extends Controller
             ], 409);
         }
 
+        $tipoProyecto = $request->tipo_proyecto ?? 'normal';
+
         $webhook = config('services.bitrix.webhook');
 
-        // Crear grupo en Bitrix
-        $response = Http::post($webhook . '/sonet_group.create', [
+        $dataGrupo = [
             'NAME' => $estimacion->nombre_empresa,
             'DESCRIPTION' =>
                 "Responsable: {$estimacion->responsable} | ID negocio: {$estimacion->id_negocio}",
             'VISIBLE' => 'Y',
             'OPENED' => 'Y',
-            "SCRUM_MASTER_ID" => 281,
-            "PROJECT_OPTIONS" => [
-                "scrum" => "Y"
-            ]
-        ]);
+        ];
+
+        // 🔥 Si es SCRUM
+        if ($tipoProyecto === 'scrum') {
+            $dataGrupo['SCRUM_MASTER_ID'] = 281; // ID usuario Bitrix
+            $dataGrupo['PROJECT_OPTIONS'] = [
+                'scrum' => 'Y'
+            ];
+        }
+
+        $response = Http::post(
+            $webhook . '/sonet_group.create',
+            $dataGrupo
+        );
 
         if ($response->failed() || isset($response['error'])) {
             return response()->json([
-                'message' => $response['error_description'] ?? 'Error al crear grupo en Bitrix'
+                'message' => $response['error_description']
+                    ?? 'Error al crear grupo en Bitrix'
             ], 500);
         }
 
@@ -301,9 +382,9 @@ class EstimacionController extends Controller
             ]);
         }
 
-        // Guardar ID del grupo
         $estimacion->update([
             'bitrix_group_id' => $groupId,
+            'tipo_proyecto_bitrix' => $tipoProyecto
         ]);
 
         return response()->json([
@@ -336,5 +417,6 @@ class EstimacionController extends Controller
 
         return $pdf->stream('estimacion_' . $estimacion->id . '.pdf');
     }
+
 
 }
