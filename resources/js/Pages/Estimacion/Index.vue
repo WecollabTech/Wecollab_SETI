@@ -47,8 +47,10 @@ const isCreatingProject = (id) => {
 };
 
 // =========================
-// LISTAR
+// FUNCIONES
 // =========================
+
+// LISTAR ESTIMACIONES
 const cargarEstimaciones = async (page = 1) => {
     loading.value = true;
     try {
@@ -71,9 +73,13 @@ const buscarEstimaciones = () => {
     }, 400);
 };
 
-// =========================
+// ABRIR PDF
+const abrirPdf = (id) => {
+    // Llama a la ruta Laravel que apunta a exportarPdf
+    window.open(`/estimaciones/${id}/pdf`, "_blank");
+};
+
 // CREAR PROYECTO
-// =========================
 const confirmarIniciarProyecto = (id) => {
     estimacionIdToStart.value = id;
     tipoProyecto.value = "normal";
@@ -113,9 +119,7 @@ const iniciarProyectoConfirmado = async () => {
     }
 };
 
-// =========================
 // ELIMINAR
-// =========================
 const confirmarEliminar = (id) => {
     estimacionIdToDelete.value = id;
     showDeleteModal.value = true;
@@ -139,6 +143,7 @@ const eliminarEstimacion = async () => {
     }
 };
 
+// ON MOUNTED
 onMounted(() => {
     cargarEstimaciones();
 });
@@ -171,13 +176,14 @@ onMounted(() => {
                     </template>
                 </ToolbarBase>
             </template>
+
+            <!-- HEAD -->
             <template #head>
                 <tr class="bg-gray-200 text-gray-800 text-sm uppercase">
                     <th class="py-3 px-3 text-left">ID</th>
                     <th class="py-3 px-3 text-center">Id de la Negociación</th>
                     <th class="py-3 px-3 text-left">Tipo Implementación</th>
                     <th class="py-3 px-3 text-left">Empresa</th>
-
                     <th class="py-3 px-3 text-left">Complejidad</th>
                     <th class="py-3 px-3 text-left">Horas</th>
                     <th class="py-3 px-3 text-center">Fecha</th>
@@ -198,7 +204,6 @@ onMounted(() => {
                         {{ item.nombre_tipo_implementacion }}
                     </td>
                     <td class="py-3 px-3">{{ item.nombre_empresa }}</td>
-
                     <td class="py-3 px-3">
                         {{ item.complejidad?.nombre ?? "-" }}
                     </td>
@@ -221,6 +226,7 @@ onMounted(() => {
                             Ver
                         </button>
 
+                        <!-- BOTÓN PDF FUNCIONANDO -->
                         <button
                             @click="abrirPdf(item.id)"
                             class="px-3 py-1 bg-indigo-600 text-white rounded"
@@ -232,9 +238,9 @@ onMounted(() => {
                             @click="confirmarIniciarProyecto(item.id)"
                             class="px-3 py-1 bg-green-600 text-white rounded"
                         >
-                            <span v-if="creandoProyecto === item.id">
-                                ⏳ Creando...
-                            </span>
+                            <span v-if="creandoProyecto === item.id"
+                                >⏳ Creando...</span
+                            >
                             <span v-else>🚀 Iniciar proyecto</span>
                         </button>
 
@@ -248,12 +254,12 @@ onMounted(() => {
                 </tr>
             </template>
         </TablaSeccion>
+
         <!-- PAGINACIÓN -->
         <div
             v-if="estimaciones.last_page > 1"
             class="flex justify-center items-center gap-2 mt-6"
         >
-            <!-- ANTERIOR -->
             <button
                 class="px-3 py-1 rounded border text-sm"
                 :class="
@@ -267,7 +273,6 @@ onMounted(() => {
                 ← Anterior
             </button>
 
-            <!-- NÚMEROS -->
             <button
                 v-for="page in estimaciones.last_page"
                 :key="page"
@@ -282,7 +287,6 @@ onMounted(() => {
                 {{ page }}
             </button>
 
-            <!-- SIGUIENTE -->
             <button
                 class="px-3 py-1 rounded border text-sm"
                 :class="
@@ -310,14 +314,6 @@ onMounted(() => {
             v-model:show="showSuccessModal"
             :title="successTitle"
             :message="successMessage"
-        />
-
-        <ConfirmaciondeBitrix
-            v-model:show="showConfirmProjectModal"
-            mode="confirm"
-            title="Iniciar proyecto"
-            message="¿Estás seguro de iniciar este proyecto? Se crearán el grupo y todas las tareas en Bitrix24."
-            @confirm="iniciarProyectoConfirmado"
         />
 
         <!-- MODAL SELECCION TIPO PROYECTO -->
@@ -363,7 +359,6 @@ onMounted(() => {
                     >
                         Cancelar
                     </button>
-
                     <button
                         @click="iniciarProyectoConfirmado"
                         class="px-4 py-2 bg-indigo-600 text-white rounded"

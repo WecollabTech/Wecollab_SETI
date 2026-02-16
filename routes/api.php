@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TipoImplementacionController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 
 //RUTAS DE PROYECTO DE IMPLEMENTACIO
@@ -123,11 +124,12 @@ Route::post(
 
 
 //Ruta para cargar usuarios 
-Route::get('/usuarios', function () {
-    return response()->json(
-        User::select('id', 'name', 'email')->orderBy('name')->get()
-    );
-});
+// Route::get('/usuarios', function () {
+//     return response()->json(
+//         User::select('id', 'name', 'email', 'user_id_bitrix')->orderBy('name')->get()
+//     );
+// });
+Route::get('/usuarios', [UserController::class, 'listaUsuarios']);
 
 
 
