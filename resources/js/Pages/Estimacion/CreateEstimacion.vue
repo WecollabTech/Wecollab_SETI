@@ -29,7 +29,7 @@ const estimacion = ref({
     nombreTipoImplementacion: "",
 
     userId: null, // usuario seleccionado en PasoTipo
-
+    userIdBitrix: null, // 👈 AGREGAR
     nombreEmpresa: "", // ✅ nuevo
     responsable: "", // ✅ nuevo
     idNegocio: "", // ✅ nuevo
@@ -103,6 +103,7 @@ const guardarEstimacion = async (estimacion) => {
         responsable: estimacion.responsable,
         id_negocio: estimacion.idNegocio,
         user_id: estimacion.userId, // <-- NUEVO
+        user_id_bitrix: estimacion.userIdBitrix, // 👈 AGREGAR
         complejidad_id: estimacion.complejidad.id,
         comentarios: estimacion.comentarios,
         total_minutos: estimacion.totalMinutos,

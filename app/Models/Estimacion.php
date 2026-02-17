@@ -20,6 +20,7 @@ class Estimacion extends Model
         'responsable',
         'id_negocio',
         'user_id',
+        'user_id_bitrix', // 👈 ESTE
     ];
 
     //Tipos de Implementacio que estara relacionada a cada estimacion
