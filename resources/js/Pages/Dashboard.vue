@@ -1080,7 +1080,14 @@ onMounted(() => {
                                     <p
                                         class="text-4xl font-extrabold text-gray-800 dark:text-white"
                                     >
-                                        {{ estadoStats.en_proceso?.horas || 0 }}
+                                        {{
+                                            estadoStats.en_proceso?.horas
+                                                ? Number(
+                                                      estadoStats.en_proceso
+                                                          .horas,
+                                                  ).toFixed(2)
+                                                : "0.00"
+                                        }}
                                     </p>
                                     <p class="text-xs text-gray-500">
                                         {{
