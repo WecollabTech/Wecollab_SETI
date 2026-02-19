@@ -28,6 +28,7 @@ return new class extends Migration {
 
             // Datos adicionales que agregaste
             $table->string('nombre_empresa');
+            $table->unsignedBigInteger('user_id_bitrix')->nullable();
             $table->string('responsable')->nullable();
             $table->string('id_negocio')->nullable();
             $table->string('bitrix_group_id')->nullable();
